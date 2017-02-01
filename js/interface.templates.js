@@ -13,9 +13,11 @@ this["Fliplet"]["Widget"]["Templates"]["templates.create"] = Handlebars.template
 },"useData":true});
 
 this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1;
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
 
-  return "<section>\n  "
-    + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
-    + "\n</section>";
+  return "<section class=\"well\" data-instance-id=\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.instance : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">\n  <h2>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</h2>\n  <hr />\n  <h3>Theme configuration</h3>\n  <form>\n\n  </form>\n  <hr />\n  <a href=\"#\" class=\"btn btn-danger btn-sm\" data-delete-instance>Remove theme</a>\n</section>";
 },"useData":true});

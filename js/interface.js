@@ -11,7 +11,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     return Fliplet.Widget.Templates['templates.' + name];
   }
 
-  function loadThemes() {
+  function init() {
     return Fliplet.API.request({
       url: 'v1/widgets?include_instances=true&tags=type:theme&appId=' + appId
     }).then(function (response) {
@@ -20,7 +20,15 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       response.widgets.forEach(function (theme) {
         if (!theme.instances.length) {
           $instances.append(tpl('create')(theme));
+          return;
         }
+
+        theme.instances.forEach(function (instance) {
+          $instances.append(tpl('instance')({
+            instance: instance,
+            theme: theme
+          }));
+        });
       });
     });
   }
@@ -34,12 +42,19 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       data: {
         widgetId: $(this).data('create-instance')
       }
-    }).then(function () {
-      return loadThemes();
-    })
+    }).then(init);
   });
 
-  loadThemes();
+  $instances.on('click', '[data-delete-instance]', function (event) {
+    event.preventDefault();
+
+    Fliplet.API.request({
+      method: 'DELETE',
+      url: 'v1/widget-instances/' + $(this).closest('[data-instance-id]').data('instance-id')
+    }).then(init);
+  });
+
+  init();
 
   return {};
 });
