@@ -5,6 +5,7 @@ Handlebars.registerHelper('setValue', function(node) {
 
 Fliplet.Widget.register('com.fliplet.theme', function () {
   var appId = Fliplet.Env.get('appId');
+  var saveRequests = [];
 
   if (!appId) {
     throw new Error('appId is required');
@@ -35,6 +36,12 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
           }));
         });
       });
+
+      // bind plugins on inputs
+      $instances.find('[data-type="color"]').each(function () {
+        var picker = new jscolor(this);
+      });
+
     });
   }
 
@@ -57,6 +64,34 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       method: 'DELETE',
       url: 'v1/widget-instances/' + $(this).closest('[data-instance-id]').data('instance-id')
     }).then(init);
+  });
+
+  $instances.on('submit', '[data-instance-id] form', function (event) {
+    event.preventDefault();
+
+    var $form = $(this);
+
+    var instanceId = $form.closest('[data-instance-id]').data('instance-id');
+
+    var data = $form.serializeArray().reduce(function(obj, item) {
+      obj[item.name] = item.value;
+      return obj;
+    }, {});
+
+    saveRequests.push(Fliplet.API.request({
+      url: 'v1/widget-instances/' + instanceId,
+      method: 'PUT',
+      data: data
+    }));
+  });
+
+  Fliplet.Widget.onSaveRequest(function () {
+    saveRequests = [];
+    $instances.find('[data-instance-id] form').submit();
+
+    Promise.all(saveRequests).then(function () {
+      Fliplet.Widget.complete();
+    });
   });
 
   init();

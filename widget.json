@@ -9,11 +9,13 @@
   "html_tag": "div",
   "interface": {
     "dependencies": [
+      "lodash",
       "handlebars",
       "fliplet-core",
       "fliplet-studio-ui"
     ],
     "assets": [
+      "vendor/jscolor.min.js",
       "js/interface.templates.js",
       "js/interface.js"
     ]

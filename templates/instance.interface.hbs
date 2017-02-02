@@ -11,7 +11,8 @@
           {{#each variables}}
             <li>
               <label>{{ description }}</label>
-              <input name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+              <input data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+            </li>
           {{/each}}
         </ul>
       </div>
