@@ -36,7 +36,9 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
 
       // bind plugins on inputs
       $instances.find('[data-type="color"]').each(function () {
-        var picker = new jscolor(this);
+        var picker = new jscolor(this, {
+          hash: true
+        });
       });
 
     });
