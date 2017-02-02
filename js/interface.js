@@ -18,12 +18,10 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
   }
 
   function init() {
-    return Fliplet.API.request({
-      url: 'v1/widgets?include_instances=true&tags=type:theme&appId=' + appId
-    }).then(function (response) {
+    Fliplet.Themes.get().then(function (themes) {
       $instances.html('');
 
-      response.widgets.forEach(function (theme) {
+      themes.forEach(function (theme) {
         if (!theme.instances.length) {
           $instances.append(tpl('create')(theme));
           return;
@@ -85,9 +83,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       url: 'v1/widget-instances/' + instanceId,
       method: 'PUT',
       data: {
-        theme: true,
-        values: data,
-        assets: []
+        values: data
       }
     }));
   });

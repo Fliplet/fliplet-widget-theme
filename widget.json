@@ -11,7 +11,7 @@
     "dependencies": [
       "lodash",
       "handlebars",
-      "fliplet-core",
+      "fliplet-themes",
       "fliplet-studio-ui"
     ],
     "assets": [
