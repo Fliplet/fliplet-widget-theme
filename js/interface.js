@@ -4,10 +4,9 @@ Handlebars.registerHelper('setValue', function(node) {
 });
 
 Fliplet.Widget.register('com.fliplet.theme', function () {
-  var appId = Fliplet.Env.get('appId');
   var saveRequests = [];
 
-  if (!appId) {
+  if (!Fliplet.Env.get('appId')) {
     throw new Error('appId is required');
   }
 
@@ -48,7 +47,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
 
     Fliplet.API.request({
       method: 'POST',
-      url: 'v1/widget-instances?appId=' + appId,
+      url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
       data: {
         widgetId: $(this).data('create-instance')
       }
