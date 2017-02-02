@@ -1,6 +1,6 @@
 Handlebars.registerHelper('setValue', function(node) {
-  var settings = node.data._parent._parent.root.instance.settings;
-  return settings[this.name] || this.default;
+  var values = node.data._parent._parent.root.instance.settings.values || {};
+  return values[this.name] || this.default;
 });
 
 Fliplet.Widget.register('com.fliplet.theme', function () {
@@ -62,7 +62,10 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
 
     Fliplet.API.request({
       method: 'DELETE',
-      url: 'v1/widget-instances/' + $(this).closest('[data-instance-id]').data('instance-id')
+      url: 'v1/widget-instances/' + $(this).closest('[data-instance-id]').data('instance-id'),
+      data: {
+        destroy: true
+      }
     }).then(init);
   });
 
@@ -81,7 +84,11 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     saveRequests.push(Fliplet.API.request({
       url: 'v1/widget-instances/' + instanceId,
       method: 'PUT',
-      data: data
+      data: {
+        theme: true,
+        values: data,
+        assets: []
+      }
     }));
   });
 
