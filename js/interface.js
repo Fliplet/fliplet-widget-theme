@@ -1,3 +1,8 @@
+Handlebars.registerHelper('setValue', function(node) {
+  var settings = node.data._parent._parent.root.instance.settings;
+  return settings[this.name] || this.default;
+});
+
 Fliplet.Widget.register('com.fliplet.theme', function () {
   var appId = Fliplet.Env.get('appId');
 

@@ -3,7 +3,19 @@
   <hr />
   <h3>Theme configuration</h3>
   <form>
-
+    {{#each theme.settings.configuration}}
+      <div class="well">
+        <h4>{{ name }}</h4>
+        <hr />
+        <ul>
+          {{#each variables}}
+            <li>
+              <label>{{ description }}</label>
+              <input name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+          {{/each}}
+        </ul>
+      </div>
+    {{/each}}
   </form>
   <hr />
   <a href="#" class="btn btn-danger btn-sm" data-delete-instance>Remove theme</a>
