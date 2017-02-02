@@ -16,8 +16,12 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     return Fliplet.Widget.Templates['templates.' + name];
   }
 
+  function reloadPage() {
+    Fliplet.Studio.emit('reload-page-preview');
+  }
+
   function init() {
-    Fliplet.Themes.get().then(function (themes) {
+    return Fliplet.Themes.get().then(function (themes) {
       $instances.html('');
 
       themes.forEach(function (theme) {
@@ -65,7 +69,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       data: {
         destroy: true
       }
-    }).then(init);
+    }).then(init).then(reloadPage);
   });
 
   $instances.on('submit', '[data-instance-id] form', function (event) {
@@ -95,6 +99,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
 
     Promise.all(saveRequests).then(function () {
       Fliplet.Widget.complete();
+      reloadPage();
     });
   });
 
