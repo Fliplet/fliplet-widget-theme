@@ -100,6 +100,10 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     Promise.all(saveRequests).then(function () {
       Fliplet.Widget.complete();
       reloadPage();
+    }, function (err) {
+      var message = err.responseJSON.error && err.responseJSON.error.formatted;
+      console.warn(err.responseJSON.error);
+      alert(message);
     });
   });
 
