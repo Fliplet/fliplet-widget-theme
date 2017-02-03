@@ -43,5 +43,7 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
     + "</h2>\n  <form>\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = ((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.configuration : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "  </form>\n  <hr />\n  <a href=\"#\" class=\"btn btn-danger btn-sm\" data-delete-instance>Remove theme</a>\n</section>";
+    + "  </form>\n  <div class=\"actions\">\n    <a href=\"#\" class=\"btn btn-danger btn-sm\" data-delete-instance>Remove this theme ("
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
+    + ")</a>\n  </div>\n</section>";
 },"useData":true});
