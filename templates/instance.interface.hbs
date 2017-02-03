@@ -1,17 +1,14 @@
-<section class="well" data-instance-id="{{ instance.id }}">
+<section data-instance-id="{{ instance.id }}">
   <h2>{{ theme.name }}</h2>
-  <hr />
-  <h3>Theme configuration</h3>
   <form>
     {{#each theme.settings.configuration}}
-      <div class="well">
+      <div>
         <h4>{{ name }}</h4>
-        <hr />
         <ul>
           {{#each variables}}
             <li>
               <label>{{ description }}</label>
-              <input data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+              <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
             </li>
           {{/each}}
         </ul>

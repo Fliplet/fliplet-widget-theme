@@ -1,14 +1,22 @@
 .loader {
   display: none;
-  position: absolute;
-  bottom: 0;
+  position: fixed;
+  bottom: 38px;
   left: 0;
   right: 0;
-  background-color: rgba(255,255,255,0.5);
+  border-top: 1px solid #d9ddde;
+  background-color: #f2f6f7;
+  padding: 15px 0;
+}
+
+.loader p {
+  text-align: center;
+  font-size: 12px;
+  color: #333;
 }
 
 .progress {
-  margin: 10px;
+  margin: 0;
 }
 
 [data-instances] {
@@ -20,5 +28,37 @@
 }
 
 .saving .loader {
+  display: block;
+}
+
+section {
+  border-bottom: 1px solid #d9ddde;
+}
+
+section h2 {
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+section h4 {
+  margin-bottom: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+section ul {
+  list-style: none;
+  padding: 0;
+}
+
+section li {
+  border-bottom: 1px solid #d9ddde;
+  padding: 10px 0;
+}
+
+section li label {
   display: block;
 }

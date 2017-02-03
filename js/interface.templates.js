@@ -15,9 +15,9 @@ this["Fliplet"]["Widget"]["Templates"]["templates.create"] = Handlebars.template
 this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : {};
 
-  return "      <div class=\"well\">\n        <h4>"
+  return "      <div>\n        <h4>"
     + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "</h4>\n        <hr />\n        <ul>\n"
+    + "</h4>\n        <ul>\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.variables : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "        </ul>\n      </div>\n";
 },"2":function(container,depth0,helpers,partials,data) {
@@ -25,7 +25,7 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
 
   return "            <li>\n              <label>"
     + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
-    + "</label>\n              <input data-type=\""
+    + "</label>\n              <input class=\"form-control\" type=\"text\" data-type=\""
     + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
     + "\" name=\""
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
@@ -37,11 +37,11 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.lambda, alias2=container.escapeExpression;
 
-  return "<section class=\"well\" data-instance-id=\""
+  return "<section data-instance-id=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.instance : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">\n  <h2>"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</h2>\n  <hr />\n  <h3>Theme configuration</h3>\n  <form>\n"
+    + "</h2>\n  <form>\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = ((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.configuration : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "  </form>\n  <hr />\n  <a href=\"#\" class=\"btn btn-danger btn-sm\" data-delete-instance>Remove theme</a>\n</section>";
 },"useData":true});
