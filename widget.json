@@ -17,7 +17,8 @@
     "assets": [
       "vendor/jscolor.min.js",
       "js/interface.templates.js",
-      "js/interface.js"
+      "js/interface.js",
+      "css/interface.css"
     ]
   }
 }

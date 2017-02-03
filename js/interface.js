@@ -5,6 +5,7 @@ Handlebars.registerHelper('setValue', function(node) {
 
 Fliplet.Widget.register('com.fliplet.theme', function () {
   var saveRequests = [];
+  var $main = $('main');
 
   if (!Fliplet.Env.get('appId')) {
     throw new Error('appId is required');
@@ -97,10 +98,16 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     saveRequests = [];
     $instances.find('[data-instance-id] form').submit();
 
+    $main.addClass('saving');
+
     Promise.all(saveRequests).then(function () {
+      $main.removeClass('saving');
+
       Fliplet.Widget.complete();
       reloadPage();
     }, function (err) {
+      $main.removeClass('saving');
+
       var message = err.responseJSON.error && err.responseJSON.error.formatted;
       console.warn(err.responseJSON.error);
       alert(message);
