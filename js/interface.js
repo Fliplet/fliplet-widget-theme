@@ -89,7 +89,8 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       url: 'v1/widget-instances/' + instanceId,
       method: 'PUT',
       data: {
-        values: data
+        package: $form.closest('[data-instance-id]').data('package-name'),
+        values: data || {}
       }
     }));
   });

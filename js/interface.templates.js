@@ -39,6 +39,8 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
 
   return "<section data-instance-id=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.instance : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\" data-package-name=\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1["package"] : stack1), depth0))
     + "\">\n  <h2>"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
     + "</h2>\n  <form>\n"
