@@ -15,7 +15,8 @@
       "fliplet-studio-ui"
     ],
     "assets": [
-      "vendor/jscolor.min.js",
+      "vendor/color-picker.js",
+      "vendor/color-picker.css",
       "js/interface.templates.js",
       "js/interface.js",
       "css/interface.css"

@@ -1,14 +1,27 @@
 <section data-instance-id="{{ instance.id }}" data-package-name="{{ theme.package }}">
-  <h2>{{ theme.name }}</h2>
-  <form>
+  <h2><small>{{ theme.name }}</small></h2>
+  <form class="form-horizontal">
     {{#each theme.settings.configuration}}
       <div>
         <h4>{{ name }}</h4>
         <ul>
           {{#each variables}}
             <li>
-              <label>{{ description }}</label>
-              <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+              <div class="form-group">
+                <div class="col-sm-4 control-label">
+                  <label>{{ description }}</label>
+                </div>
+                <div class="col-sm-8">
+                  {{#if_eq type "color"}}
+                  <div class="input-group">
+                    <div class="input-group-addon" style="background-color:{{ setValue }}">&nbsp;&nbsp;&nbsp;</div>
+                    <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}">
+                  </div>
+                  {{else}}
+                  <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+                  {{/if_eq}}
+                </div>
+              </div>
             </li>
           {{/each}}
         </ul>

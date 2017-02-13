@@ -3,6 +3,13 @@ Handlebars.registerHelper('setValue', function(node) {
   return values[this.name] || this.default;
 });
 
+Handlebars.registerHelper('if_eq', function(a, b, opts) {
+    if(a == b)
+        return opts.fn(this);
+    else
+        return opts.inverse(this);
+});
+
 Fliplet.Widget.register('com.fliplet.theme', function () {
   var saveRequests = [];
   var $main = $('main');
@@ -41,9 +48,32 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
 
       // bind plugins on inputs
       $instances.find('[data-type="color"]').each(function () {
-        var picker = new jscolor(this, {
-          hash: true
+        var picker = new CP(this);
+
+        $(this).on('keyup change paste blur', function() {
+          picker.set(this.value.toLowerCase());
+          picker.trigger("change", [this.value.substring(1)], 'main-change');
         });
+
+        picker.on("change", function(color) {
+          this.target.value = '#' + color;
+          $($(this.target).siblings('div')[0]).css('background-color', '#'+color);
+        }, 'main-change');
+
+        var colors = ['1d3f68', '00abd2', '036b95', 'ffd21d', 'ed9119', 'e03629', '831811', '5e0f0f', '23a437', '076c31'], box;
+
+        for (var i = 0, len = colors.length; i < len; ++i) {
+          box = document.createElement('span');
+          box.className = 'color-picker-box';
+          box.title = '#' + colors[i];
+          box.style.backgroundColor = '#' + colors[i];
+          box.addEventListener("click", function(e) {
+            picker.set(this.title);
+            picker.trigger("change", [this.title.slice(1)], 'main-change');
+            e.stopPropagation();
+          }, false);
+          picker.picker.firstChild.appendChild(box);
+        }
       });
 
     });

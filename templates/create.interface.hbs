@@ -1,2 +1,15 @@
-<a class="btn btn-primary btn-sm" href="#" data-create-instance="{{ id }}">Add theme: {{ name }}</a>
-<hr />
+<div class="col-xs-4 theme-holder" data-theme-id="{{ id }}">
+  <input type="radio" id="fl-theme-{{ id }}" name="fl-themes" data-create-instance="{{ id }}">
+  <label for="fl-theme-{{ id }}">
+
+    <div class="theme-icon">
+      {{#if icon}}<div class="icon" style="background-image:url('{{icon}}')"></div>{{/if}}
+      <div class="theme-screen">
+        <i class="fa fa-check"></i>
+      </div>
+    </div>
+    <div class="theme-name">
+      <p>{{ name }}</p>
+    </div>
+  </label>
+</div>
