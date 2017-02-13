@@ -78,11 +78,13 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
   Fliplet.Themes.get().then(function (themes) {
     themes.forEach(function (theme) {
       $themeInstances.append(tpl('create')(theme));
+      if (theme.instances.length) {
+        $('[data-create-instance="' + theme.id + '"]').prop('checked', true);
+      }
     });
   });
 
   $themeInstances.on('click', '[data-create-instance]', function (event) {
-    //event.preventDefault();
 
     var widgetInstanceId = $(this).data('create-instance');
 
@@ -106,21 +108,6 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
 
 
   });
-
-  /** DEPRICATE THE DELETE BUTTON
-  /*
-  $instances.on('click', '[data-delete-instance]', function (event) {
-    event.preventDefault();
-
-    Fliplet.API.request({
-      method: 'DELETE',
-      url: 'v1/widget-instances/' + $(this).closest('[data-instance-id]').data('instance-id'),
-      data: {
-        destroy: true
-      }
-    }).then(init).then(reloadPage);
-  });
-  */
 
   $instances.on('submit', '[data-instance-id] form', function (event) {
     event.preventDefault();
