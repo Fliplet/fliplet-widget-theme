@@ -18,6 +18,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     throw new Error('appId is required');
   }
 
+  $themeInstances = $('[data-theme-instances]');
   $instances = $('[data-instances]');
 
   function tpl(name) {
@@ -33,11 +34,6 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       $instances.html('');
 
       themes.forEach(function (theme) {
-        if (!theme.instances.length) {
-          $instances.append(tpl('create')(theme));
-          return;
-        }
-
         theme.instances.forEach(function (instance) {
           $instances.append(tpl('instance')({
             instance: instance,
@@ -79,18 +75,40 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     });
   }
 
-  $instances.on('click', '[data-create-instance]', function (event) {
-    event.preventDefault();
-
-    Fliplet.API.request({
-      method: 'POST',
-      url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
-      data: {
-        widgetId: $(this).data('create-instance')
-      }
-    }).then(init);
+  Fliplet.Themes.get().then(function (themes) {
+    themes.forEach(function (theme) {
+      $themeInstances.append(tpl('create')(theme));
+    });
   });
 
+  $themeInstances.on('click', '[data-create-instance]', function (event) {
+    //event.preventDefault();
+
+    var widgetInstanceId = $(this).data('create-instance');
+
+    if ( $(this).is(':checked') ) {
+      Fliplet.API.request({
+        method: 'POST',
+        url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
+        data: {
+          widgetId: $(this).data('create-instance')
+        }
+      }).then(init);
+    } else {
+      Fliplet.API.request({
+        method: 'DELETE',
+        url: 'v1/widget-instances/' + $('[data-instances] [data-widget-id="' + widgetInstanceId + '"]').data('instance-id'),
+        data: {
+          destroy: true
+        }
+      }).then(init).then(reloadPage);
+    }
+
+
+  });
+
+  /** DEPRICATE THE DELETE BUTTON
+  /*
   $instances.on('click', '[data-delete-instance]', function (event) {
     event.preventDefault();
 
@@ -102,6 +120,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       }
     }).then(init).then(reloadPage);
   });
+  */
 
   $instances.on('submit', '[data-instance-id] form', function (event) {
     event.preventDefault();

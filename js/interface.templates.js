@@ -13,7 +13,7 @@ this["Fliplet"]["Widget"]["Templates"]["templates.create"] = Handlebars.template
 
   return "<div class=\"col-xs-4 theme-holder\" data-theme-id=\""
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
-    + "\">\r\n  <input type=\"radio\" id=\"fl-theme-"
+    + "\">\r\n  <input type=\"checkbox\" id=\"fl-theme-"
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
     + "\" name=\"fl-themes\" data-create-instance=\""
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
@@ -73,13 +73,15 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
 
   return "<section data-instance-id=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.instance : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\" data-widget-id=\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.instance : depth0)) != null ? stack1.widgetId : stack1), depth0))
     + "\" data-package-name=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1["package"] : stack1), depth0))
     + "\">\r\n  <h2><small>"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
     + "</small></h2>\r\n  <form class=\"form-horizontal\">\r\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = ((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.configuration : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "  </form>\r\n  <div class=\"actions\">\r\n    <a href=\"#\" class=\"btn btn-danger btn-sm\" data-delete-instance>Remove this theme ("
+    + "  </form>\r\n  <!-- DEPRICATED DELETE BUTTON\r\n  <div class=\"actions\">\r\n    <a href=\"#\" class=\"btn btn-danger btn-sm\" data-delete-instance>Remove this theme ("
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
-    + ")</a>\r\n  </div>\r\n</section>\r\n";
+    + ")</a>\r\n  </div>\r\n  -->\r\n</section>\r\n";
 },"useData":true});

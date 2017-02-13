@@ -19,6 +19,10 @@
     margin: 0;
 }
 
+.loader .progress-bar {
+  background-color: #00abd1;
+}
+
 [data-instances] {
     transition: opacity 2s;
     padding: 15px;
@@ -63,7 +67,6 @@ section .actions {
 h2 small {
     color: #14505e;
 }
-
 
 /*BUTTONS*/
 
@@ -267,14 +270,14 @@ textarea.form-control {
     color: #00abd2;
 }
 
-.theme-holder input[type="radio"]:checked + label .theme-icon {
+.theme-holder input[type="checkbox"]:checked + label .theme-icon {
     border-color: #00abd2;
 }
 
-.theme-holder input[type="radio"]:checked + label .theme-screen {
+.theme-holder input[type="checkbox"]:checked + label .theme-screen {
     display: block;
 }
 
-.theme-holder input[type="radio"]:checked + label .theme-name {
+.theme-holder input[type="checkbox"]:checked + label .theme-name {
     color: #00abd2;
 }

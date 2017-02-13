@@ -1,4 +1,4 @@
-<section data-instance-id="{{ instance.id }}" data-package-name="{{ theme.package }}">
+<section data-instance-id="{{ instance.id }}" data-widget-id="{{ instance.widgetId }}" data-package-name="{{ theme.package }}">
   <h2><small>{{ theme.name }}</small></h2>
   <form class="form-horizontal">
     {{#each theme.settings.configuration}}
@@ -28,7 +28,9 @@
       </div>
     {{/each}}
   </form>
+  <!-- DEPRICATED DELETE BUTTON
   <div class="actions">
     <a href="#" class="btn btn-danger btn-sm" data-delete-instance>Remove this theme ({{ theme.name }})</a>
   </div>
+  -->
 </section>
