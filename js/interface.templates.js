@@ -77,11 +77,9 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.instance : depth0)) != null ? stack1.widgetId : stack1), depth0))
     + "\" data-package-name=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1["package"] : stack1), depth0))
-    + "\">\r\n  <h2><small>"
+    + "\">\r\n  <h2><small>Theme: "
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</small></h2>\r\n  <form class=\"form-horizontal\">\r\n"
+    + "</small></h2>\r\n  <p>Use the fields below to change the styles of your app.</p>\r\n  <form class=\"form-horizontal\">\r\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = ((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.configuration : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "  </form>\r\n  <!-- DEPRICATED DELETE BUTTON\r\n  <div class=\"actions\">\r\n    <a href=\"#\" class=\"btn btn-danger btn-sm\" data-delete-instance>Remove this theme ("
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.name : stack1), depth0))
-    + ")</a>\r\n  </div>\r\n  -->\r\n</section>\r\n";
+    + "  </form>\r\n</section>\r\n";
 },"useData":true});

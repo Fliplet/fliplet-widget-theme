@@ -20,6 +20,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
 
   $themeInstances = $('[data-theme-instances]');
   $instances = $('[data-instances]');
+  $instanceEmpty = $('.instance-empty');
 
   function tpl(name) {
     return Fliplet.Widget.Templates['templates.' + name];
@@ -34,6 +35,11 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       $instances.html('');
 
       themes.forEach(function (theme) {
+        if (theme.instances.length) {
+          $instanceEmpty.addClass('hidden');
+        } else {
+          $instanceEmpty.removeClass('hidden');
+        }
         theme.instances.forEach(function (instance) {
           $instances.append(tpl('instance')({
             instance: instance,
