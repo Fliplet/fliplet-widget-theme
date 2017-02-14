@@ -5,7 +5,23 @@
   </header>
   <h2><small>Select a theme</small></h2>
   <p>Select one or multiple themes to change the look of your app.</p>
-  <div data-theme-instances class="clearfix"></div>
+  <div class="clearfix theme-instances-holder">
+    <div class="col-xs-4 theme-holder" data-theme-id="none">
+      <input type="radio" id="fl-theme-none" name="fl-themes" data-create-instance="none">
+      <label for="fl-theme-none">
+        <div class="theme-icon none">
+          <div class="theme-screen">
+            <i class="fa fa-check"></i>
+          </div>
+        </div>
+        <div class="theme-name">
+          <p>None</p>
+        </div>
+      </label>
+    </div>
+    <div data-theme-instances>
+    </div>
+  </div>
   <div class="instance-empty">
     <h2><small>You haven't applied a theme yet</small></h2>
     <p>Your app is using Fliplet's default styles.<br/>Select one or multiple themes above to change the look and feel of your app.</p>

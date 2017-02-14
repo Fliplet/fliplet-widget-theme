@@ -18,9 +18,11 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     throw new Error('appId is required');
   }
 
+  $themeInstancesHolder = $('.theme-instances-holder');
   $themeInstances = $('[data-theme-instances]');
   $instances = $('[data-instances]');
   $instanceEmpty = $('.instance-empty');
+  var emptyState;
 
   function tpl(name) {
     return Fliplet.Widget.Templates['templates.' + name];
@@ -33,12 +35,11 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
   function init() {
     return Fliplet.Themes.get().then(function (themes) {
       $instances.html('');
+      emptyState = true;
 
       themes.forEach(function (theme) {
         if (theme.instances.length) {
-          $instanceEmpty.addClass('hidden');
-        } else {
-          $instanceEmpty.removeClass('hidden');
+          emptyState = false;
         }
         theme.instances.forEach(function (instance) {
           $instances.append(tpl('instance')({
@@ -47,6 +48,13 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
           }));
         });
       });
+
+      // Adds/Removes empty state
+      if (emptyState) {
+        $instanceEmpty.removeClass('hidden');
+      } else {
+        $instanceEmpty.addClass('hidden');
+      }
 
       // bind plugins on inputs
       $instances.find('[data-type="color"]').each(function () {
@@ -86,33 +94,52 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
       $themeInstances.append(tpl('create')(theme));
       if (theme.instances.length) {
         $('[data-create-instance="' + theme.id + '"]').prop('checked', true);
+      } else {
+        $('[data-create-instance="none"]').prop('checked', true);
       }
     });
   });
 
-  $themeInstances.on('click', '[data-create-instance]', function (event) {
-
+  $themeInstancesHolder.on('click', '[data-create-instance]', function (event) {
     var widgetInstanceId = $(this).data('create-instance');
+    // Removes all widget instances if NONE is selected
+    if (widgetInstanceId === "none") {
+      $('[data-instances] [data-widget-id]').each(function(i, el) {
+        Fliplet.API.request({
+          method: 'DELETE',
+          url: 'v1/widget-instances/' + $(el).data('instance-id'),
+          data: {
+            destroy: true
+          }
+        });
+      });
+      init().then(reloadPage);
+      return;
+    }
 
-    if ( $(this).is(':checked') ) {
+    // Check if it is the same theme you clicked
+    if ( $('[data-instances] [data-widget-id="' + widgetInstanceId + '"]').length === 0 ) {
+      // If it isn't then
+      // First removes all instances
+      $('[data-instances] [data-widget-id]').each(function(i, el) {
+        Fliplet.API.request({
+          method: 'DELETE',
+          url: 'v1/widget-instances/' + $(el).data('instance-id'),
+          data: {
+            destroy: true
+          }
+        });
+      });
+
+      // Then Adds the new one
       Fliplet.API.request({
         method: 'POST',
         url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
         data: {
           widgetId: $(this).data('create-instance')
         }
-      }).then(init);
-    } else {
-      Fliplet.API.request({
-        method: 'DELETE',
-        url: 'v1/widget-instances/' + $('[data-instances] [data-widget-id="' + widgetInstanceId + '"]').data('instance-id'),
-        data: {
-          destroy: true
-        }
       }).then(init).then(reloadPage);
     }
-
-
   });
 
   $instances.on('submit', '[data-instance-id] form', function (event) {
