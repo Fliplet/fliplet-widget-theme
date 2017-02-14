@@ -18,7 +18,6 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
     throw new Error('appId is required');
   }
 
-  $themeInstancesHolder = $('.theme-instances-holder');
   $themeInstances = $('[data-theme-instances]');
   $instances = $('[data-instances]');
   $instanceEmpty = $('.instance-empty');
@@ -90,20 +89,36 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
   }
 
   Fliplet.Themes.get().then(function (themes) {
+    var themeId = '';
+    $themeInstances.find('option').text('-- Select a theme');
     themes.forEach(function (theme) {
       $themeInstances.append(tpl('create')(theme));
       if (theme.instances.length) {
-        $('[data-create-instance="' + theme.id + '"]').prop('checked', true);
-      } else {
-        $('[data-create-instance="none"]').prop('checked', true);
+        themeId = theme.id;
       }
     });
+
+    if (themeId !== '') {
+      $themeInstances.val(themeId);
+    } else {
+      $themeInstances.val('none');
+    }
+
+    $themeInstances.trigger('change');
+    $themeInstances.prop('disabled', '');
   });
 
-  $themeInstancesHolder.on('click', '[data-create-instance]', function (event) {
-    var widgetInstanceId = $(this).data('create-instance');
+  $(document).on('change', '.hidden-select', function(){
+    var selectedValue = $(this).val();
+    var selectedText = $(this).find("option:selected").text();
+    $(this).parents('.select-proxy-display').find('.select-value-proxy').text(selectedText);
+  });
+
+  $(document).on('change', '[data-theme-instances]', function (event) {
+    console.log( $(this).val() );
+    var widgetInstanceId = $(this).val();
     // Removes all widget instances if NONE is selected
-    if (widgetInstanceId === "none") {
+    if (widgetInstanceId === "none" && $('[data-instances] [data-widget-id]').length) {
       $('[data-instances] [data-widget-id]').each(function(i, el) {
         Fliplet.API.request({
           method: 'DELETE',
@@ -136,7 +151,7 @@ Fliplet.Widget.register('com.fliplet.theme', function () {
         method: 'POST',
         url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
         data: {
-          widgetId: $(this).data('create-instance')
+          widgetId: widgetInstanceId
         }
       }).then(init).then(reloadPage);
     }

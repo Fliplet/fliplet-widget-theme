@@ -4,22 +4,18 @@
     <a id="help_tip" href="#">Need help?</a>
   </header>
   <h2><small>Select a theme</small></h2>
-  <p>Select one or multiple themes to change the look of your app.</p>
-  <div class="clearfix theme-instances-holder">
-    <div class="col-xs-4 theme-holder" data-theme-id="none">
-      <input type="radio" id="fl-theme-none" name="fl-themes" data-create-instance="none">
-      <label for="fl-theme-none">
-        <div class="theme-icon none">
-          <div class="theme-screen">
-            <i class="fa fa-check"></i>
-          </div>
-        </div>
-        <div class="theme-name">
-          <p>None</p>
-        </div>
-      </label>
+  <div class="form-group clearfix">
+    <div class="col-sm-4 control-label">
+      <label for="select-theme">Select one or multiple themes to change the look of your app</label>
     </div>
-    <div data-theme-instances>
+    <div class="col-sm-8">
+      <label for="select_email" class="select-proxy-display">
+        <select name="select-theme" id="select-theme" data-label="select" class="hidden-select form-control" data-theme-instances disabled>
+          <option value="none">-- Please wait...</option>
+        </select>
+        <span class="icon fa fa-chevron-down"></span>
+        <span class="select-value-proxy">-- Please wait...</span>
+      </label>
     </div>
   </div>
   <div class="instance-empty">
@@ -35,3 +31,8 @@
     </div>
   </div>
 </main>
+
+<!--
+<div data-theme-instances>
+</div>
+-->
