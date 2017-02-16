@@ -12,7 +12,8 @@
       "lodash",
       "handlebars",
       "fliplet-themes",
-      "fliplet-studio-ui"
+      "fliplet-studio-ui",
+      "bootstrap"
     ],
     "assets": [
       "vendor/bootstrap-colorpicker.min.js",
