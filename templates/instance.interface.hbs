@@ -1,31 +1,44 @@
 <section data-instance-id="{{ instance.id }}" data-widget-id="{{ instance.widgetId }}" data-package-name="{{ theme.package }}">
   <p>Use the fields below to change the styles of your app.</p>
   <form class="form-horizontal">
+    <div class="panel-group" id="accordion">
     {{#each theme.settings.configuration}}
-      <div>
-        <h4>{{ name }}</h4>
-        <ul>
-          {{#each variables}}
-            <li>
-              <div class="form-group">
-                <div class="col-sm-4 control-label">
-                  <label>{{ description }}</label>
-                </div>
-                <div class="col-sm-8">
-                  {{#if_eq type "color"}}
-                  <div class="input-group" colorpicker-component>
-                    <div class="input-group-addon"><i style="background-color:{{ setValue }}"></i></div>
-                    <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}">
-                  </div>
-                  {{else}}
-                  <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
-                  {{/if_eq}}
-                </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading{{@index}}">
+          <h4 class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{@index}}" aria-expanded="false" aria-controls="collapse{{@index}}">
+              {{ name }}
+              <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          </h4>
+        </div>
+        <div id="collapse{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{@index}}">
+          <div class="panel-body">
+            {{#each variables}}
+            <div class="form-group">
+              <div class="col-sm-4 control-label">
+                <label>{{ description }}</label>
               </div>
-            </li>
-          {{/each}}
-        </ul>
+              <div class="col-sm-8">
+                {{#if_eq type "color"}}
+                <div class="input-group" colorpicker-component>
+                  <div class="input-group-addon"><i style="background-color:{{ setValue }}"></i></div>
+                  <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}">
+                  {{#if helper}}
+                  <p class="text-helper">{{ helper }}</p>
+                  {{/if}}
+                </div>
+                {{else}}
+                <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+                {{#if hint}}
+                <p class="text-helper">{{ hint }}</p>
+                {{/if}}
+                {{/if_eq}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
       </div>
     {{/each}}
+    </div>
   </form>
 </section>

@@ -145,6 +145,13 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         }
     });
 
+    $(document).on('show.bs.collapse', '.panel-collapse', function() {
+      $(this).siblings('.panel-heading').find('.fa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    })
+    .on('hide.bs.collapse', '.panel-collapse', function() {
+      $(this).siblings('.panel-heading').find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+    })
+
     $instances.on('submit', '[data-instance-id] form', function(event) {
         event.preventDefault();
 

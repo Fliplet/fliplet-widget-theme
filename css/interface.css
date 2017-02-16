@@ -74,23 +74,6 @@ section:last-child {
 
 section h4 {
     font-size: 16px;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #00abd2;
-}
-
-section ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 20px;
-}
-
-section li {
-    padding: 10px 0;
-}
-
-section li label {
-    display: block;
 }
 
 section .actions {
@@ -99,6 +82,14 @@ section .actions {
 
 h2 small {
     color: #14505e;
+}
+
+.text-helper {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+    font-size: 0.8em;
+    display: block;
+    color: #b0b0b0;
 }
 /*BUTTONS*/
 .btn {
@@ -202,6 +193,7 @@ header a {
 
 .form-group {
     margin: 0 -15px;
+    padding: 10px 0;
 }
 
 .panel-body {
@@ -414,14 +406,40 @@ textarea.form-control {
 .theme-holder input[type="radio"]:checked + label .theme-name {
     color: #00abd2;
 }
+/* ACCORDIONS */
+.panel.panel-default {
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 10px;
+}
 
-.color-preview-1,
-.color-preview-2 {
-    display: block;
-    width: 50%;
-    height: 30px;
-    float: left;
-    border-top: 1px solid;
-    border-color: inherit;
+.panel-default > .panel-heading {
+    position: relative;
     cursor: pointer;
+    background-color: #ffffff;
+    border: 1px solid #e4e9eb;
+    padding: 10px 48px 10px 10px;
+    border-radius: 0;
+}
+
+.panel-default > .panel-heading .fa {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    color: #00abd2;
+}
+
+.panel-default > .panel-heading + .panel-collapse > .panel-body {
+    border: none;
+    border-right: 1px solid #e4e9eb;
+    border-bottom: 1px solid #e4e9eb;
+    border-left: 1px solid #e4e9eb;
+    padding: 0 10px;
 }
