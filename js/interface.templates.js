@@ -33,9 +33,9 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
 },"3":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "                  <div class=\"input-group\">\n                    <div class=\"input-group-addon\" style=\"background-color:"
+  return "                  <div class=\"input-group\" colorpicker-component>\n                    <div class=\"input-group-addon\"><i style=\"background-color:"
     + alias4(((helper = (helper = helpers.setValue || (depth0 != null ? depth0.setValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"setValue","hash":{},"data":data}) : helper)))
-    + "\">&nbsp;&nbsp;&nbsp;</div>\n                    <input class=\"form-control\" type=\"text\" data-type=\""
+    + "\"></i></div>\n                    <input class=\"form-control\" type=\"text\" data-type=\""
     + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data}) : helper)))
     + "\" name=\""
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))

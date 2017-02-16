@@ -2,6 +2,10 @@ html {
     overflow-y: scroll;
 }
 
+body {
+    padding-bottom: 38px;
+}
+
 .loader {
     display: none;
     position: fixed;
@@ -56,7 +60,7 @@ html {
 }
 
 main {
-    padding: 15px;
+    padding: 0;
 }
 
 section {
@@ -69,8 +73,10 @@ section:last-child {
 }
 
 section h4 {
-    margin-bottom: 0;
     font-size: 16px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #00abd2;
 }
 
 section ul {
@@ -229,12 +235,30 @@ textarea.form-control {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(0, 171, 210, .6);
 }
 
+.input-group {
+    width: 100%;
+}
+
 .input-group .form-control {
     height: 46px;
 }
 
 .input-group-addon {
     border-radius: 6px;
+    width: 46px;
+    position: relative;
+    overflow: hidden;
+}
+
+.colorpicker-element .input-group-addon i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
 }
 /* SELECT */
 .select-proxy-display {

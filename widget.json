@@ -15,11 +15,17 @@
       "fliplet-studio-ui"
     ],
     "assets": [
-      "vendor/color-picker.js",
-      "vendor/color-picker.css",
+      "vendor/bootstrap-colorpicker.min.js",
+      "vendor/bootstrap-colorpicker.css",
+      "vendor/bootstrap-colorpicker.css.map",
       "js/interface.templates.js",
       "js/interface.js",
-      "css/interface.css"
+      "css/interface.css",
+      "img/bootstrap-colorpicker/alpha-horizontal.png",
+      "img/bootstrap-colorpicker/alpha.png",
+      "img/bootstrap-colorpicker/hue-horizontal.png",
+      "img/bootstrap-colorpicker/hue.png",
+      "img/bootstrap-colorpicker/saturation.png"
     ]
   }
 }

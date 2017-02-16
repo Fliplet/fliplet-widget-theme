@@ -13,8 +13,8 @@
                 </div>
                 <div class="col-sm-8">
                   {{#if_eq type "color"}}
-                  <div class="input-group">
-                    <div class="input-group-addon" style="background-color:{{ setValue }}">&nbsp;&nbsp;&nbsp;</div>
+                  <div class="input-group" colorpicker-component>
+                    <div class="input-group-addon"><i style="background-color:{{ setValue }}"></i></div>
                     <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}">
                   </div>
                   {{else}}

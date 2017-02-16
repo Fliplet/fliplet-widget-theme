@@ -37,11 +37,6 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         Fliplet.Studio.emit('reload-page-preview');
     }
 
-    function validateHEX(color) {
-        var re = /^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-        return re.test(color);
-    }
-
     function init() {
         return Fliplet.Themes.get().then(function(themes) {
             $instances.html('');
@@ -67,51 +62,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             }
 
             // bind plugins on inputs
-            $instances.find('[data-type="color"]').each(function() {
-                var picker = new CP(this),
-                    box_1 = document.createElement('span'),
-                    box_2 = document.createElement('span');
-
-                picker.on("enter", function() {
-                    var color = '#' + CP._HSV2HEX(this.set());
-                    box_1.title = color;
-                    box_2.title = color;
-                    box_1.style.backgroundColor = color;
-                    box_2.style.backgroundColor = color;
-                });
-
-                picker.on("change", function(color) {
-                    box_2.title = '#' + color;
-                    this.target.value = '#' + color;
-                    box_2.style.backgroundColor = '#' + color;
-                    $($(this.target).siblings('div')[0]).css('background-color', '#' + color);
-                }, '');
-
-                box_1.className = 'color-preview-1';
-                box_2.className = 'color-preview-2';
-
-                picker.picker.firstChild.appendChild(box_1);
-                picker.picker.firstChild.appendChild(box_2);
-
-                // click to reset
-                box_1.addEventListener("click", function(e) {
-                    var color = this.title;
-                    picker.set(color);
-                    box_2.title = color;
-                    box_2.style.backgroundColor = color;
-                    e.stopPropagation();
-                }, false);
-
-                // click to set
-                box_2.addEventListener("click", function(e) {
-                    var color = this.title;
-                    picker.target.value = this.title;
-                    picker.exit();
-                }, false);
-
-                // set color value on exit
-                picker.on("exit", function() {
-                    this.target.value = box_2.title;
+            $instances.find('[colorpicker-component]').each(function() {
+                $(this).colorpicker({
+                    container: true
                 });
             });
 
