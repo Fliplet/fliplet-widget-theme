@@ -90,7 +90,7 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.instance : depth0)) != null ? stack1.widgetId : stack1), depth0))
     + "\" data-package-name=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1["package"] : stack1), depth0))
-    + "\">\n  <p>Use the fields below to change the styles of your app.</p>\n  <form class=\"form-horizontal\">\n    <div class=\"panel-group\" id=\"accordion\">\n"
+    + "\">\n  <p>You can tweak the look of your app by changing the settings in the groups below.</p>\n  <form class=\"form-horizontal\">\n    <div class=\"panel-group\" id=\"accordion\">\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = ((stack1 = (depth0 != null ? depth0.theme : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.configuration : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "    </div>\n  </form>\n</section>\n";
 },"useData":true});

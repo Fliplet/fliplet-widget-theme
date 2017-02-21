@@ -38,6 +38,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     }
 
     function init() {
+        $instanceEmpty.addClass('hidden');
+        $instances.html('');
+        $instances.prev('.instance-loading').addClass('load');
         return Fliplet.Themes.get().then(function(themes) {
             $instances.html('');
             emptyState = true;
@@ -60,6 +63,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             } else {
                 $instanceEmpty.addClass('hidden');
             }
+            $instances.prev('.instance-loading').removeClass('load');
 
             // bind plugins on inputs
             $instances.find('[colorpicker-component]').each(function() {
