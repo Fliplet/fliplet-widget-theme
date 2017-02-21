@@ -42,6 +42,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         return Fliplet.Themes.get().then(function(themes) {
             $instances.html('');
             emptyState = true;
+            var openPanelIndex = Cookies.get('panelIndex');
 
             themes.forEach(function(theme) {
                 if (theme.instances.length) {
@@ -56,7 +57,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                     var panels = $('.panel-default');
                     var i;
                     for (i = 0; i < panels.length; i++) {
-                        if ( i == instance.settings.openPanelIndex ) {
+                        if ( i == openPanelIndex ) {
                             // Open panel
                     		    $(panels[i]).find('.collapse').collapse('show');
                             // Remove loading
@@ -80,12 +81,13 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             $instances.prev('.instance-loading').removeClass('load');
 
             // bind plugins on inputs
-            $instances.find('[colorpicker-component]').each(function() {
-                $(this).colorpicker({
-                    container: true
-                });
+            $instances.find('[colorpicker-component]').colorpicker({
+                container: true
             });
 
+            $instances.find('[colorpicker-component] input').on('focus', function() {
+                $(this).prev('.input-group-addon').find('i').trigger('click');
+            });
         });
     }
 
@@ -165,6 +167,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
     $(document).on('show.bs.collapse', '.panel-collapse', function() {
       $(this).siblings('.panel-heading').find('.fa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+      var panelIndex = $(this).data('index');
+      Cookies.set('panelIndex', panelIndex);
     })
     .on('hide.bs.collapse', '.panel-collapse', function() {
       $(this).siblings('.panel-heading').find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
@@ -182,23 +186,12 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             return obj;
         }, {});
 
-        // Save open panel position
-        var panels = $('.panel-default');
-        var i;
-        var openPanelIndex = '-1';
-        for (i = 0; i < panels.length; i++) {
-            if ( $(panels[i]).find('.collapse.in').length ) {
-        		    openPanelIndex = i;
-            }
-        }
-
         saveRequests.push(Fliplet.API.request({
             url: 'v1/widget-instances/' + instanceId,
             method: 'PUT',
             data: {
                 package: $form.closest('[data-instance-id]').data('package-name'),
-                values: data || {},
-                openPanelIndex: openPanelIndex
+                values: data || {}
             }
         }));
     });
