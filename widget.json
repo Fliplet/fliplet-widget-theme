@@ -16,6 +16,7 @@
       "bootstrap"
     ],
     "assets": [
+      "vendor/js.cookie.js",
       "vendor/bootstrap-colorpicker.min.js",
       "vendor/bootstrap-colorpicker.css",
       "vendor/bootstrap-colorpicker.css.map",
