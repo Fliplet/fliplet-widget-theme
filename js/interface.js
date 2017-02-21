@@ -185,7 +185,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         // Save open panel position
         var panels = $('.panel-default');
         var i;
-        var openPanelIndex;
+        var openPanelIndex = '-1';
         for (i = 0; i < panels.length; i++) {
             if ( $(panels[i]).find('.collapse.in').length ) {
         		    openPanelIndex = i;
