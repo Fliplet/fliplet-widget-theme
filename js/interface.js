@@ -148,6 +148,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                     }
                 });
             });
+            
+            Cookies.remove('panelIndex');
 
             // Then Adds the new one
             Fliplet.API.request({
