@@ -3,7 +3,7 @@ html {
 }
 
 body {
-    padding-bottom: 38px;
+    padding: 15px 15px 54px;
 }
 
 .loader {
@@ -242,7 +242,7 @@ textarea.form-control {
     overflow: hidden;
 }
 
-.colorpicker-element .input-group-addon i {
+[colorpicker-component] .input-group-addon i {
     position: absolute;
     top: 0;
     left: 0;
@@ -419,10 +419,14 @@ textarea.form-control {
 .panel-default > .panel-heading {
     position: relative;
     cursor: pointer;
-    background-color: #ffffff;
-    border: 1px solid #e4e9eb;
+    background-color: #e4e9eb;
+    border: 1px solid #e2e2e2;
     padding: 10px 48px 10px 10px;
     border-radius: 0;
+}
+
+.panel-default > .panel-heading .panel-title {
+    font-size: 14px;
 }
 
 .panel-default > .panel-heading .fa {
@@ -438,9 +442,9 @@ textarea.form-control {
 
 .panel-default > .panel-heading + .panel-collapse > .panel-body {
     border: none;
-    border-right: 1px solid #e4e9eb;
-    border-bottom: 1px solid #e4e9eb;
-    border-left: 1px solid #e4e9eb;
+    border-right: 1px solid #e2e2e2;
+    border-bottom: 1px solid #e2e2e2;
+    border-left: 1px solid #e2e2e2;
     padding: 0 10px;
 }
 /* LOADER */
