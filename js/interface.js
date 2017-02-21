@@ -1,5 +1,3 @@
-window.ENV.appId = 11;
-
 Handlebars.registerHelper('setValue', function(node) {
     var values = node.data._parent._parent.root.instance.settings.values || {};
     return values[this.name] || this.default;
@@ -54,6 +52,21 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                         instance: instance,
                         theme: theme
                     }));
+                    // Load open panel
+                    var panels = $('.panel-default');
+                    var i;
+                    for (i = 0; i < panels.length; i++) {
+                        if ( i == instance.settings.openPanelIndex ) {
+                            // Open panel
+                    		    $(panels[i]).find('.collapse').collapse('show');
+                            // Remove loading
+                            $instances.prev('.instance-loading').removeClass('load');
+                            // Scroll to open panel
+                            $('body').animate({
+                                scrollTop: $(panels[i]).offset().top - $('body').offset().top
+                            }, 1000 );
+                        }
+                    }
                 });
             });
 
@@ -63,6 +76,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             } else {
                 $instanceEmpty.addClass('hidden');
             }
+            // Remove loading
             $instances.prev('.instance-loading').removeClass('load');
 
             // bind plugins on inputs
@@ -154,7 +168,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     })
     .on('hide.bs.collapse', '.panel-collapse', function() {
       $(this).siblings('.panel-heading').find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-    })
+    });
 
     $instances.on('submit', '[data-instance-id] form', function(event) {
         event.preventDefault();
@@ -168,12 +182,23 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             return obj;
         }, {});
 
+        // Save open panel position
+        var panels = $('.panel-default');
+        var i;
+        var openPanelIndex;
+        for (i = 0; i < panels.length; i++) {
+            if ( $(panels[i]).find('.collapse.in').length ) {
+        		    openPanelIndex = i;
+            }
+        }
+
         saveRequests.push(Fliplet.API.request({
             url: 'v1/widget-instances/' + instanceId,
             method: 'PUT',
             data: {
                 package: $form.closest('[data-instance-id]').data('package-name'),
-                values: data || {}
+                values: data || {},
+                openPanelIndex: openPanelIndex
             }
         }));
     });
@@ -198,7 +223,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         });
     });
 
-    init();
+    //init();
 
     return {};
 });
