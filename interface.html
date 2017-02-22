@@ -1,5 +1,35 @@
 <main>
-  <div data-instances></div>
+  <header>
+    <p>Configure the appearance of your app</p>
+    <a id="help_tip" href="#">Need help?</a>
+  </header>
+  <h2><small>Select a theme</small></h2>
+  <div class="form-group clearfix">
+    <div class="col-sm-4 control-label">
+      <label for="select-theme">Select a theme to change the look of your app</label>
+    </div>
+    <div class="col-sm-8">
+      <label for="select_email" class="select-proxy-display">
+        <select name="select-theme" id="select-theme" data-label="select" class="hidden-select form-control" data-theme-instances disabled>
+          <option value="none">-- Please wait...</option>
+        </select>
+        <span class="icon fa fa-chevron-down"></span>
+        <span class="select-value-proxy">-- Please wait...</span>
+      </label>
+    </div>
+  </div>
+  <div class="instance-empty hidden">
+    <h2><small>You haven't applied a theme yet</small></h2>
+    <p>Without a theme you can not change the look of your app.<br/>Select a theme first and change the style of your app.</p>
+  </div>
+  <div class="instance-loading">
+    <div class="loading-holder animated">
+      <div class="loading">Loading...</div>
+      <p>Loading...</p>
+    </div>
+  </div>
+  <div data-instances>
+  </div>
   <div class="loader">
     <p>Please wait while your theme is getting compiled...</p>
     <div class="progress">

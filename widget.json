@@ -12,13 +12,22 @@
       "lodash",
       "handlebars",
       "fliplet-themes",
-      "fliplet-studio-ui"
+      "fliplet-studio-ui",
+      "bootstrap"
     ],
     "assets": [
-      "vendor/jscolor.min.js",
+      "vendor/js.cookie.js",
+      "vendor/bootstrap-colorpicker.min.js",
+      "vendor/bootstrap-colorpicker.css",
+      "vendor/bootstrap-colorpicker.css.map",
       "js/interface.templates.js",
       "js/interface.js",
-      "css/interface.css"
+      "css/interface.css",
+      "img/bootstrap-colorpicker/alpha-horizontal.png",
+      "img/bootstrap-colorpicker/alpha.png",
+      "img/bootstrap-colorpicker/hue-horizontal.png",
+      "img/bootstrap-colorpicker/hue.png",
+      "img/bootstrap-colorpicker/saturation.png"
     ]
   }
 }

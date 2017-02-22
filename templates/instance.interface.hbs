@@ -1,21 +1,44 @@
-<section data-instance-id="{{ instance.id }}" data-package-name="{{ theme.package }}">
-  <h2>{{ theme.name }}</h2>
-  <form>
+<section data-instance-id="{{ instance.id }}" data-widget-id="{{ instance.widgetId }}" data-package-name="{{ theme.package }}">
+  <p>You can tweak the look of your app by changing the settings in the groups below.</p>
+  <form class="form-horizontal">
+    <div class="panel-group" id="accordion">
     {{#each theme.settings.configuration}}
-      <div>
-        <h4>{{ name }}</h4>
-        <ul>
-          {{#each variables}}
-            <li>
-              <label>{{ description }}</label>
-              <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
-            </li>
-          {{/each}}
-        </ul>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="heading{{@index}}" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{@index}}" aria-expanded="false" aria-controls="collapse{{@index}}">
+          <h4 class="panel-title">
+              {{ name }}
+              <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          </h4>
+        </div>
+        <div id="collapse{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{@index}}" data-index="{{@index}}">
+          <div class="panel-body">
+            {{#each variables}}
+            <div class="form-group">
+              <div class="col-sm-4 control-label">
+                <label>{{ description }}</label>
+              </div>
+              <div class="col-sm-8">
+                {{#if_eq type "color"}}
+                <div class="input-group" colorpicker-component>
+                  <div class="input-group-addon"><i style="background-color:{{ setValue }}"></i></div>
+                  <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}">
+                  {{#if helper}}
+                  <p class="text-helper">{{ helper }}</p>
+                  {{/if}}
+                </div>
+                {{else}}
+                <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+                {{#if hint}}
+                <p class="text-helper">{{ hint }}</p>
+                {{/if}}
+                {{/if_eq}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
       </div>
     {{/each}}
+    </div>
   </form>
-  <div class="actions">
-    <a href="#" class="btn btn-danger btn-sm" data-delete-instance>Remove this theme ({{ theme.name }})</a>
-  </div>
 </section>
