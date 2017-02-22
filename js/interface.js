@@ -148,7 +148,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                     }
                 });
             });
-            
+
             Cookies.remove('panelIndex');
 
             // Then Adds the new one
@@ -160,7 +160,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                 }
             }).then(init).then(reloadPage);
         } else {
-            init().then(reloadPage);
+            init();
             // Turns flag to false
             // Next theme selections will create the theme instances correctly
             initialLoad = false;
