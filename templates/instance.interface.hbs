@@ -13,7 +13,6 @@
         <div id="collapse{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{@index}}" data-index="{{@index}}">
           <div class="panel-body">
             {{#each variables}}
-            {{#unless hidden}}
             <div class="form-group">
               <div class="col-sm-4 control-label">
                 <label>{{ description }}</label>
@@ -35,7 +34,6 @@
                 {{/if_eq}}
               </div>
             </div>
-            {{/unless}}
             {{/each}}
           </div>
         </div>
