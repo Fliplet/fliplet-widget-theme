@@ -218,7 +218,5 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         });
     });
 
-    //init();
-
     return {};
 });
