@@ -173,14 +173,14 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
       $(this).siblings('.panel-heading').find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
     });
 
-    $instances.on('submit', '[data-instance-id] form', function(event) {
+    $instances.on('submit', '[data-instance-id] form', function(event, eventData) {
         event.preventDefault();
 
         var $form = $(this);
 
         var instanceId = $form.closest('[data-instance-id]').data('instance-id');
 
-        var data = $form.serializeArray().reduce(function(obj, item) {
+        var data = eventData.reset ? {} : $form.serializeArray().reduce(function(obj, item) {
             obj[item.name] = item.value;
             return obj;
         }, {});
@@ -198,7 +198,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     $('#reset_settings').on('click', function() {
       var alert = confirm("Reset theme settings.\nAre you sure you want to reset the theme settings?");
       if (alert) {
-        // Do stuff
+        $instances.submit({reset: true});
       }
     });
 
