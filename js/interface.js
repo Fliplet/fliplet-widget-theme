@@ -198,6 +198,13 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         }));
     });
 
+    $('#reset_settings').on('click', function() {
+      var alert = confirm("Reset theme settings.\nAre you sure you want to reset the theme settings?");
+      if (alert) {
+        // Do stuff
+      }
+    });
+
     Fliplet.Widget.onSaveRequest(function() {
         saveRequests = [];
         $instances.find('[data-instance-id] form').submit();
