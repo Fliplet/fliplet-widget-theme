@@ -125,11 +125,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             $('[data-instances] [data-widget-id]').each(function(i, el) {
                 Fliplet.API.request({
                     method: 'DELETE',
-                    url: 'v1/widget-instances/' + $(el).data('instance-id'),
-                    data: {
-                        destroy: true
-                    }
-                });
+                    url: 'v1/widget-instances/' + $(el).data('instance-id')});
             });
             init().then(reloadPage);
             return;
@@ -156,7 +152,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                 method: 'POST',
                 url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
                 data: {
-                    widgetId: widgetInstanceId
+                  widgetId: widgetInstanceId,
+                  reuse: true
                 }
             }).then(init).then(reloadPage);
         } else {
