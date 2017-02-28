@@ -119,9 +119,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     });
 
     $(document).on('change', '[data-theme-instances]', function(event) {
-        var widgetInstanceId = $(this).val();
+        var widgetId = $(this).val();
         // Removes all widget instances if NONE is selected
-        if (widgetInstanceId === "none" && $('[data-instances] [data-widget-id]').length) {
+        if (widgetId === "none" && $('[data-instances] [data-widget-id]').length) {
             $('[data-instances] [data-widget-id]').each(function(i, el) {
                 Fliplet.API.request({
                     method: 'DELETE',
@@ -132,7 +132,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         }
 
         // Check if it is the same theme you selected
-        if (!initialLoad && $('[data-widget-id="' + widgetInstanceId + '"]').length === 0) {
+        if (!initialLoad && $('[data-widget-id="' + widgetId + '"]').length === 0) {
             // If it isn't then
             // First removes all instances
             $('[data-widget-id]').each(function(i, el) {
@@ -152,7 +152,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                 method: 'POST',
                 url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
                 data: {
-                  widgetId: widgetInstanceId,
+                  widgetId: widgetId,
                   reuse: true
                 }
             }).then(init).then(reloadPage);
@@ -179,7 +179,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         var $form = $(this);
 
         var instanceId = $form.closest('[data-instance-id]').data('instance-id');
-
+      
         var data = eventData.reset ? {} : $form.serializeArray().reduce(function(obj, item) {
             obj[item.name] = item.value;
             return obj;
