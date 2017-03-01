@@ -178,7 +178,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         var instanceId = $form.closest('[data-instance-id]').data('instance-id');
 
         var data = $form.serializeArray().reduce(function(obj, item) {
-            obj[item.name] = (eventData && eventData.reset) ? null : item.value;
+            obj[item.name] = item.value;
             return obj;
         }, {});
 
@@ -187,7 +187,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             method: 'PUT',
             data: {
                 package: $form.closest('[data-instance-id]').data('package-name'),
-                values: data || {}
+                values: (eventData && eventData.reset) ? null : data || {}
             }
         }));
     });
@@ -210,6 +210,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
         Fliplet.Widget.complete();
         reloadPage();
+        if (reset) {
+            init();
+        }
       }, function(err) {
         $main.removeClass('saving');
 
