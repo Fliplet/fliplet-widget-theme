@@ -179,8 +179,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         var $form = $(this);
 
         var instanceId = $form.closest('[data-instance-id]').data('instance-id');
-      
-        var data = eventData.reset ? {} : $form.serializeArray().reduce(function(obj, item) {
+
+
+        var data = (eventData && eventData.reset) ? {} : $form.serializeArray().reduce(function(obj, item) {
             obj[item.name] = item.value;
             return obj;
         }, {});
@@ -198,7 +199,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     $('#reset_settings').on('click', function() {
       var alert = confirm("Reset theme settings.\nAre you sure you want to reset the theme settings?");
       if (alert) {
-        $instances.submit({reset: true});
+        $instances.find('[data-instance-id] form').trigger('submit', { reset: true });
       }
     });
 
