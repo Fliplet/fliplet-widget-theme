@@ -180,9 +180,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
         var instanceId = $form.closest('[data-instance-id]').data('instance-id');
 
-
-        var data = (eventData && eventData.reset) ? {} : $form.serializeArray().reduce(function(obj, item) {
-            obj[item.name] = item.value;
+        var data = $form.serializeArray().reduce(function(obj, item) {
+            obj[item.name] = (eventData && eventData.reset) ? null : item.value;
             return obj;
         }, {});
 
@@ -199,29 +198,31 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     $('#reset_settings').on('click', function() {
       var alert = confirm("Reset theme settings.\nAre you sure you want to reset the theme settings?");
       if (alert) {
-        $instances.find('[data-instance-id] form').trigger('submit', { reset: true });
+        save(true);
       }
     });
 
-    Fliplet.Widget.onSaveRequest(function() {
-        saveRequests = [];
-        $instances.find('[data-instance-id] form').submit();
+    function save(reset) {
+      saveRequests = [];
+      $instances.find('[data-instance-id] form').trigger('submit', { reset: reset });
 
-        $main.addClass('saving');
+      $main.addClass('saving');
 
-        Promise.all(saveRequests).then(function() {
-            $main.removeClass('saving');
+      Promise.all(saveRequests).then(function() {
+        $main.removeClass('saving');
 
-            Fliplet.Widget.complete();
-            reloadPage();
-        }, function(err) {
-            $main.removeClass('saving');
+        Fliplet.Widget.complete();
+        reloadPage();
+      }, function(err) {
+        $main.removeClass('saving');
 
-            var message = err.responseJSON.error && err.responseJSON.error.formatted;
-            console.warn(err.responseJSON.error);
-            alert(message);
-        });
-    });
+        var message = err.responseJSON.error && err.responseJSON.error.formatted;
+        console.warn(err.responseJSON.error);
+        alert(message);
+      });
+    }
+
+    Fliplet.Widget.onSaveRequest(save);
 
     return {};
 });
