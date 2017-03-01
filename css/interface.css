@@ -7,7 +7,7 @@ body {
 }
 
 #reset_settings {
-    /*display: none;*/
+    display: none;
     text-align: center;
     margin-top: 0.5em;
 }
