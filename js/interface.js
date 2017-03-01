@@ -138,10 +138,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             $('[data-widget-id]').each(function(i, el) {
                 Fliplet.API.request({
                     method: 'DELETE',
-                    url: 'v1/widget-instances/' + $(el).data('instance-id'),
-                    data: {
-                        destroy: true
-                    }
+                    url: 'v1/widget-instances/' + $(el).data('instance-id')
                 });
             });
 
