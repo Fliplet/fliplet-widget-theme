@@ -44,7 +44,7 @@ body {
 }
 
 [data-instances] {
-    transition: opacity 2s;
+    transition: opacity 1s;
     margin-top: 15px;
 }
 
@@ -456,11 +456,18 @@ textarea.form-control {
 /* LOADER */
 .instance-loading {
     display: none;
-    margin-top: 50px;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    z-index: 10;
 }
 
 .instance-loading.load {
     display: block;
+}
+
+.instance-loading.load + [data-instances] {
+    opacity: 0.2;
 }
 
 .loading-holder {

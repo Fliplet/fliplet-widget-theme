@@ -38,7 +38,6 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     function init() {
         $instanceEmpty.addClass('hidden');
         $instances.html('');
-        $instances.prev('.instance-loading').addClass('load');
         return Fliplet.Themes.get().then(function(themes) {
             $instances.html('');
             emptyState = true;
@@ -119,33 +118,28 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     });
 
     $(document).on('change', '[data-theme-instances]', function(event) {
-        var widgetInstanceId = $(this).val();
+        var widgetId = $(this).val();
+        $instanceEmpty.addClass('hidden');
+        $instances.prev('.instance-loading').addClass('load');
         // Removes all widget instances if NONE is selected
-        if (widgetInstanceId === "none" && $('[data-instances] [data-widget-id]').length) {
+        if (widgetId === "none" && $('[data-instances] [data-widget-id]').length) {
             $('[data-instances] [data-widget-id]').each(function(i, el) {
                 Fliplet.API.request({
                     method: 'DELETE',
-                    url: 'v1/widget-instances/' + $(el).data('instance-id'),
-                    data: {
-                        destroy: true
-                    }
-                });
+                    url: 'v1/widget-instances/' + $(el).data('instance-id')});
             });
             init().then(reloadPage);
             return;
         }
 
         // Check if it is the same theme you selected
-        if (!initialLoad && $('[data-widget-id="' + widgetInstanceId + '"]').length === 0) {
+        if (!initialLoad && $('[data-widget-id="' + widgetId + '"]').length === 0) {
             // If it isn't then
             // First removes all instances
             $('[data-widget-id]').each(function(i, el) {
                 Fliplet.API.request({
                     method: 'DELETE',
-                    url: 'v1/widget-instances/' + $(el).data('instance-id'),
-                    data: {
-                        destroy: true
-                    }
+                    url: 'v1/widget-instances/' + $(el).data('instance-id')
                 });
             });
 
@@ -156,7 +150,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                 method: 'POST',
                 url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
                 data: {
-                    widgetId: widgetInstanceId
+                  widgetId: widgetId,
+                  reuse: true
                 }
             }).then(init).then(reloadPage);
         } else {
@@ -176,7 +171,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
       $(this).siblings('.panel-heading').find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
     });
 
-    $instances.on('submit', '[data-instance-id] form', function(event) {
+    $instances.on('submit', '[data-instance-id] form', function(event, eventData) {
         event.preventDefault();
 
         var $form = $(this);
@@ -193,7 +188,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             method: 'PUT',
             data: {
                 package: $form.closest('[data-instance-id]').data('package-name'),
-                values: data || {}
+                values: (eventData && eventData.reset) ? null : data || {}
             }
         }));
     });
@@ -201,29 +196,34 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     $('#reset_settings').on('click', function() {
       var alert = confirm("Reset theme settings.\nAre you sure you want to reset the theme settings?");
       if (alert) {
-        // Do stuff
+        save(true);
       }
     });
 
-    Fliplet.Widget.onSaveRequest(function() {
-        saveRequests = [];
-        $instances.find('[data-instance-id] form').submit();
+    function save(reset) {
+      saveRequests = [];
+      $instances.find('[data-instance-id] form').trigger('submit', { reset: reset });
 
-        $main.addClass('saving');
+      $main.addClass('saving');
 
-        Promise.all(saveRequests).then(function() {
-            $main.removeClass('saving');
+      Promise.all(saveRequests).then(function() {
+        $main.removeClass('saving');
 
-            Fliplet.Widget.complete();
-            reloadPage();
-        }, function(err) {
-            $main.removeClass('saving');
+        Fliplet.Widget.complete();
+        reloadPage();
+        if (reset) {
+            init();
+        }
+      }, function(err) {
+        $main.removeClass('saving');
 
-            var message = err.responseJSON.error && err.responseJSON.error.formatted;
-            console.warn(err.responseJSON.error);
-            alert(message);
-        });
-    });
+        var message = err.responseJSON.error && err.responseJSON.error.formatted;
+        console.warn(err.responseJSON.error);
+        alert(message);
+      });
+    }
+
+    Fliplet.Widget.onSaveRequest(save);
 
     return {};
 });
