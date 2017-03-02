@@ -38,7 +38,6 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     function init() {
         $instanceEmpty.addClass('hidden');
         $instances.html('');
-        $instances.prev('.instance-loading').addClass('load');
         return Fliplet.Themes.get().then(function(themes) {
             $instances.html('');
             emptyState = true;
@@ -120,6 +119,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
     $(document).on('change', '[data-theme-instances]', function(event) {
         var widgetId = $(this).val();
+        $instanceEmpty.addClass('hidden');
+        $instances.prev('.instance-loading').addClass('load');
         // Removes all widget instances if NONE is selected
         if (widgetId === "none" && $('[data-instances] [data-widget-id]').length) {
             $('[data-instances] [data-widget-id]').each(function(i, el) {
