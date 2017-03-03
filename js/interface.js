@@ -41,7 +41,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         return Fliplet.Themes.get().then(function(themes) {
             $instances.html('');
             emptyState = true;
-            var openPanelIndex = Cookies.get('panelIndex');
+            var openPanelIndex = Cookies.get('open-panel-index');
 
             themes.forEach(function(theme) {
                 if (theme.instances.length) {
@@ -143,7 +143,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
                 });
             });
 
-            Cookies.remove('panelIndex');
+            Cookies.remove('open-panel-index');
 
             // Then Adds the new one
             Fliplet.API.request({
@@ -165,7 +165,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     $(document).on('show.bs.collapse', '.panel-collapse', function() {
       $(this).siblings('.panel-heading').find('.fa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
       var panelIndex = $(this).data('index');
-      Cookies.set('panelIndex', panelIndex);
+      Cookies.set('open-panel-index', panelIndex);
     })
     .on('hide.bs.collapse', '.panel-collapse', function() {
       $(this).siblings('.panel-heading').find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
