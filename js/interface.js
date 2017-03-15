@@ -200,6 +200,10 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
       }
     });
 
+    $('header a').on('click', function() {
+      alert('During beta, please use live chat and let us know what you need help with.');
+    });
+
     function save(reset) {
       saveRequests = [];
       $instances.find('[data-instance-id] form').trigger('submit', { reset: reset });
