@@ -173,11 +173,19 @@ a {
 }
 
 header {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    font-size: 1em;
+    font-size: 0.8em;
     border-bottom: 1px solid #E3E9EB;
     margin-bottom: 3rem;
     padding-bottom: 1.5em;
+    color: #14505E;
+}
+@media only screen and (min-width: 1681px) {
+    header {
+        font-size: 1.0em;
+    }
 }
 
 header.titles {
