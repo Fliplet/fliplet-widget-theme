@@ -18,11 +18,10 @@
     "assets": [
       "vendor/js.cookie.js",
       "vendor/bootstrap-colorpicker.min.js",
-      "vendor/bootstrap-colorpicker.css",
-      "vendor/bootstrap-colorpicker.css.map",
+      "bootstrap-colorpicker.css",
       "js/interface.templates.js",
       "js/interface.js",
-      "css/interface.css",
+      "interface.css",
       "img/bootstrap-colorpicker/alpha-horizontal.png",
       "img/bootstrap-colorpicker/alpha.png",
       "img/bootstrap-colorpicker/hue-horizontal.png",
