@@ -354,7 +354,7 @@ textarea.form-control {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
-    background-image: url('../img/theme-icon.png');
+    background-image: url('img/theme-icon.png');
     overflow: hidden;
 }
 
