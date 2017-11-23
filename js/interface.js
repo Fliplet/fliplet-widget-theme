@@ -77,6 +77,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
               }, 1000);
             }
           }
+
+          // Trigger a change to update the .select-value-proxy text
+          $instances.find('select').trigger('change');
         });
       });
 

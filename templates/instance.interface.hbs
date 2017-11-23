@@ -28,11 +28,15 @@
                   </div>
                 {{else}}
                   {{#if_eq type "font"}}
-                    <select data-type="{{ type }}" name="{{ name }}">
-                      {{#each ../../fonts}}
-                        <option value="{{ name }}" {{#if_eq name ../setValue}}selected="selected"{{/if_eq}}>{{ name }}</option>
-                      {{/each}}
-                    </select>
+                    <label for="drop-down-{{ name }}" class="select-proxy-display">
+                      <span class="icon fa fa-chevron-down"></span>
+                      <span class="select-value-proxy">-- Select a font</span>
+                      <select id="drop-down-{{ name }}" data-type="{{ type }}" name="{{ name }}" class="hidden-select form-control">
+                        {{#each ../../fonts}}
+                          <option value="{{ name }}" {{#if_eq name ../setValue}}selected="selected"{{/if_eq}}>{{ name }}</option>
+                        {{/each}}
+                      </select>
+                    </label>
                   {{else}}
                     <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
                     {{#if hint}}
