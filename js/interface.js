@@ -202,7 +202,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         method: 'POST',
         url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
         data: {
-          widgetId: widgetId,
+          widgetId: widgetId === 'none' ? undefined : widgetId,
           reuse: true
         }
       }).then(init).then(reloadPage);
