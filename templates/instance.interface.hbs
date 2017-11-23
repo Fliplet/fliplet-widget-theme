@@ -19,18 +19,26 @@
               </div>
               <div class="col-sm-8">
                 {{#if_eq type "color"}}
-                <div class="input-group" colorpicker-component>
-                  <div class="input-group-addon"><i style="background-color:{{ setValue }}"></i></div>
-                  <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}">
-                  {{#if helper}}
-                  <p class="text-helper">{{ helper }}</p>
-                  {{/if}}
-                </div>
+                  <div class="input-group" colorpicker-component>
+                    <div class="input-group-addon"><i style="background-color:{{ setValue }}"></i></div>
+                    <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}">
+                    {{#if helper}}
+                    <p class="text-helper">{{ helper }}</p>
+                    {{/if}}
+                  </div>
                 {{else}}
-                <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
-                {{#if hint}}
-                <p class="text-helper">{{ hint }}</p>
-                {{/if}}
+                  {{#if_eq type "font"}}
+                    <select data-type="{{ type }}" name="{{ name }}">
+                      {{#each ../../fonts}}
+                        <option value="{{ name }}" {{#if_eq name ../setValue}}selected="selected"{{/if_eq}}>{{ name }}</option>
+                      {{/each}}
+                    </select>
+                  {{else}}
+                    <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
+                    {{#if hint}}
+                      <p class="text-helper">{{ hint }}</p>
+                    {{/if}}
+                  {{/if_eq}}
                 {{/if_eq}}
               </div>
             </div>

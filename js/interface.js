@@ -26,6 +26,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
   $instances = $('[data-instances]');
   $instanceEmpty = $('.instance-empty');
   var emptyState;
+  var fonts;
 
   function tpl(name) {
     return Fliplet.Widget.Templates['templates.' + name];
@@ -38,7 +39,15 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
   function init() {
     $instanceEmpty.addClass('hidden');
     $instances.html('');
-    return Fliplet.Themes.get().then(function(themes) {
+
+    // only get app fonts once
+    var getAppFonts = fonts ? Promise.resolve() : Fliplet.App.Fonts.get().then(function (appFonts) {
+      fonts = appFonts;
+    });
+
+    return getAppFonts.then(function () {
+      return Fliplet.Themes.get();
+    }).then(function(themes) {
       $instances.html('');
       emptyState = true;
       var openPanelIndex = Cookies.get('open-panel-index');
@@ -50,7 +59,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         theme.instances.forEach(function(instance) {
           $instances.append(tpl('instance')({
             instance: instance,
-            theme: theme
+            theme: theme,
+            fonts: fonts
           }));
           // Load open panel
           var panels = $('.panel-default');
