@@ -3,6 +3,11 @@ Handlebars.registerHelper('setValue', function(node) {
   return values[this.name] || this.default;
 });
 
+Handlebars.registerHelper('isValueSelected', function(font, variable, node) {
+  var values = node.data.root.instance.settings.values || {};
+  return (values[variable.name] || variable.default) === font.name ? node.fn(this) : node.inverse(this);
+});
+
 Handlebars.registerHelper('if_eq', function(a, b, opts) {
   if (a == b)
     return opts.fn(this);

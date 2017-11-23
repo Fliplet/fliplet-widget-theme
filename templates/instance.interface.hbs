@@ -12,7 +12,7 @@
         </div>
         <div id="collapse{{@index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{@index}}" data-index="{{@index}}">
           <div class="panel-body">
-            {{#each variables}}
+            {{#each variables as |variable|}}
             <div class="form-group">
               <div class="col-sm-4 control-label">
                 <label>{{ description }}</label>
@@ -32,8 +32,8 @@
                       <span class="icon fa fa-chevron-down"></span>
                       <span class="select-value-proxy">-- Select a font</span>
                       <select id="drop-down-{{ name }}" data-type="{{ type }}" name="{{ name }}" class="hidden-select form-control">
-                        {{#each ../../fonts}}
-                          <option value="{{ name }}" {{#if_eq name ../setValue}}selected="selected"{{/if_eq}}>{{ name }}</option>
+                        {{#each ../../fonts as |font|}}
+                          <option value="{{ font.name }}" {{#isValueSelected font variable }}selected="selected"{{/isValueSelected}}>{{ font.name }}</option>
                         {{/each}}
                       </select>
                     </label>
