@@ -67,7 +67,7 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
 },"6":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
 
-  return ((stack1 = (helpers.if_eq || (depth0 && depth0.if_eq) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.type : depth0),"font",{"name":"if_eq","hash":{},"fn":container.program(7, data, 0, blockParams, depths),"inverse":container.program(13, data, 0, blockParams, depths),"data":data,"blockParams":blockParams})) != null ? stack1 : "");
+  return ((stack1 = (helpers.if_eq || (depth0 && depth0.if_eq) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.type : depth0),"font",{"name":"if_eq","hash":{},"fn":container.program(7, data, 0, blockParams, depths),"inverse":container.program(14, data, 0, blockParams, depths),"data":data,"blockParams":blockParams})) != null ? stack1 : "");
 },"7":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -80,30 +80,43 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
     + "\" name=\""
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"blockParams":blockParams}) : helper)))
     + "\" class=\"hidden-select form-control\">\n"
-    + ((stack1 = helpers.each.call(alias1,(depths[2] != null ? depths[2].fonts : depths[2]),{"name":"each","hash":{},"fn":container.program(8, data, 1, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
-    + ((stack1 = (helpers.customFontValue || (depth0 && depth0.customFontValue) || alias2).call(alias1,(depths[2] != null ? depths[2].fonts : depths[2]),blockParams[2][0],{"name":"customFontValue","hash":{},"fn":container.program(11, data, 0, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
-    + "                      </select>\n                    </label>\n";
-},"8":function(container,depth0,helpers,partials,data,blockParams) {
+    + ((stack1 = helpers["if"].call(alias1,(depths[2] != null ? depths[2].customFonts : depths[2]),{"name":"if","hash":{},"fn":container.program(8, data, 0, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(alias1,(depths[2] != null ? depths[2].webFonts : depths[2]),{"name":"each","hash":{},"fn":container.program(12, data, 1, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
+    + "                        <optgroup label=\"---\"></optgroup>\n                        <option value=\"\" "
+    + ((stack1 = (helpers.customFontValue || (depth0 && depth0.customFontValue) || alias2).call(alias1,(depths[2] != null ? depths[2].fonts : depths[2]),blockParams[2][0],{"name":"customFontValue","hash":{},"fn":container.program(10, data, 0, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
+    + ">Custom</option>\n                      </select>\n                    </label>\n                    <input class=\"form-control hidden\" type=\"text\" placeholder=\"Helvetica, sans-serif\" value=\""
+    + alias4(((helper = (helper = helpers.setValue || (depth0 != null ? depth0.setValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"setValue","hash":{},"data":data,"blockParams":blockParams}) : helper)))
+    + "\" data-custom-font=\""
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"blockParams":blockParams}) : helper)))
+    + "\">\n";
+},"8":function(container,depth0,helpers,partials,data,blockParams,depths) {
+    var stack1;
+
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depths[2] != null ? depths[2].customFonts : depths[2]),{"name":"each","hash":{},"fn":container.program(9, data, 1, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
+    + "                          <optgroup label=\"---\"></optgroup>\n";
+},"9":function(container,depth0,helpers,partials,data,blockParams) {
+    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "                            <option value=\""
+    + alias2(alias1(((stack1 = blockParams[0][0]) != null ? stack1.name : stack1), depth0))
+    + "\" "
+    + ((stack1 = (helpers.isValueSelected || (depth0 && depth0.isValueSelected) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),blockParams[0][0],blockParams[4][0],{"name":"isValueSelected","hash":{},"fn":container.program(10, data, 0, blockParams),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
+    + ">"
+    + alias2(alias1(((stack1 = blockParams[0][0]) != null ? stack1.name : stack1), depth0))
+    + "</option>\n";
+},"10":function(container,depth0,helpers,partials,data) {
+    return "selected=\"selected\"";
+},"12":function(container,depth0,helpers,partials,data,blockParams) {
     var stack1, alias1=container.lambda, alias2=container.escapeExpression;
 
   return "                          <option value=\""
     + alias2(alias1(((stack1 = blockParams[0][0]) != null ? stack1.name : stack1), depth0))
     + "\" "
-    + ((stack1 = (helpers.isValueSelected || (depth0 && depth0.isValueSelected) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),blockParams[0][0],blockParams[3][0],{"name":"isValueSelected","hash":{},"fn":container.program(9, data, 0, blockParams),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
+    + ((stack1 = (helpers.isValueSelected || (depth0 && depth0.isValueSelected) || helpers.helperMissing).call(depth0 != null ? depth0 : (container.nullContext || {}),blockParams[0][0],blockParams[3][0],{"name":"isValueSelected","hash":{},"fn":container.program(10, data, 0, blockParams),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
     + ">"
     + alias2(alias1(((stack1 = blockParams[0][0]) != null ? stack1.name : stack1), depth0))
     + "</option>\n";
-},"9":function(container,depth0,helpers,partials,data) {
-    return "selected=\"selected\"";
-},"11":function(container,depth0,helpers,partials,data) {
-    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
-
-  return "                          <optgroup label=\"Legacy fonts\">\n                            <option value=\""
-    + alias4(((helper = (helper = helpers.setValue || (depth0 != null ? depth0.setValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"setValue","hash":{},"data":data}) : helper)))
-    + "\" selected=\"selected\">"
-    + alias4(((helper = (helper = helpers.setValue || (depth0 != null ? depth0.setValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"setValue","hash":{},"data":data}) : helper)))
-    + "</option>\n                          </optgroup>\n";
-},"13":function(container,depth0,helpers,partials,data) {
+},"14":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "                    <input class=\"form-control\" type=\"text\" data-type=\""
@@ -115,8 +128,8 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
     + "\" value=\""
     + alias4(((helper = (helper = helpers.setValue || (depth0 != null ? depth0.setValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"setValue","hash":{},"data":data}) : helper)))
     + "\" />\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hint : depth0),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
-},"14":function(container,depth0,helpers,partials,data) {
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hint : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"15":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "                      <p class=\"text-helper\">"

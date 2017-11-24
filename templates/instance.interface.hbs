@@ -32,16 +32,20 @@
                       <span class="icon fa fa-chevron-down"></span>
                       <span class="select-value-proxy">-- Select a font</span>
                       <select id="drop-down-{{ name }}" data-type="{{ type }}" name="{{ name }}" class="hidden-select form-control">
-                        {{#each ../../fonts as |font|}}
+                        {{#if ../../customFonts}}
+                          {{#each ../../customFonts as |font|}}
+                            <option value="{{ font.name }}" {{#isValueSelected font variable }}selected="selected"{{/isValueSelected}}>{{ font.name }}</option>
+                          {{/each}}
+                          <optgroup label="---"></optgroup>
+                        {{/if}}
+                        {{#each ../../webFonts as |font|}}
                           <option value="{{ font.name }}" {{#isValueSelected font variable }}selected="selected"{{/isValueSelected}}>{{ font.name }}</option>
                         {{/each}}
-                        {{#customFontValue ../../fonts variable}}
-                          <optgroup label="Legacy fonts">
-                            <option value="{{ setValue }}" selected="selected">{{ setValue }}</option>
-                          </optgroup>
-                        {{/customFontValue}}
+                        <optgroup label="---"></optgroup>
+                        <option value="" {{#customFontValue ../../fonts variable}}selected="selected"{{/customFontValue}}>Custom</option>
                       </select>
                     </label>
+                    <input class="form-control hidden" type="text" placeholder="Helvetica, sans-serif" value="{{ setValue }}" data-custom-font="{{ name }}">
                   {{else}}
                     <input class="form-control" type="text" data-type="{{ type }}" name="{{ name }}" placeholder="{{ default }}" value="{{ setValue }}" />
                     {{#if hint}}

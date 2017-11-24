@@ -94,7 +94,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
           $instances.append(tpl('instance')({
             instance: instance,
             theme: theme,
-            fonts: fonts
+            fonts: fonts,
+            webFonts: _.reject(fonts, function (font) { return font.url; }),
+            customFonts: _.filter(fonts, function (font) { return font.url; })
           }));
           // Load open panel
           var panels = $('.panel-default');
@@ -112,7 +114,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
             }
           }
 
-          // Trigger a change to update the .select-value-proxy text
+          // Trigger a change to update all selects
           $instances.find('select').trigger('change');
         });
       });
@@ -166,6 +168,10 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     var selectedValue = $(this).val();
     var selectedText = $(this).find("option:selected").text();
     $(this).parents('.select-proxy-display').find('.select-value-proxy').text(selectedText);
+  });
+
+  $(document).on('change', 'select[data-type="font"]', function () {
+    $(this).closest('div').find('[data-custom-font]').toggleClass('hidden', !!$(this).val());
   });
 
   $(document).on('change', '[data-theme-instances]', function(event) {
@@ -233,8 +239,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     var data = $form.serializeArray().reduce(function(obj, item) {
       var fieldType = $form.find('[name="' + item.name + '"]').data('type');
 
-      if (fieldType === 'font') {
-        item.value = item.value.trim().replace(/;$/, '');
+      if (fieldType === 'font' && !item.value) {
+        item.value = $form.find('input[data-custom-font="' + item.name + '"]').val() || item.value;
       }
 
       obj[item.name] = item.value;
