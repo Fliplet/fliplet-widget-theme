@@ -3,6 +3,22 @@ Handlebars.registerHelper('setValue', function(node) {
   return values[this.name] || this.default;
 });
 
+Handlebars.registerHelper('isValueSelected', function(font, variable, node) {
+  var values = node.data.root.instance.settings.values || {};
+  return (values[variable.name] || variable.default) === font.name ? node.fn(this) : node.inverse(this);
+});
+
+Handlebars.registerHelper('customFontValue', function(fonts, variable, opts) {
+  var values = opts.data.root.instance.settings.values || {};
+  var legacyValue = values[variable.name];
+
+  if (!legacyValue) {
+    return opts.inverse(this);
+  }
+
+  return fonts.some(function (font) { return font.name === legacyValue; }) ? opts.inverse(this) : opts.fn(this);
+});
+
 Handlebars.registerHelper('if_eq', function(a, b, opts) {
   if (a == b)
     return opts.fn(this);
@@ -26,6 +42,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
   $instances = $('[data-instances]');
   $instanceEmpty = $('.instance-empty');
   var emptyState;
+  var fonts;
+  var themes;
+  var themesLoadingPromise;
 
   function tpl(name) {
     return Fliplet.Widget.Templates['templates.' + name];
@@ -35,10 +54,34 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     Fliplet.Studio.emit('reload-page-preview');
   }
 
+  function getThemes() {
+    if (themes) {
+      return Promise.resolve(themes);
+    }
+
+    if (!themesLoadingPromise) {
+      themesLoadingPromise = Fliplet.Themes.get().then(function (response) {
+        themesLoadingPromise = null;
+        themes = response;
+        return themes;
+      });
+    }
+
+    return themesLoadingPromise;
+  }
+
   function init() {
     $instanceEmpty.addClass('hidden');
     $instances.html('');
-    return Fliplet.Themes.get().then(function(themes) {
+
+    // only get app fonts once
+    var getAppFonts = fonts ? Promise.resolve() : Fliplet.App.Fonts.get().then(function (appFonts) {
+      fonts = appFonts;
+    });
+
+    return getAppFonts.then(function () {
+      return getThemes();
+    }).then(function() {
       $instances.html('');
       emptyState = true;
       var openPanelIndex = Cookies.get('open-panel-index');
@@ -50,7 +93,10 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         theme.instances.forEach(function(instance) {
           $instances.append(tpl('instance')({
             instance: instance,
-            theme: theme
+            theme: theme,
+            fonts: fonts,
+            webFonts: _.reject(fonts, function (font) { return font.url; }),
+            customFonts: _.filter(fonts, function (font) { return font.url; })
           }));
           // Load open panel
           var panels = $('.panel-default');
@@ -67,6 +113,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
               }, 1000);
             }
           }
+
+          // Trigger a change to update all selects
+          $instances.find('select').trigger('change');
         });
       });
 
@@ -94,7 +143,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     });
   }
 
-  Fliplet.Themes.get().then(function(themes) {
+  getThemes().then(function(themes) {
     var themeId = '';
     $themeInstances.find('option').text('-- Select a theme');
     themes.forEach(function(theme) {
@@ -119,6 +168,10 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     var selectedValue = $(this).val();
     var selectedText = $(this).find("option:selected").text();
     $(this).parents('.select-proxy-display').find('.select-value-proxy').text(selectedText);
+  });
+
+  $(document).on('change', 'select[data-type="font"]', function () {
+    $(this).closest('div').find('[data-custom-font]').toggleClass('hidden', !!$(this).val());
   });
 
   $(document).on('change', '[data-theme-instances]', function(event) {
@@ -155,7 +208,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         method: 'POST',
         url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
         data: {
-          widgetId: widgetId,
+          widgetId: widgetId === 'none' ? undefined : widgetId,
           reuse: true
         }
       }).then(init).then(reloadPage);
@@ -184,6 +237,12 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     var instanceId = $form.closest('[data-instance-id]').data('instance-id');
 
     var data = $form.serializeArray().reduce(function(obj, item) {
+      var fieldType = $form.find('[name="' + item.name + '"]').data('type');
+
+      if (fieldType === 'font' && !item.value) {
+        item.value = $form.find('input[data-custom-font="' + item.name + '"]').val() || item.value;
+      }
+
       obj[item.name] = item.value;
       return obj;
     }, {});
