@@ -264,8 +264,12 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     }
   });
 
-  $('header a').on('click', function() {
+  $('header .betaAlert').on('click', function() {
     alert('During beta, please use live chat and let us know what you need help with.');
+  });
+
+  $('header .closeSideView').on('click', function() {
+    Fliplet.Studio.emit('navigate', { name: 'appEdit' });
   });
 
   function save(reset) {
