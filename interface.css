@@ -12,6 +12,15 @@ body {
     margin-top: 0.5em;
 }
 
+a.closeSideView {
+  color: #ababab;
+  margin-right: 5px;
+}
+
+a.closeSideView:hover {
+  color: #006c85;
+}
+
 .loader {
     display: none;
     position: fixed;
