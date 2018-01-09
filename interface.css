@@ -483,3 +483,38 @@ textarea.form-control {
         transform: rotate(360deg);
     }
 }
+
+.colorpicker-2x .colorpicker-saturation {
+  width: 235px;
+  height: 235px;
+}
+
+.colorpicker-2x .colorpicker-hue,
+.colorpicker-2x .colorpicker-alpha {
+  width: 30px;
+  height: 235px;
+}
+
+.colorpicker-2x .colorpicker-preview,
+.colorpicker-2x .colorpicker-preview div {
+  height: 30px;
+  font-size: 16px;
+  line-height: 160%;
+}
+
+.colorpicker-saturation .colorpicker-guide,
+.colorpicker-saturation .colorpicker-guide i {
+  height: 10px;
+  width: 10px;
+  border-radius: 10px;
+}
+
+.colorpicker-right:before {
+  left: 15px;
+  right: auto;
+}
+
+.colorpicker-right:after {
+  left: 16px;
+  right: auto;
+}
