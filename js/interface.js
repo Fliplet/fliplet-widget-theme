@@ -130,7 +130,20 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
       // bind plugins on inputs
       $instances.find('[colorpicker-component]').colorpicker({
-        container: true
+        container: true,
+        customClass: 'colorpicker-2x',
+        sliders: {
+          saturation: {
+            maxLeft: 235,
+            maxTop: 235
+          },
+          hue: {
+            maxTop: 235
+          },
+          alpha: {
+            maxTop: 235
+          }
+        }
       });
 
       $instances.find('[colorpicker-component] input').on('click', function() {
