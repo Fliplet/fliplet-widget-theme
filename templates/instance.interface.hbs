@@ -29,8 +29,6 @@
                 {{else}}
                   {{#if_eq type "font"}}
                     <label for="drop-down-{{ name }}" class="select-proxy-display">
-                      <span class="icon fa fa-chevron-down"></span>
-                      <span class="select-value-proxy">-- Select a font</span>
                       <select id="drop-down-{{ name }}" data-type="{{ type }}" name="{{ name }}" class="hidden-select form-control">
                         {{#if ../../customFonts}}
                           {{#each ../../customFonts as |font|}}
@@ -44,6 +42,8 @@
                         <optgroup label="---"></optgroup>
                         <option value="" {{#customFontValue ../../fonts variable}}selected="selected"{{/customFontValue}}>Custom...</option>
                       </select>
+                      <span class="icon fa fa-chevron-down"></span>
+                      <span class="select-value-proxy">-- Select a font</span>
                     </label>
                     <input class="form-control hidden" type="text" placeholder="Helvetica, sans-serif" value="{{ setValue }}" data-custom-font="{{ name }}">
                   {{else}}
