@@ -73,7 +73,7 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
 
   return "                    <label for=\"drop-down-"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"blockParams":blockParams}) : helper)))
-    + "\" class=\"select-proxy-display\">\n                      <span class=\"icon fa fa-chevron-down\"></span>\n                      <span class=\"select-value-proxy\">-- Select a font</span>\n                      <select id=\"drop-down-"
+    + "\" class=\"select-proxy-display\">\n                      <select id=\"drop-down-"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"blockParams":blockParams}) : helper)))
     + "\" data-type=\""
     + alias4(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"type","hash":{},"data":data,"blockParams":blockParams}) : helper)))
@@ -84,7 +84,7 @@ this["Fliplet"]["Widget"]["Templates"]["templates.instance"] = Handlebars.templa
     + ((stack1 = helpers.each.call(alias1,(depths[2] != null ? depths[2].webFonts : depths[2]),{"name":"each","hash":{},"fn":container.program(12, data, 1, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
     + "                        <optgroup label=\"---\"></optgroup>\n                        <option value=\"\" "
     + ((stack1 = (helpers.customFontValue || (depth0 && depth0.customFontValue) || alias2).call(alias1,(depths[2] != null ? depths[2].fonts : depths[2]),blockParams[2][0],{"name":"customFontValue","hash":{},"fn":container.program(10, data, 0, blockParams, depths),"inverse":container.noop,"data":data,"blockParams":blockParams})) != null ? stack1 : "")
-    + ">Custom...</option>\n                      </select>\n                    </label>\n                    <input class=\"form-control hidden\" type=\"text\" placeholder=\"Helvetica, sans-serif\" value=\""
+    + ">Custom...</option>\n                      </select>\n                      <span class=\"icon fa fa-chevron-down\"></span>\n                      <span class=\"select-value-proxy\">-- Select a font</span>\n                    </label>\n                    <input class=\"form-control hidden\" type=\"text\" placeholder=\"Helvetica, sans-serif\" value=\""
     + alias4(((helper = (helper = helpers.setValue || (depth0 != null ? depth0.setValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"setValue","hash":{},"data":data,"blockParams":blockParams}) : helper)))
     + "\" data-custom-font=\""
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"blockParams":blockParams}) : helper)))
