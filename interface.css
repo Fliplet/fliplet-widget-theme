@@ -375,6 +375,7 @@ textarea.form-control {
     border: none;
     border-radius: 0;
     margin-bottom: 10px;
+    overflow: visible;
 }
 
 .panel-default > .panel-heading {
