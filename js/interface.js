@@ -293,11 +293,22 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
     $main.addClass('saving');
 
-    Promise.all(saveRequests).then(function() {
+    Promise.all(saveRequests).then(function(response) {
       $main.removeClass('saving');
 
       Fliplet.Widget.complete();
-      reloadPage();
+
+      if (response.length === 1) {
+        var settings = response[0].widgetInstance.settings.assets[0];
+        Fliplet.Studio.emit('page-preview-send-event', {
+          type: 'reloadCssAsset',
+          path: settings.path,
+          url: settings.url
+        });
+      } else {
+        reloadPage();
+      }
+
       if (reset) {
         init();
       }
