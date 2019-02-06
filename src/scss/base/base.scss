@@ -1,0 +1,41 @@
+html {
+  overflow-y: scroll;
+}
+
+body {
+  padding: 0 15px 54px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba($text-color, 0.1);
+  margin-bottom: 1.0rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  padding: 0 1.5rem;
+  color: $text-color;
+  height: 4rem;
+
+  p {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    flex: 1;
+    margin: 0 1.4rem 0 0;
+  }
+
+  a {
+    &.closeSideView {
+      font-size: 0.8em;
+      color: $text-color;
+      text-decoration: none;
+      margin-right: 10px;
+      margin-top: -3px;
+    }
+  }
+}
+
+.fa-times-thin:before {
+  content: '\00d7';
+}
