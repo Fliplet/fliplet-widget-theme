@@ -4,6 +4,14 @@ html {
 body {
   padding: 0 15px 54px; }
 
+.spinner-holder {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin-top: -27px;
+  text-align: center; }
+
 header {
   display: flex;
   align-items: center;
