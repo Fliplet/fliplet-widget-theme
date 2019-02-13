@@ -8,7 +8,7 @@
         <label for="select_email" class="select-proxy-display">
           <select v-model="selectedTheme" name="select-theme" class="hidden-select form-control">
             <option value="none">-- Select a theme</option>
-            <option v-for="theme in themes" v-bind:value="theme.id">{{ theme.name }}</option>
+            <option v-for="theme in themes" :value="theme.id">{{ theme.name }}</option>
           </select>
           <span class="icon fa fa-chevron-down"></span>
         </label>
@@ -22,11 +22,12 @@
 export default {
   data() {
     return {
-      selectedTheme: 'none'
+      selectedTheme: this.activeTheme ? this.activeTheme.id : 'none'
     }
   },
   props: {
-    themes: Array
+    themes: Array,
+    activeTheme: Object
   }
 }
 </script>
