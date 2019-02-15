@@ -79,6 +79,7 @@ export default {
       let themeWithoutInstances = 0
 
       this.themes.forEach((theme) => {
+        // @TODO: Remove console.log
         console.log(theme)
         if (!theme.instances.length) {
           themeWithoutInstances++
