@@ -37,3 +37,62 @@ header {
 
 .fa-times-thin:before {
   content: '\00d7'; }
+
+.slide-in-enter-active {
+  transition: all .25s ease-out; }
+
+.slide-in-leave-active {
+  transition: all .25s ease-out; }
+
+.slide-in-enter,
+.slide-in-leave-to {
+  transform: translateX(100%); }
+
+.form-holder {
+  margin: 0 -15px; }
+  .form-holder .control-label {
+    text-transform: uppercase; }
+    .form-holder .control-label label {
+      font-weight: 600; }
+
+.quick-settings-holder {
+  margin: 0 -15px 15px; }
+  .quick-settings-holder .control-label.quick-settings-title {
+    text-transform: uppercase; }
+  .quick-settings-holder .control-label label {
+    font-weight: 600; }
+
+.components-buttons-holder {
+  margin: 0 -15px 15px; }
+  .components-buttons-holder .control-label {
+    text-transform: uppercase; }
+    .components-buttons-holder .control-label label {
+      font-weight: 600; }
+  .components-buttons-holder .components-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 15px;
+    border-top: 1px solid #e4e2e3;
+    border-bottom: 1px solid #e4e2e3;
+    margin: -1px 0 0;
+    cursor: pointer;
+    text-transform: uppercase; }
+    .components-buttons-holder .components-buttons i {
+      margin-left: 12px;
+      font-size: 18px; }
+
+#component-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f8f6f7;
+  padding: 0 15px; }
+  #component-settings-overlay .close-component-settings {
+    font-size: 0.8em;
+    margin-top: -3px;
+    cursor: pointer; }
+  #component-settings-overlay .settings-fields-holder {
+    margin: 0 -15px; }

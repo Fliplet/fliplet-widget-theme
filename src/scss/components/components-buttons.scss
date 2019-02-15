@@ -1,0 +1,42 @@
+.quick-settings-holder {
+  margin:0 -15px 15px;
+
+  .control-label {
+    &.quick-settings-title {
+      text-transform: uppercase;
+    }
+
+    label {
+      font-weight: 600;
+    }
+  }
+}
+
+.components-buttons-holder {
+  margin:0 -15px 15px;
+
+  .control-label {
+    text-transform: uppercase;
+
+    label {
+      font-weight: 600;
+    }
+  }
+
+  .components-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 15px;
+    border-top: 1px solid #e4e2e3;
+    border-bottom: 1px solid #e4e2e3;
+    margin: -1px 0 0;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    i {
+      margin-left: 12px;
+      font-size: 18px;
+    }
+  }
+}

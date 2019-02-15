@@ -36,6 +36,7 @@ function js() {
 function watchFiles() {
   gulp.watch('src/scss/**/*', scss);
   gulp.watch('src/main.js', js);
+  gulp.watch('src/store/index.js', js);
   gulp.watch('src/**/*.vue', js);
 }
 

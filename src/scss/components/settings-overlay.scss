@@ -1,0 +1,19 @@
+#component-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f8f6f7;
+  padding: 0 15px;
+
+  .close-component-settings {
+    font-size: 0.8em;
+    margin-top: -3px;
+    cursor: pointer;
+  }
+
+  .settings-fields-holder {
+    margin: 0 -15px;
+  }
+}
