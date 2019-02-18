@@ -9,21 +9,18 @@
         <label>{{ variable.description }}</label>
       </div>
       <div class="col-xs-12">
-        <input type="text" class="form-control" v-model="variable.value" v-on:keyup="setNewValue(variable)">
+        <input type="text" class="form-control" v-model="variable.value" v-on:input="setNewValue(variable)">
       </div>
     </template>
   </div>
 </template>
 
 <script>
-import bus from '../../libs/bus'
+import { saveFieldData } from '../../store'
 
 export default {
   data() {
-    return {
-      variableToBeSaved: {},
-      saveDebounced: _.debounce(this.saveData, 500)
-    }
+    return {}
   },
   props: {
     componentConfig: Object,
@@ -51,24 +48,8 @@ export default {
   },
   methods: {
     setNewValue(variable) {
-      this.variableToBeSaved.name = variable.name
-      this.variableToBeSaved.value = variable.value
-      this.saveDebounced()
-    },
-    saveData() {
-      const newData = {
-        name: this.variableToBeSaved.name,
-        value: this.variableToBeSaved.value
-      }
-
-      bus.$emit('field-saved', newData)
+      saveFieldData(variable)
     }
-  },
-  mounted() {
-    bus.$on('save-settings', this.saveDebounced)
-  },
-  destroyed() {
-    bus.$off('save-settings', this.saveDebounced)
   }
 }
 </script>

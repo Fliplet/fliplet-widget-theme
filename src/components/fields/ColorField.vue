@@ -10,13 +10,12 @@
 </template>
 
 <script>
-import bus from '../../libs/bus'
+import { saveFieldData } from '../../store'
 
 export default {
   data() {
     return {
-      value: this.savedValue || this.data.fieldConfig.default,
-      saveDebounced: _.debounce(this.saveData, 500)
+      value: this.savedValue || this.data.fieldConfig.default
     }
   },
   props: {
@@ -26,25 +25,13 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.saveDebounced()
+        const data = {
+          name: this.data.fieldConfig.name,
+          value: newVal
+        }
+        saveFieldData(data)
       }
     }
-  },
-  methods: {
-    saveData() {
-      const newData = {
-        name: this.data.fieldConfig.name,
-        value: this.value
-      }
-
-      bus.$emit('field-saved', newData)
-    }
-  },
-  mounted() {
-    bus.$on('save-settings', this.saveDebounced)
-  },
-  destroyed() {
-    bus.$off('save-settings', this.saveDebounced)
   }
 }
 </script>

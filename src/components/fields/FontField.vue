@@ -19,14 +19,13 @@
 </template>
 
 <script>
-import bus from '../../libs/bus'
+import { saveFieldData } from '../../store'
 
 export default {
   data() {
     return {
       value: this.getFontValue(),
       customValue: this.getCustomValue(),
-      saveDebounced: _.debounce(this.saveData, 500),
       showInputField: false
     }
   },
@@ -37,14 +36,22 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.saveDebounced()
+        const data = {
+          name: this.data.fieldConfig.name,
+          value: newVal === 'custom' ? this.customValue : newVal
+        }
+        saveFieldData(data)
       }
 
       this.showInputField = newVal === 'custom'
     },
     customValue(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.saveDebounced()
+        const data = {
+          name: this.data.fieldConfig.name,
+          value: newVal
+        }
+        saveFieldData(data)
       }
     }
   },
@@ -95,21 +102,7 @@ export default {
       }
 
       return value
-    },
-    saveData() {
-      const newData = {
-        name: this.data.fieldConfig.name,
-        value: this.showInputField ? this.customValue : this.value
-      }
-
-      bus.$emit('field-saved', newData)
     }
-  },
-  mounted() {
-    bus.$on('save-settings', this.saveDebounced)
-  },
-  destroyed() {
-    bus.$off('save-settings', this.saveDebounced)
   }
 }
 </script>

@@ -53,7 +53,6 @@ export default {
       return data
     },
     savedValue(field) {
-      debugger
       let value = undefined
       if (state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
         value = state.componentOverlay.data.instance.settings.values[field.name]
