@@ -46,10 +46,6 @@ export default {
           .then(() => {
             return bus.$emit('initialize-widget')
           })
-          .then(() => {
-            // @TODO: Confirm we need this
-            return bus.$emit('reload-page')
-          })
           .catch((err) => {
             const error = Fliplet.parseError(err)
             console.error(error)
