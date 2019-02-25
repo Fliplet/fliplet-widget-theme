@@ -143,8 +143,21 @@ export default {
       const dataObj = _.mapValues(_.keyBy(this.savedFields, 'name'), 'value')
 
       this.updateInstance(dataObj)
+        .then((response) => {
+          if (response && response.widgetInstance) {
+            var settings = response.widgetInstance.settings.assets[0];
+            Fliplet.Studio.emit('page-preview-send-event', {
+              type: 'reloadCssAsset',
+              path: settings.path,
+              url: settings.url
+            });
+          } else {
+            this.reloadPage()
+          }
+
+          return 
+        })
         .then(this.initialize)
-        .then(this.reloadPage)
         .catch((err) => {
           const error = Fliplet.parseError(err)
           console.error(error)
@@ -158,7 +171,6 @@ export default {
     // Listeners
     bus.$on('field-saved', this.onFieldSave)
     bus.$on('initialize-widget', this.initialize)
-    bus.$on('reload-page', this.reloadPage)
 
     // Initialize
     this.initialize()
@@ -169,7 +181,6 @@ export default {
   destroyed() {
     bus.$off('field-saved', this.onFieldSave)
     bus.$off('initialize-widget', this.initialize)
-    bus.$off('reload-page', this.reloadPage)
   }
 }
 </script>
