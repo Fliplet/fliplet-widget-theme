@@ -35,18 +35,14 @@ export default {
       this.colorpicker.show({
         left: target.left,
         top: target.bottom
-      })
+      }, this.value, this.onColorChange, this.onColorChange)
     },
     onColorChange(color) {
       this.value = color
     }
   },
   mounted() {
-    this.colorpicker = new ColorPicker({
-      color: this.value,
-      onChange: this.onColorChange,
-      onHide: this.onColorChange
-    })
+    this.colorpicker = new ColorPicker()
   }
 }
 </script>
