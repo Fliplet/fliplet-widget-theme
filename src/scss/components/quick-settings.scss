@@ -1,0 +1,27 @@
+.quick-settings-holder {
+  margin: 30px -15px;
+
+  .control-label {
+    &.quick-settings-title {
+      text-transform: uppercase;
+    }
+
+    label {
+      font-weight: 600;
+    }
+  }
+
+  .settings-field-holder {
+    display: flex;
+    align-items: center;
+
+    & + .settings-field-holder {
+      margin-top: 10px;
+    }
+
+    .label-holder {
+      margin-left: 15px;
+      opacity: 0.5;
+    }
+  }
+}

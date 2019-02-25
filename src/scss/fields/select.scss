@@ -1,0 +1,35 @@
+.btn-group {
+  &.select-box {
+    .dropdown-toggle {
+      background-color: transparent;
+      padding: 0;
+      line-height: 1;
+      box-shadow: none;
+
+      &:hover,
+      &:focus,
+      &:active,
+      &:active:hover,
+      &:active:focus {
+        background-color: transparent;
+        box-shadow: none;
+      }
+    }
+
+    &.open {
+      .dropdown-toggle {
+        background-color: transparent;
+        box-shadow: none;
+
+        &:hover,
+        &:focus,
+        &:active,
+        &:active:hover,
+        &:active:focus {
+          background-color: transparent;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}

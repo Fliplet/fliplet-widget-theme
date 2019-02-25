@@ -29,5 +29,8 @@
   "scripts": {
     "watch": "gulp build && gulp watch",
     "build": "gulp build"
+  },
+  "dependencies": {
+    "codemirror-colorpicker": "^1.9.50"
   }
 }

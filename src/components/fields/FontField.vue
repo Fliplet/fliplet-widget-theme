@@ -1,20 +1,27 @@
 <template>
-  <div class="form-group clearfix">
-    <div class="col-xs-12 control-label">
-      <label for="select-theme">{{ data.fieldConfig.description }}</label>
-    </div>
-    <div class="col-xs-12">
-      <select v-model="value" class="form-control">
+  <div>
+    <div class="btn-group select-box">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{ value }}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-left">
         <template v-if="customFonts && customFonts.length">
-          <option v-for="(customFont, index) in customFonts" :key="index" :value="customFont.name">{{ customFont.name }}</option>
-          <optgroup label="---"></optgroup>
+          <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === value }">
+            <a href="#" @click.prevent="onValueChange(customFont.name)">{{ customFont.name }}</a>
+          </li>
+          <li class="divider"></li>
         </template>
-        <option v-for="(webFont, index) in webFonts" :key="index" :value="webFont.name">{{ webFont.name }}</option>
-        <optgroup label="---"></optgroup>
-        <option value="custom">Custom...</option>
-      </select>
-      <input v-if="showInputField" class="form-control" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
+        <li v-for="(webFont, index) in webFonts" :key="index" :class="{ active: webFont.name === value }">
+          <a href="#" @click.prevent="onValueChange(webFont.name)">{{ webFont.name }}</a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <a href="#" :class="{ active: value === 'custom' }" @click.prevent="onValueChange('custom')">Custom...</a>
+        </li>
+      </ul>
     </div>
+    <input v-if="showInputField" class="form-control" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
   </div>
 </template>
 
@@ -102,6 +109,9 @@ export default {
       }
 
       return value
+    },
+    onValueChange(value) {
+      this.value = value
     }
   }
 }

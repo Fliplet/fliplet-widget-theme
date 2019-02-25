@@ -14,6 +14,13 @@ function clean() {
   return del(['dist/']);
 }
 
+// Get CSS file from codemirror-colorpicker
+function copyCss() {
+  return gulp
+  .src(['node_modules/codemirror-colorpicker/dist/codemirror-colorpicker.css'])
+  .pipe(gulp.dest('dist/css/'))
+}
+
 // SASS task
 function scss() {
   return gulp
@@ -40,7 +47,7 @@ function watchFiles() {
   gulp.watch('src/**/*.vue', js);
 }
 
-const build = gulp.series(clean, gulp.parallel(scss, js));
+const build = gulp.series(clean, gulp.parallel(copyCss, scss, js));
 const watch = gulp.parallel(watchFiles);
 
 exports.build = build;

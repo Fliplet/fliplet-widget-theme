@@ -9,14 +9,9 @@
 
       <ThemeSelection :themes="themes" :active-theme="activeTheme" :theme-instance="themeInstance"></ThemeSelection>
 
-      <template v-for="(configuration, index) in activeTheme.settings.configuration" v-if="configuration.name === 'Quick settings'">
-        <QuickSettings :component-config="configuration" :component-index="index" :theme-instance="themeInstance"></QuickSettings>
-      </template>
+      <QuickSettings :component-config="getQuickSettings()" :component-index="index" :theme-instance="themeInstance" :web-fonts="webFonts" :custom-fonts="customFonts"></QuickSettings>
 
       <div class="components-buttons-holder">
-        <div class="col-xs-12 control-label">
-          <label>Components</label>
-        </div>
         <SettingsButtons v-for="(configuration, index) in activeTheme.settings.configuration" :key="index" v-if="configuration.name !== 'Quick settings'" :component-config="configuration" :component-index="index" :theme-instance="themeInstance"></SettingsButtons>
       </div>
 
@@ -129,6 +124,9 @@ export default {
       } else {
         this.savedFields.push(data)
       }
+
+      console.log(this.savedFields)
+      this.save()
     },
     updateInstance(dataObj) {
       return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
@@ -141,7 +139,6 @@ export default {
       })
     },
     save() {
-      bus.$emit('save-settings')
       // Map data
       const dataObj = _.mapValues(_.keyBy(this.savedFields, 'name'), 'value')
 
@@ -152,6 +149,9 @@ export default {
           const error = Fliplet.parseError(err)
           console.error(error)
         })
+    },
+    getQuickSettings() {
+      return _.find(this.activeTheme.settings.configuration, { quickSettings: true })
     }
   },
   created() {

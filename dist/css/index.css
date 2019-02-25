@@ -48,6 +48,21 @@ header {
 .slide-in-leave-to {
   transform: translateX(100%); }
 
+.quick-settings-holder {
+  margin: 30px -15px; }
+  .quick-settings-holder .control-label.quick-settings-title {
+    text-transform: uppercase; }
+  .quick-settings-holder .control-label label {
+    font-weight: 600; }
+  .quick-settings-holder .settings-field-holder {
+    display: flex;
+    align-items: center; }
+    .quick-settings-holder .settings-field-holder + .settings-field-holder {
+      margin-top: 10px; }
+    .quick-settings-holder .settings-field-holder .label-holder {
+      margin-left: 15px;
+      opacity: 0.5; }
+
 .form-holder {
   margin: 0 -15px; }
   .form-holder .control-label {
@@ -55,15 +70,8 @@ header {
     .form-holder .control-label label {
       font-weight: 600; }
 
-.quick-settings-holder {
-  margin: 0 -15px 15px; }
-  .quick-settings-holder .control-label.quick-settings-title {
-    text-transform: uppercase; }
-  .quick-settings-holder .control-label label {
-    font-weight: 600; }
-
 .components-buttons-holder {
-  margin: 0 -15px 15px; }
+  margin: 30px -15px; }
   .components-buttons-holder .control-label {
     text-transform: uppercase; }
     .components-buttons-holder .control-label label {
@@ -96,3 +104,26 @@ header {
     cursor: pointer; }
   #component-settings-overlay .settings-fields-holder {
     margin: 0 -15px; }
+
+.color-holder {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #efefef;
+  border-radius: 6px;
+  cursor: pointer; }
+
+.btn-group.select-box .dropdown-toggle {
+  background-color: transparent;
+  padding: 0;
+  line-height: 1;
+  box-shadow: none; }
+  .btn-group.select-box .dropdown-toggle:hover, .btn-group.select-box .dropdown-toggle:focus, .btn-group.select-box .dropdown-toggle:active, .btn-group.select-box .dropdown-toggle:active:hover, .btn-group.select-box .dropdown-toggle:active:focus {
+    background-color: transparent;
+    box-shadow: none; }
+
+.btn-group.select-box.open .dropdown-toggle {
+  background-color: transparent;
+  box-shadow: none; }
+  .btn-group.select-box.open .dropdown-toggle:hover, .btn-group.select-box.open .dropdown-toggle:focus, .btn-group.select-box.open .dropdown-toggle:active, .btn-group.select-box.open .dropdown-toggle:active:hover, .btn-group.select-box.open .dropdown-toggle:active:focus {
+    background-color: transparent;
+    box-shadow: none; }

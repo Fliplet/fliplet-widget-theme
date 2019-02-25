@@ -5,10 +5,17 @@
         <label for="select-theme">Selected theme</label>
       </div>
       <div class="col-xs-12">
-        <select v-model="selectedTheme" name="select-theme" class="form-control">
-          <option value="none">-- Select a theme</option>
-          <option v-for="(theme, index) in themes" :key="index" :value="theme.id">{{ theme.name }}</option>
-        </select>
+        <div class="btn-group select-box">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ selectedTheme.name }}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-left">
+            <li v-for="(theme, index) in themes" :key="index" :class="{ active: theme.id === selectedTheme.id }">
+              <a href="#" @click.prevent="onValueChange(theme.id)">{{ theme.name }}</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -21,7 +28,7 @@ import bus from '../../libs/bus'
 export default {
   data() {
     return {
-      selectedTheme: this.activeTheme ? this.activeTheme.id : 'none'
+      selectedTheme: this.activeTheme ? this.activeTheme : { name: 'Select a theme' }
     }
   },
   props: {
@@ -29,27 +36,12 @@ export default {
     activeTheme: Object,
     themeInstance: Object
   },
-  watch: {
-    selectedTheme(newVal) {
-      if (newVal === "none") {
-        return this.removeInstance()
-          .then(() => {
-            bus.$emit('initialize-widget')
-          })
-          .then(() => {
-            // @TODO: Confirm we need this
-            bus.$emit('reload-page')
-          })
-          .catch((err) => {
-            const error = Fliplet.parseError(err)
-            console.error(error)
-          })
-      }
-
-      if (newVal !== this.activeTheme.id) {
+  methods: {
+    onValueChange(id) {
+      if (id !== this.activeTheme.id) {
         this.removeInstance()
           .then(() => {
-            return this.createInstance(newVal)
+            return this.createInstance(id)
           })
           .then(() => {
             return bus.$emit('initialize-widget')
@@ -63,9 +55,7 @@ export default {
             console.error(error)
           })
       }
-    }
-  },
-  methods: {
+    },
     removeInstance() {
       return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
         method: 'DELETE',

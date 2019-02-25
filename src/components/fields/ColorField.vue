@@ -1,21 +1,16 @@
 <template>
-  <div class="form-group clearfix">
-    <div class="col-xs-12 control-label">
-      <label for="select-theme">{{ data.fieldConfig.description }}</label>
-    </div>
-    <div class="col-xs-12">
-      <input type="text" class="form-control" v-model="value">
-    </div>
-  </div>
+  <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
 </template>
 
 <script>
 import { saveFieldData } from '../../store'
+import { ColorPicker } from 'codemirror-colorpicker'
 
 export default {
   data() {
     return {
-      value: this.savedValue || this.data.fieldConfig.default
+      value: this.savedValue || this.data.fieldConfig.default,
+      colorpicker: undefined
     }
   },
   props: {
@@ -32,6 +27,26 @@ export default {
         saveFieldData(data)
       }
     }
+  },
+  methods: {
+    toggleColorPicker(e) {
+      const target = e.target.getBoundingClientRect()
+
+      this.colorpicker.show({
+        left: target.left,
+        top: target.bottom
+      })
+    },
+    onColorChange(color) {
+      this.value = color
+    }
+  },
+  mounted() {
+    this.colorpicker = new ColorPicker({
+      color: this.value,
+      onChange: this.onColorChange,
+      onHide: this.onColorChange
+    })
   }
 }
 </script>
