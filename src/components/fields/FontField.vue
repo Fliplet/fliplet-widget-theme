@@ -17,7 +17,7 @@
         </li>
         <li class="divider"></li>
         <li>
-          <a href="#" :class="{ active: value === 'custom' }" @click.prevent="onValueChange('custom')">Custom...</a>
+          <a href="#" :class="{ active: value === 'Custom' }" @click.prevent="onValueChange('Custom')">Custom...</a>
         </li>
       </ul>
     </div>
@@ -45,12 +45,12 @@ export default {
       if (newVal !== oldVal) {
         const data = {
           name: this.data.fieldConfig.name,
-          value: newVal === 'custom' ? this.customValue : newVal
+          value: newVal === 'Custom' ? this.customValue : newVal
         }
         saveFieldData(data)
       }
 
-      this.showInputField = newVal === 'custom'
+      this.showInputField = newVal === 'Custom'
     },
     customValue(newVal, oldVal) {
       if (newVal !== oldVal) {
