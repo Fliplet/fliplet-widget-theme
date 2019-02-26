@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="btn-group select-box">
+    <div v-if="!showInputField" class="btn-group select-box">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{ value }}
         <span class="caret"></span>
@@ -16,17 +16,25 @@
           <a href="#" @click.prevent="onValueChange(webFont.name)">{{ webFont.name }}</a>
         </li>
         <li class="divider"></li>
+        <li :class="{ active: value === 'Custom' }">
+          <a href="#" @click.prevent="onValueChange('Custom')">Custom...</a>
+        </li>
+        <li class="divider"></li>
         <li>
-          <a href="#" :class="{ active: value === 'Custom' }" @click.prevent="onValueChange('Custom')">Custom...</a>
+          <a href="#" @click.prevent="openFontUploader"><span class="text-primary">Upload a new font</span></a>
         </li>
       </ul>
     </div>
-    <input v-if="showInputField" class="form-control" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
+    <div v-else>
+      <input class="form-control custom-font" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
+      <small><a href="#" @click.prevent="showListOfFonts">See full list of fonts</a></small>
+    </div>
   </div>
 </template>
 
 <script>
 import { saveFieldData } from '../../store'
+import bus from '../../libs/bus'
 
 export default {
   data() {
@@ -43,22 +51,14 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        const data = {
-          name: this.data.fieldConfig.name,
-          value: newVal === 'Custom' ? this.customValue : newVal
-        }
-        saveFieldData(data)
+        this.prepareToSave()
       }
 
       this.showInputField = newVal === 'Custom'
     },
     customValue(newVal, oldVal) {
       if (newVal !== oldVal) {
-        const data = {
-          name: this.data.fieldConfig.name,
-          value: newVal
-        }
-        saveFieldData(data)
+        this.prepareToSave()
       }
     }
   },
@@ -84,7 +84,7 @@ export default {
       if (this.savedValue && (webFont || customFont)) {
         value = this.savedValue
       } else if (this.savedValue && !webFont && !customFont) {
-        value = 'custom'
+        value = 'Custom'
         this.showInputField = true
       } else if (!this.savedValue) {
         value = this.data.fieldConfig.default
@@ -112,6 +112,52 @@ export default {
     },
     onValueChange(value) {
       this.value = value
+    },
+    showListOfFonts() {
+      this.value = this.webFonts[0].name
+      this.showInputField = false
+    },
+    openFontUploader() {
+      if (Fliplet.Env.get('development')) {
+        return
+      }
+
+      const filePickerData = {
+        selectAvailable: false,
+        type: 'font'
+      }
+
+      window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
+        data: filePickerData,
+        onEvent: (e, data) => {
+          switch (e) {
+            case 'widget-set-info':
+              Fliplet.Studio.emit('widget-save-label-reset')
+              Fliplet.Studio.emit('widget-save-label-update', {
+                text: 'Close'
+              })
+              break
+          }
+        }
+      })
+
+      window.filePickerProvider.then((result) => {
+        Fliplet.Studio.emit('widget-save-label-update', {
+          text: 'Apply changes'
+        })
+        bus.$emit('reload-custom-fonts')
+
+        window.filePickerProvider = null
+        return Promise.resolve()
+      })
+    },
+    prepareToSave() {
+      const data = {
+        name: this.data.fieldConfig.name,
+        value: this.value === 'Custom' && this.showInputField ? this.customValue : this.value
+      }
+
+      saveFieldData(data)
     }
   }
 }
