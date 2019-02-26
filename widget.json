@@ -19,7 +19,9 @@
     "assets": [
       "dist/css/codemirror-colorpicker.css",
       "dist/css/index.css",
-      "dist/app.js"
+      "dist/app.js",
+
+      "img/color-bg.gif"
     ]
   }
 }
