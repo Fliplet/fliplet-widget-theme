@@ -138,13 +138,13 @@ export default {
         }
       })
     },
-    save() {
+    save(forceRefresh) {
       // Map data
       const dataObj = _.mapValues(_.keyBy(this.savedFields, 'name'), 'value')
 
       this.updateInstance(dataObj)
         .then((response) => {
-          if (response && response.widgetInstance) {
+          if (response && response.widgetInstance && !forceRefresh) {
             var settings = response.widgetInstance.settings.assets[0];
             Fliplet.Studio.emit('page-preview-send-event', {
               type: 'reloadCssAsset',
@@ -165,22 +165,40 @@ export default {
     },
     getQuickSettings() {
       return _.find(this.activeTheme.settings.configuration, { quickSettings: true })
+    },
+    reloadCustomFonts() {
+      this.getFonts()
+        .then((response) => {
+          this.fonts = response
+          this.webFonts = _.reject(this.fonts, (font) => { return font.url })
+          this.customFonts = _.filter(this.fonts, (font) => { return font.url })
+        })
     }
   },
   created() {
     // Listeners
     bus.$on('field-saved', this.onFieldSave)
     bus.$on('initialize-widget', this.initialize)
+    bus.$on('reload-custom-fonts', this.reloadCustomFonts)
 
     // Initialize
     this.initialize()
 
     // Save Request
-    Fliplet.Widget.onSaveRequest(this.save)
+    Fliplet.Widget.onSaveRequest(() => {
+      if (window.filePickerProvider) {
+        window.filePickerProvider.forwardSaveRequest()
+        return
+      }
+
+      // @TODO: Decide if it should force refresh
+      this.save(true)
+    })
   },
   destroyed() {
     bus.$off('field-saved', this.onFieldSave)
     bus.$off('initialize-widget', this.initialize)
+    bus.$off('reload-custom-fonts', this.reloadCustomFonts)
   }
 }
 </script>
