@@ -1,5 +1,7 @@
 <template>
-  <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
+  <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
+    <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
+  </div>
 </template>
 
 <script>
@@ -10,7 +12,8 @@ export default {
   data() {
     return {
       value: this.savedValue || this.data.fieldConfig.default,
-      colorpicker: undefined
+      colorpicker: undefined,
+      widgetId: Fliplet.Widget.getDefaultId()
     }
   },
   props: {
@@ -26,6 +29,11 @@ export default {
         }
         saveFieldData(data)
       }
+    }
+  },
+  computed: {
+    bgImg() {
+      return window.__widgetData[this.widgetId].assetsUrl ? window.__widgetData[this.widgetId].assetsUrl + 'img/color-bg.gif' : ''
     }
   },
   methods: {
