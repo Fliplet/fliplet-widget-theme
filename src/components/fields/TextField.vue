@@ -1,12 +1,5 @@
 <template>
-  <div class="form-group clearfix">
-    <div class="col-xs-12 control-label">
-      <label for="select-theme">{{ data.fieldConfig.description }}</label>
-    </div>
-    <div class="col-xs-12">
-      <input type="text" class="form-control" v-model="value">
-    </div>
-  </div>
+  <input type="text" class="form-control" v-model="value">
 </template>
 
 <script>
