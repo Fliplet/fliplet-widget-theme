@@ -108,6 +108,18 @@ header {
     cursor: pointer; }
   #component-settings-overlay .settings-fields-holder {
     margin: 0 -15px; }
+    #component-settings-overlay .settings-fields-holder .control-label {
+      text-transform: uppercase;
+      font-weight: 600; }
+    #component-settings-overlay .settings-fields-holder .multi-field {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0 15px 0 10px; }
+      #component-settings-overlay .settings-fields-holder .multi-field > * {
+        display: inline-block;
+        width: calc(33.33% - 5px);
+        margin: 0 0 5px 5px;
+        flex-grow: 0; }
 
 .color-picker-background {
   width: 30px;
@@ -166,3 +178,21 @@ header {
   padding: 0 8px;
   line-height: 1;
   height: 28px; }
+
+.size-field-holder {
+  display: flex !important;
+  align-items: center; }
+  .size-field-holder .form-control {
+    height: 30px;
+    padding: 0 2px;
+    width: 40px; }
+    .size-field-holder .form-control:focus {
+      border-color: #00abd1; }
+  .size-field-holder .drag-input-holder {
+    width: 10px;
+    height: 30px;
+    cursor: ew-resize; }
+
+.weight-field-holder {
+  display: flex !important;
+  align-items: center; }
