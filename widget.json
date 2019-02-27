@@ -14,7 +14,8 @@
       "fliplet-studio-ui",
       "lodash",
       "bootstrap",
-      "font-awesome"
+      "font-awesome",
+      "hammer.js"
     ],
     "assets": [
       "dist/css/codemirror-colorpicker.css",
