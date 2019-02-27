@@ -5,9 +5,9 @@
     </div>
 
     <div class="col-xs-12">
-      <template v-for="(variable, index) in variables"> 
+      <template v-for="(variable, idx) in variables"> 
         <div class="settings-field-holder">
-          <component :is="componentType(variable.type)" :data="fieldData(variable)" :saved-value="savedValue(index)"></component>
+          <component v-for="(field, index) in variable.fields" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)"></component>
           <div class="label-holder">{{ variable.description }}</div>
         </div>
       </template>
@@ -58,15 +58,17 @@ export default {
     },
     computeVars() {
       const vars = []
-      this.componentConfig.variables.forEach((variable, index) => {
-        const newObj = {
-          value: this.themeInstance.settings
-            && this.themeInstance.settings.values
-            && this.themeInstance.settings.values[variable.name]
-            ? this.themeInstance.settings.values[variable.name] : variable.default
-        }
+      const newObj = {}
 
-        _.extend(this.componentConfig.variables[index], newObj)
+      this.componentConfig.variables.forEach((variable, index) => {
+        variable.fields.forEach((field, idx) => {
+          newObj.value = this.themeInstance.settings
+            && this.themeInstance.settings.values
+            && this.themeInstance.settings.values[field.name]
+            ? this.themeInstance.settings.values[field.name] : field.default
+
+          _.extend(this.componentConfig.variables[index].fields[idx], newObj)
+        })
       })
 
       return this.componentConfig.variables
