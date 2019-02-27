@@ -6,8 +6,15 @@
         <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <div v-if="state.componentOverlay.data && state.componentOverlay.data.component" class="settings-fields-holder">
-        <div v-for="(field, index) in state.componentOverlay.data.component.variables" :key="index">
-          <component :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
+        <div v-for="(variable, index) in state.componentOverlay.data.component.variables" :key="index">
+          <div class="form-group clearfix">
+            <div class="col-xs-12 control-label">
+              <label>{{ variable.description }}</label>
+            </div>
+            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
+              <component v-for="(field, idx) in variable.fields" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -16,6 +23,8 @@
 
 <script>
 import { state, closeComponentSettings } from '../../store'
+import SizeField from '../fields/SizeField'
+import WeightField from '../fields/WeightField'
 import TextField from '../fields/TextField'
 import ColorField from '../fields/ColorField'
 import FontField from '../fields/FontField'
@@ -31,6 +40,8 @@ export default {
     customFonts: Array
   },
   components: {
+    SizeField,
+    WeightField,
     TextField,
     ColorField,
     FontField
