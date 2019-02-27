@@ -15,5 +15,24 @@
 
   .settings-fields-holder {
     margin: 0 -15px;
+
+    .control-label {
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .multi-field {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0 15px 0 10px;
+
+      > * {
+        display: inline-block;
+        width: calc(33.33% - 5px);
+        margin: 0 0 5px 5px;
+        flex-grow: 0;
+      }
+    }
   }
 }
+

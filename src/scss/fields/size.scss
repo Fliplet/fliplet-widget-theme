@@ -1,0 +1,20 @@
+.size-field-holder {
+  display: flex !important;
+  align-items: center;
+
+  .form-control {
+    height: 30px;
+    padding: 0 2px;
+    width: 40px;
+
+    &:focus {
+      border-color: $primary-color;
+    }
+  }
+
+  .drag-input-holder {
+    width: 10px;
+    height: 30px;
+    cursor: ew-resize;
+  }
+}
