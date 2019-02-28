@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="font-field-holder">
     <div v-if="!showInputField" class="btn-group select-box">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{ value }}

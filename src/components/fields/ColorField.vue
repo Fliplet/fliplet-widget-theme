@@ -1,6 +1,8 @@
 <template>
-  <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
-    <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
+  <div class="color-field-holder">
+    <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
+      <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
+    </div>
   </div>
 </template>
 
