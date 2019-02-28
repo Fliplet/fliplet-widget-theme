@@ -11,7 +11,7 @@
             <div class="col-xs-12 control-label">
               <label>{{ variable.description }}</label>
             </div>
-            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
+            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
               <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
             </div>
           </div>
@@ -24,7 +24,10 @@
 <script>
 import { state, closeComponentSettings } from '../../store'
 import SizeField from '../fields/SizeField'
-import WeightField from '../fields/WeightField'
+import FontStyleField from '../fields/FontStyleField'
+import BorderField from '../fields/BorderField'
+import BorderStyleField from '../fields/BorderStyleField'
+import SelectField from '../fields/SelectField'
 import TextField from '../fields/TextField'
 import ColorField from '../fields/ColorField'
 import FontField from '../fields/FontField'
@@ -41,7 +44,10 @@ export default {
   },
   components: {
     SizeField,
-    WeightField,
+    FontStyleField,
+    BorderField,
+    BorderStyleField,
+    SelectField,
     TextField,
     ColorField,
     FontField
