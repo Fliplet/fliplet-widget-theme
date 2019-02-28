@@ -7,7 +7,7 @@
     <div class="col-xs-12">
       <template v-for="(variable, idx) in variables"> 
         <div class="settings-field-holder">
-          <component v-for="(field, index) in variable.fields" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)"></component>
+          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)"></component>
           <div class="label-holder">{{ variable.description }}</div>
         </div>
       </template>

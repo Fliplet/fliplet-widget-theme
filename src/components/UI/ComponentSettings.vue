@@ -12,7 +12,7 @@
               <label>{{ variable.description }}</label>
             </div>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
-              <component v-for="(field, idx) in variable.fields" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
+              <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
             </div>
           </div>
         </div>
