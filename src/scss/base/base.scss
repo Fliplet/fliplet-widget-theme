@@ -52,4 +52,10 @@ header {
 
 #theme-application {
   font-size: 13px;
+
+  .form-control {
+    height: 30px;
+    padding: 0 6px;
+    font-size: 13px;
+  }
 }

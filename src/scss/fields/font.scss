@@ -1,7 +1,13 @@
-.form-control {
-  &.custom-font {
-    padding: 0 8px;
-    line-height: 1;
-    height: 28px;
+.font-field-holder {
+  display: flex !important;
+  align-items: center;
+  height: 30px;
+
+  .form-control {
+    &.custom-font {
+      padding: 0 8px;
+      line-height: 1;
+      height: 28px;
+    }
   }
 }

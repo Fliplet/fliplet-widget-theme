@@ -5,8 +5,12 @@
 @import "./components/theme-selection.scss";
 @import "./components/components-buttons.scss";
 @import "./components/settings-overlay.scss";
+@import "./components/select.scss";
+@import "./components/checkboxes.scss";
 @import "./fields/color.scss";
-@import "./fields/select.scss";
 @import "./fields/font.scss";
 @import "./fields/size.scss";
-@import "./fields/weight.scss";
+@import "./fields/font-style.scss";
+@import "./fields/border.scss";
+@import "./fields/select-field.scss";
+@import "./fields/border-style.scss";
