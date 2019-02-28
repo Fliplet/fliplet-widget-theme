@@ -1,17 +1,22 @@
 <template>
   <div class="size-field-holder">
-    <input type="text" class="form-control" v-model="value" @keydown="onKeyDown" @keyup="onKeyUp">
-    <div class="drag-input-holder" ref="ondrag"></div>
-    <div class="btn-group select-box">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{ property }}
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-left">
-        <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop === property }">
-          <a href="#" @click.prevent="onValueChange(prop)">{{ prop }}</a>
-        </li>
-      </ul>
+    <div class="interactive-holder">
+      <span ref="ondrag" class="drag-input-holder" @click.prevent="manualEditToggle">{{ value }}</span>
+      <div v-if="property && properties" class="btn-group select-box">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ property }}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-left">
+          <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop === property }">
+            <a href="#" @click.prevent="onValueChange(prop)">{{ prop }}</a>
+          </li>
+        </ul>
+      </div>
+      <div v-if="label" class="field-label">{{ label }}</div>
+    </div>
+    <div class="input-holder" v-show="inputIsActive">
+      <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="manualEditToggle" @keydown.enter="manualEditToggle" @keydown="onKeyDown" @keyup="onKeyUp">
     </div>
   </div>
 </template>
@@ -23,8 +28,10 @@ export default {
   data() {
     return {
       value: this.parseValue(this.savedValue || this.data.fieldConfig.default),
+      label: this.data.fieldConfig.label,
       property: this.data.fieldConfig.property,
       properties: this.data.fieldConfig.properties,
+      inputIsActive: false,
       hammerInstance: undefined,
       keyMap: {}
     }
@@ -51,9 +58,18 @@ export default {
     prepareToSave() {
       const data = {
         name: this.data.fieldConfig.name,
-        value: this.value + (this.property !== 'none' ? this.property : '')
+        value: this.value + (this.property !== 'x' ? this.property : '')
       }
       saveFieldData(data)
+    },
+    manualEditToggle() {
+      this.inputIsActive = !this.inputIsActive
+
+      if (this.inputIsActive) {
+        this.$nextTick(() => {
+          this.$refs.inputfield.focus()
+        })
+      }
     },
     onKeyDown(e) {
       this.keyMap[e.keyCode] = true
