@@ -9,13 +9,33 @@
 
       <ThemeSelection :themes="themes" :active-theme="activeTheme" :theme-instance="themeInstance"></ThemeSelection>
 
-      <QuickSettings :component-config="getQuickSettings()" :component-index="index" :theme-instance="themeInstance" :web-fonts="webFonts" :custom-fonts="customFonts"></QuickSettings>
 
-      <div class="components-buttons-holder">
-        <SettingsButtons v-for="(configuration, index) in activeTheme.settings.configuration" :key="index" v-if="configuration.name !== 'Quick settings'" :component-config="configuration" :component-index="index" :theme-instance="themeInstance"></SettingsButtons>
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs breakpoint-tabs">
+        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
+          <a :href="'#tab-' + tab.type" data-toggle="tab"><i :class="tab.icon"></i></a>
+        </li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div v-for="(tab, index) in tabs" :class="{ active: activeTab === index }" :ref="index" class="tab-pane" :id="'tab-' + tab.type">
+          <template v-if="tab.type === 'mobile'">
+            <QuickSettings :component-config="getQuickSettings()" :component-index="index" :theme-instance="themeInstance" :web-fonts="webFonts" :custom-fonts="customFonts"></QuickSettings>
+
+            <div class="components-buttons-holder">
+              <SettingsButtons v-for="(configuration, index) in activeTheme.settings.configuration" :key="index" v-if="configuration.name !== 'Quick settings'" :component-config="configuration" :component-index="index" :theme-instance="themeInstance"></SettingsButtons>
+            </div>
+
+            <ComponentSettings :web-fonts="webFonts" :custom-fonts="customFonts"></ComponentSettings>
+          </template>
+
+          <template v-else>
+            {{ tab.name }}
+          </template>
+        </div>
       </div>
 
-      <ComponentSettings :web-fonts="webFonts" :custom-fonts="customFonts"></ComponentSettings>
     </template>
   </div>
 </template>
@@ -39,7 +59,25 @@ export default {
       activeTheme: undefined,
       webFonts: undefined,
       customFonts: undefined,
-      savedFields: []
+      savedFields: [],
+      tabs: [
+        {
+          name: 'Mobile',
+          type: 'mobile',
+          icon: 'fa fa-mobile'
+        },
+        {
+          name: 'Tablet',
+          type: 'tablet',
+          icon: 'fa fa-tablet'
+        },
+        {
+          name: 'Web',
+          type: 'web',
+          icon: 'fa fa-desktop'
+        }
+      ],
+      activeTab: 0
     }
   },
   components: {
