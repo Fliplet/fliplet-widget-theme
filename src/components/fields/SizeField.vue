@@ -1,7 +1,7 @@
 <template>
   <div class="size-field-holder">
     <div class="interactive-holder">
-      <span ref="ondrag" class="drag-input-holder" @click.prevent="manualEditToggle">{{ value }}</span>
+      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ value }}</span>
       <div v-if="property && properties" class="btn-group select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
@@ -16,7 +16,7 @@
       <div v-if="label" class="field-label">{{ label }}</div>
     </div>
     <div class="input-holder" v-show="inputIsActive">
-      <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="manualEditToggle" @keydown.enter="manualEditToggle" @keydown="onKeyDown" @keyup="onKeyUp">
+      <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
     </div>
   </div>
 </template>
@@ -33,7 +33,8 @@ export default {
       properties: this.data.fieldConfig.properties,
       inputIsActive: false,
       hammerInstance: undefined,
-      keyMap: {}
+      keyMap: {},
+      enterPressedToClose: false
     }
   },
   props: {
@@ -62,14 +63,25 @@ export default {
       }
       saveFieldData(data)
     },
-    manualEditToggle() {
-      this.inputIsActive = !this.inputIsActive
+    editToggle() {
+      this.inputIsActive = this.enterPressedToClose ? this.inputIsActive : !this.inputIsActive
+    },
+    manualEdit(e) {
+      this.editToggle()
 
       if (this.inputIsActive) {
         this.$nextTick(() => {
           this.$refs.inputfield.focus()
         })
       }
+    },
+    onInputBlur() {
+      this.editToggle()
+      this.enterPressedToClose = false
+    },
+    onInputEnter() {
+      this.editToggle()
+      this.enterPressedToClose = true
     },
     onKeyDown(e) {
       this.keyMap[e.keyCode] = true
