@@ -5,9 +5,18 @@
     </div>
 
     <div class="col-xs-12">
-      <template v-for="(variable, idx) in variables"> 
+      <template v-if="notMobile">
+        <div class="inherit-settings-holder" :class="{ 'active': inheritSettings }">
+          <label class="switch">
+            <input type="checkbox" v-model="inheritSettings">
+            <span class="slider round"></span>
+          </label>
+          <span class="label-holder">Inherit styles from mobile - <template v-if="inheritSettings">On</template><template v-else>Off</template></span>
+        </div>
+      </template>
+      <template v-if="!inheritSettings || !notMobile" v-for="(variable, idx) in variables"> 
         <div class="settings-field-holder">
-          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)"></component>
+          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)" :component-context="componentContext"></component>
           <div class="label-holder">{{ variable.description }}</div>
         </div>
       </template>
@@ -16,28 +25,34 @@
 </template>
 
 <script>
-import { saveFieldData } from '../../store'
 import ColorField from './ColorField'
 import FontField from './FontField'
 
 export default {
   data() {
     return {
+      notMobile: this.componentContext == 'Tablet' || this.componentContext == 'Desktop' ? true : false,
+      inheritSettings: this.getInheritance(),
       variables: this.computeVars()
     }
   },
   props: {
     componentConfig: Object,
-    componentIndex: Number,
     themeInstance: Object,
     webFonts: Array,
-    customFonts: Array
+    customFonts: Array,
+    componentContext: String
   },
   components: {
     ColorField,
     FontField
   },
   methods: {
+    getInheritance() {
+      const context = this.componentContext == 'Mobile' ? '' : this.componentContext
+      const savedValue = this.themeInstance.settings.inheritance['sampleQuickSettings' + context]
+      return typeof savedValue !== 'undefined' ? savedValue : this.componentConfig.inheritSettings
+    },
     componentType(fieldType) {
       return `${fieldType}-field`
     },

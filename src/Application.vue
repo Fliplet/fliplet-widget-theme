@@ -6,36 +6,19 @@
     </div>
     <template v-else>
       <WidgetHeader></WidgetHeader>
-
       <ThemeSelection :themes="themes" :active-theme="activeTheme" :theme-instance="themeInstance"></ThemeSelection>
-
-
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
         <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
           <a :href="'#tab-' + tab.type" data-toggle="tab"><i :class="tab.icon"></i></a>
         </li>
       </ul>
-
       <!-- Tab panes -->
       <div class="tab-content">
         <div v-for="(tab, index) in tabs" :class="{ active: activeTab === index }" :ref="index" class="tab-pane" :id="'tab-' + tab.type">
-          <template v-if="tab.type === 'mobile'">
-            <QuickSettings :component-config="getQuickSettings()" :component-index="index" :theme-instance="themeInstance" :web-fonts="webFonts" :custom-fonts="customFonts"></QuickSettings>
-
-            <div class="components-buttons-holder">
-              <SettingsButtons v-for="(configuration, index) in activeTheme.settings.configuration" :key="index" v-if="configuration.name !== 'Quick settings'" :component-config="configuration" :component-index="index" :theme-instance="themeInstance"></SettingsButtons>
-            </div>
-
-            <ComponentSettings :web-fonts="webFonts" :custom-fonts="customFonts"></ComponentSettings>
-          </template>
-
-          <template v-else>
-            {{ tab.name }}
-          </template>
+          <component :is="componentType(tab.type)" :web-fonts="webFonts" :custom-fonts="customFonts" :active-theme="activeTheme" :theme-instance="themeInstance"></component>
         </div>
       </div>
-
     </template>
   </div>
 </template>
@@ -44,9 +27,9 @@
 // @TODO: Handle errors
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
-import SettingsButtons from './components/UI/SettingsButtons'
-import ComponentSettings from './components/UI/ComponentSettings'
-import QuickSettings from './components/fields/QuickSettings'
+import MobileTab from './components/MobileTab'
+import TabletTab from './components/TabletTab'
+import WebTab from './components/WebTab'
 import bus from './libs/bus'
 
 export default {
@@ -59,7 +42,10 @@ export default {
       activeTheme: undefined,
       webFonts: undefined,
       customFonts: undefined,
-      savedFields: [],
+      savedFields: {
+        values: [],
+        inheritance: []
+      },
       tabs: [
         {
           name: 'Mobile',
@@ -83,11 +69,14 @@ export default {
   components: {
     WidgetHeader,
     ThemeSelection,
-    SettingsButtons,
-    ComponentSettings,
-    QuickSettings
+    MobileTab,
+    TabletTab,
+    WebTab
   },
   methods: {
+    componentType(type) {
+      return `${type}-tab`
+    },
     initialize() {
       // Get themes and fonts simultaneously
       return Promise.all([this.getThemes(), this.getFonts()])
@@ -153,14 +142,28 @@ export default {
       Fliplet.Studio.emit('reload-page-preview');
     },
     onFieldSave(data) {
-      const fieldIndex = _.findIndex(this.savedFields, (field) => {
+      const fieldIndex = _.findIndex(this.savedFields.values, (field) => {
         return field && field.name === data.name
       })
       
       if (fieldIndex >= 0) {
-        this.savedFields[fieldIndex].value = data.value
+        this.savedFields.values[fieldIndex].value = data.value
       } else {
-        this.savedFields.push(data)
+        this.savedFields.values.push(data)
+      }
+
+      console.log(this.savedFields)
+      this.save()
+    },
+    onInheritanceSave(data) {
+      const objIndex = _.findIndex(this.savedFields.inheritance, (obj) => {
+        return obj && obj.name === data.name
+      })
+      
+      if (objIndex >= 0) {
+        this.savedFields.inheritance[objIndex].value = data.value
+      } else {
+        this.savedFields.inheritance.push(data)
       }
 
       console.log(this.savedFields)
@@ -172,13 +175,17 @@ export default {
         method: 'PUT',
         data: {
           package: this.activeTheme.package,
-          values: dataObj || {}
+          values: dataObj.values || {},
+          inheritance: dataObj.inheritance || {}
         }
       })
     },
     save(forceRefresh) {
       // Map data
-      const dataObj = _.mapValues(_.keyBy(this.savedFields, 'name'), 'value')
+      const dataObj = {
+        values: _.mapValues(_.keyBy(this.savedFields.values, 'name'), 'value'),
+        inheritance: _.mapValues(_.keyBy(this.savedFields.inheritance, 'name'), 'value')
+      }
 
       this.updateInstance(dataObj)
         .then((response) => {
@@ -201,9 +208,6 @@ export default {
           console.error(error)
         })
     },
-    getQuickSettings() {
-      return _.find(this.activeTheme.settings.configuration, { quickSettings: true })
-    },
     reloadCustomFonts() {
       this.getFonts()
         .then((response) => {
@@ -216,6 +220,7 @@ export default {
   created() {
     // Listeners
     bus.$on('field-saved', this.onFieldSave)
+    bus.$on('inheritance-saved', this.onInheritanceSave)
     bus.$on('initialize-widget', this.initialize)
     bus.$on('reload-custom-fonts', this.reloadCustomFonts)
 
@@ -235,6 +240,7 @@ export default {
   },
   destroyed() {
     bus.$off('field-saved', this.onFieldSave)
+    bus.$off('inheritance-saved', this.onInheritanceSave)
     bus.$off('initialize-widget', this.initialize)
     bus.$off('reload-custom-fonts', this.reloadCustomFonts)
   }

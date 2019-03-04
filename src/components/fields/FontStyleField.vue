@@ -28,7 +28,8 @@ export default {
   },
   props: {
     data: Object,
-    savedValue: String
+    savedValue: String,
+    componentContext: String
   },
   watch: {
     value(newVal, oldVal) {
@@ -59,7 +60,7 @@ export default {
     },
     prepareToSave() {
       const data = {
-        name: this.data.fieldConfig.name,
+        name: this.data.fieldConfig.name + (this.componentContext !== 'Mobile' ? this.componentContext : ''),
         value: this.value.length ? this.value.join(' ') : ''
       }
 

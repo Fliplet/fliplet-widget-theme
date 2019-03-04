@@ -13,13 +13,14 @@ export default {
   },
   props: {
     data: Object,
-    savedValue: String
+    savedValue: String,
+    componentContext: String
   },
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
         const data = {
-          name: this.data.fieldConfig.name,
+          name: this.data.fieldConfig.name + (this.componentContext !== 'Mobile' ? this.componentContext : ''),
           value: newVal
         }
         saveFieldData(data)

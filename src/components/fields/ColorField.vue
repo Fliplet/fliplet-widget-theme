@@ -20,13 +20,14 @@ export default {
   },
   props: {
     data: Object,
-    savedValue: String
+    savedValue: String,
+    componentContext: String
   },
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
         const data = {
-          name: this.data.fieldConfig.name,
+          name: this.data.fieldConfig.name + (this.componentContext !== 'Mobile' ? this.componentContext : ''),
           value: newVal
         }
         saveFieldData(data)
@@ -52,7 +53,23 @@ export default {
     }
   },
   mounted() {
-    this.colorpicker = new ColorPicker()
+    this.colorpicker = new ColorPicker({
+      colorSets: [
+        {
+          name: "Fliplet",
+          colors: ['#7d4b79', '#4bebff', '#ffd94b', '#f05865', '#36344c', '#474975', '#8d8ea6', '#f8f6f7']
+        },
+        { 
+          name : "Material",  
+          colors: [ 
+            '#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',  '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',  '#795548', '#9E9E9E', '#607D8B' 
+          ]
+        },
+        { 
+          name : "Custom", "edit" : true, "colors" : []
+        }
+      ]
+    })
   }
 }
 </script>
