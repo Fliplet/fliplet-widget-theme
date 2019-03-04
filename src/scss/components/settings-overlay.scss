@@ -21,6 +21,10 @@
       font-weight: 600;
     }
 
+    .form-group {
+      margin-bottom: 25px;
+    }
+
     .multi-field,
     .two-rows {
       display: flex;
@@ -33,7 +37,7 @@
       > * {
         display: inline-block;
         width: auto;
-        margin: 0 15px 10px 15px;
+        margin: 0 15px 5px 15px;
       }
     }
 
@@ -41,7 +45,7 @@
       > * {
         display: inline-block;
         width: calc(50% - 30px);
-        margin: 0 15px 10px 15px;
+        margin: 0 15px 5px 15px;
       }
     }
   }

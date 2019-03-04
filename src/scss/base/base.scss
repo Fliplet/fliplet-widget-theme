@@ -50,6 +50,14 @@ header {
   content: '\00d7';
 }
 
+.control-label {
+  margin-bottom: 10px;
+
+  label {
+    margin: 0;
+  }
+}
+
 #theme-application {
   font-size: 13px;
 
@@ -89,6 +97,76 @@ header {
           background-color: $highlight-gray;
         }
       }
+    }
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 18px;
+    margin: 0;
+
+    input {
+      display:none;
+
+      &:checked + .slider {
+        background-color: $highlight-gray;
+        border-color: transparent;
+      }
+
+      &:checked + .slider:before {
+        @include transform(translateX(14px));
+        background-color: $text-color;
+      }
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 1px solid $highlight-gray;
+      background-color: transparent;
+      -webkit-transition: 0.25s;
+      transition: 0.25s;
+
+      &:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 0px;
+        top: 50%;
+        margin-top: -10px;
+        background-color: darken($highlight-gray, 10%);
+        @include transition(all 0.25s ease-out);
+      }
+
+      &.round {
+        border-radius: 16px;
+
+        &:before {
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+
+  .label-holder {
+    margin-left: 15px;
+    color: rgba($text-color, 0.5);
+  }
+
+  .inherit-settings-holder {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    &.active {
+      margin-bottom: 0;
     }
   }
 }
