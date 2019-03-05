@@ -16,7 +16,7 @@
       </template>
       <template v-if="!inheritSettings || !notMobile" v-for="(variable, idx) in variables"> 
         <div class="settings-field-holder">
-          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)" :component-context="componentContext"></component>
+          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)"></component>
           <div class="label-holder">{{ variable.description }}</div>
         </div>
       </template>
@@ -25,23 +25,21 @@
 </template>
 
 <script>
+import { state } from '../../store'
 import ColorField from './ColorField'
 import FontField from './FontField'
 
 export default {
   data() {
     return {
-      notMobile: this.componentContext == 'Tablet' || this.componentContext == 'Desktop' ? true : false,
+      state,
+      notMobile: state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false,
       inheritSettings: this.getInheritance(),
       variables: this.computeVars()
     }
   },
   props: {
-    componentConfig: Object,
-    themeInstance: Object,
-    webFonts: Array,
-    customFonts: Array,
-    componentContext: String
+    componentConfig: Object
   },
   components: {
     ColorField,
@@ -49,8 +47,8 @@ export default {
   },
   methods: {
     getInheritance() {
-      const context = this.componentContext == 'Mobile' ? '' : this.componentContext
-      const savedValue = this.themeInstance.settings.inheritance['sampleQuickSettings' + context]
+      const context = state.componentContext == 'Mobile' ? '' : state.componentContext
+      const savedValue = state.themeInstance.settings.inheritance['sampleQuickSettings' + context]
       return typeof savedValue !== 'undefined' ? savedValue : this.componentConfig.inheritSettings
     },
     componentType(fieldType) {
@@ -62,8 +60,8 @@ export default {
       }
 
       if (field.type === 'font') {
-        data.webFonts = this.webFonts
-        data.customFonts = this.customFonts
+        data.webFonts = state.fonts.web
+        data.customFonts = state.fonts.custom
       }
 
       return data
@@ -77,10 +75,10 @@ export default {
 
       this.componentConfig.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
-          newObj.value = this.themeInstance.settings
-            && this.themeInstance.settings.values
-            && this.themeInstance.settings.values[field.name]
-            ? this.themeInstance.settings.values[field.name] : field.default
+          newObj.value = state.themeInstance.settings
+            && state.themeInstance.settings.values
+            && state.themeInstance.settings.values[field.name]
+            ? state.themeInstance.settings.values[field.name] : field.default
 
           _.extend(this.componentConfig.variables[index].fields[idx], newObj)
         })

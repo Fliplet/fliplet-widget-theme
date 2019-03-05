@@ -1,12 +1,12 @@
 <template>
   <transition name="slide-in">
-    <div v-if="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
+    <div v-show="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
       <header>
         <p>{{ state.componentOverlay.name }}</p>
         <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
-      <div v-if="state.componentOverlay.data && state.componentOverlay.data.component" class="settings-fields-holder">
-        <div v-for="(variable, index) in state.componentOverlay.data.component.variables" :key="index">
+      <div v-if="variables && variables.length" class="settings-fields-holder">
+        <div v-for="(variable, index) in variables" :key="index">
           <div class="form-group clearfix">
             <div class="col-xs-12 control-label">
               <label>{{ variable.description }}</label>
@@ -21,7 +21,7 @@
               </div>
             </template>
             <div v-if="!variable.inheritFromMobile || !notMobile" class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
-              <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)" :component-context="componentContext"></component>
+              <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
             </div>
           </div>
         </div>
@@ -45,14 +45,10 @@ export default {
   data() {
     return {
       state,
-      notMobile: this.componentContext == 'Tablet' || this.componentContext == 'Desktop' ? true : false
+      notMobile: undefined,
+      variables: undefined,
+      context: undefined
     }
-  },
-  props: {
-    webFonts: Array,
-    customFonts: Array,
-    themeInstance: Object,
-    componentContext: String
   },
   components: {
     SizeField,
@@ -65,18 +61,24 @@ export default {
   },
   methods: {
     closeComponentSettings,
-    computeVariable() {
-      if (!this.themeInstance || (!state.componentOverlay.data && !state.componentOverlay.data.component.variables)) {
+    setVariables() {
+      this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+      this.variables = _.cloneDeep(state.componentOverlay.data.component.variables)
+      this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
+
+      // then initialize
+      this.initializeOverlay()
+    },
+    initializeOverlay() {
+      if (!state.themeInstance || (!state.componentOverlay.data && !this.variables)) {
         return
       }
 
-      const context = this.componentContext == 'Mobile' ? '' : this.componentContext
-      state.componentOverlay.data.component.variables.forEach((variable, i) => {
+      this.variables.forEach((variable, i) => {
         let savedValue
-
-        for (var prop in this.themeInstance.settings.inheritance) {
-          if (prop === variable.id + context) {
-            savedValue = this.themeInstance.settings.inheritance[prop]
+        for (var prop in state.themeInstance.settings.inheritance) {
+          if (prop === variable.id + this.context) {
+            savedValue = state.themeInstance.settings.inheritance[prop]
           }
         }
 
@@ -85,9 +87,8 @@ export default {
     },
     checkSetting(variable) {
       console.log(variable)
-      const context = this.componentContext == 'Mobile' ? '' : this.componentContext
       const obj = {
-        name: variable.id + context,
+        name: variable.id + this.context,
         value: variable.inheritFromMobile
       }
       saveInheritanceData(obj)
@@ -104,8 +105,8 @@ export default {
       }
 
       if (field.type === 'font') {
-        data.webFonts = this.webFonts
-        data.customFonts = this.customFonts
+        data.webFonts = state.fonts.web
+        data.customFonts = state.fonts.custom
       }
 
       return data
@@ -114,15 +115,13 @@ export default {
       let value = undefined
       if (state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
         const savedValues = state.componentOverlay.data.instance.settings.values
-        const context = this.componentContext[0].toUpperCase() + this.componentContext.slice(1)
-
-        value = this.componentContext !== 'mobile' ? savedValues[field.name + context] || savedValues[field.name] : savedValues[field.name]
+        value = state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] || savedValues[field.name] : savedValues[field.name]
       }
       return value
     }
   },
   mounted() {
-    bus.$on('component-overlay-opened', this.computeVariable)
+    bus.$on('component-overlay-opened', this.setVariables)
   }
 }
 </script>

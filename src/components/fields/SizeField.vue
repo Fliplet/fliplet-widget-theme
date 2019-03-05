@@ -22,11 +22,12 @@
 </template>
 
 <script>
-import { saveFieldData } from '../../store'
+import { state, saveFieldData } from '../../store'
 
 export default {
   data() {
     return {
+      state,
       value: this.parseValue(this.savedValue || this.data.fieldConfig.default),
       label: this.data.fieldConfig.label,
       property: this.data.fieldConfig.property,
@@ -39,8 +40,7 @@ export default {
   },
   props: {
     data: Object,
-    savedValue: String,
-    componentContext: String
+    savedValue: String
   },
   watch: {
     value(newVal, oldVal) {
@@ -59,7 +59,7 @@ export default {
     },
     prepareToSave() {
       const data = {
-        name: this.data.fieldConfig.name + (this.componentContext !== 'Mobile' ? this.componentContext : ''),
+        name: this.data.fieldConfig.name + (state.componentContext !== 'Mobile' ? state.componentContext : ''),
         value: this.value + (this.property !== 'x' ? this.property : '')
       }
       saveFieldData(data)

@@ -5,22 +5,23 @@
 </template>
 
 <script>
-import { openComponentSettings } from '../../store'
+import { state, openComponentSettings } from '../../store'
 
 export default {
   data() {
-    return {}
+    return {
+      state
+    }
   },
   props: {
     componentConfig: Object,
-    componentIndex: Number,
-    themeInstance: Object
+    componentIndex: Number
   },
   methods: {
     componentSettings() {
       openComponentSettings(this.componentConfig.name, {
         component: this.componentConfig,
-        instance: this.themeInstance
+        instance: state.themeInstance
       })
     }
   }

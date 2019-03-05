@@ -33,12 +33,13 @@
 </template>
 
 <script>
-import { saveFieldData } from '../../store'
+import { state, saveFieldData } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
+      state,
       value: this.getFontValue(),
       customValue: this.getCustomValue(),
       showInputField: false
@@ -46,8 +47,7 @@ export default {
   },
   props: {
     data: Object,
-    savedValue: String,
-    componentContext: String
+    savedValue: String
   },
   watch: {
     value(newVal, oldVal) {
@@ -154,7 +154,7 @@ export default {
     },
     prepareToSave() {
       const data = {
-        name: this.data.fieldConfig.name + (this.componentContext !== 'Mobile' ? this.componentContext : ''),
+        name: this.data.fieldConfig.name + (state.componentContext !== 'Mobile' ? state.componentContext : ''),
         value: this.value === 'Custom' && this.showInputField ? this.customValue : this.value
       }
 

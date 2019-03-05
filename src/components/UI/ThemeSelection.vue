@@ -23,22 +23,22 @@
 
 <script>
 // @TODO: Handle errors
+import { state } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
-      selectedTheme: this.activeTheme ? this.activeTheme : { name: 'Select a theme' }
+      state,
+      selectedTheme: state.activeTheme ? state.activeTheme : { name: 'Select a theme' }
     }
   },
   props: {
-    themes: Array,
-    activeTheme: Object,
-    themeInstance: Object
+    themes: Array
   },
   methods: {
     onValueChange(id) {
-      if (id !== this.activeTheme.id) {
+      if (id !== state.activeTheme.id) {
         this.removeInstance()
           .then(() => {
             return this.createInstance(id)
@@ -55,7 +55,7 @@ export default {
     removeInstance() {
       return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
         method: 'DELETE',
-        url: 'v1/widget-instances/' + this.themeInstance.id
+        url: 'v1/widget-instances/' + state.themeInstance.id
       })
     },
     createInstance(themeId) {

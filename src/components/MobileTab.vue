@@ -1,36 +1,33 @@
 <template>
   <div class="mobile-tab-content">
-    <QuickSettings :component-config="getQuickSettings()" :component-context="'Mobile'" :theme-instance="themeInstance" :web-fonts="webFonts" :custom-fonts="customFonts"></QuickSettings>
+    <QuickSettings :component-config="getQuickSettings()"></QuickSettings>
     <div class="components-buttons-holder">
-      <SettingsButtons v-for="(configuration, index) in activeTheme.settings.configuration" :key="index" v-if="configuration.name !== 'Quick settings'" :component-config="configuration" :component-index="index" :theme-instance="themeInstance"></SettingsButtons>
+      <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="configuration.name !== 'Quick settings'" :component-config="configuration" :component-index="index"></SettingsButtons>
     </div>
-    <ComponentSettings :web-fonts="webFonts" :custom-fonts="customFonts" :component-context="'Mobile'"></ComponentSettings>
+    <ComponentSettings></ComponentSettings>
   </div>
 </template>
 
 <script>
+import { state } from '../store'
 import SettingsButtons from './UI/SettingsButtons'
-import ComponentSettings from './UI/ComponentSettings'
 import QuickSettings from './fields/QuickSettings'
+import ComponentSettings from './UI/ComponentSettings'
 
 export default {
   data() {
-    return {}
-  },
-  props: {
-    activeTheme: Object,
-    themeInstance: Object,
-    webFonts: Array,
-    customFonts: Array
+    return {
+      state
+    }
   },
   components: {
     SettingsButtons,
-    ComponentSettings,
-    QuickSettings
+    QuickSettings,
+    ComponentSettings
   },
   methods: {
     getQuickSettings() {
-      return _.find(this.activeTheme.settings.configuration, { quickSettings: true })
+      return _.find(state.activeTheme.settings.configuration, { quickSettings: true })
     }
   }
 }

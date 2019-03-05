@@ -3,24 +3,24 @@
 </template>
 
 <script>
-import { saveFieldData } from '../../store'
+import { state, saveFieldData } from '../../store'
 
 export default {
   data() {
     return {
+      state,
       value: this.savedValue || this.data.fieldConfig.default
     }
   },
   props: {
     data: Object,
-    savedValue: String,
-    componentContext: String
+    savedValue: String
   },
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
         const data = {
-          name: this.data.fieldConfig.name + (this.componentContext !== 'Mobile' ? this.componentContext : ''),
+          name: this.data.fieldConfig.name + (state.componentContext !== 'Mobile' ? state.componentContext : ''),
           value: newVal
         }
         saveFieldData(data)
