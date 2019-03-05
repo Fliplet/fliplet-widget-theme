@@ -14,7 +14,7 @@
             <template v-if="notMobile">
               <div class="inherit-settings-holder col-xs-12" :class="{ 'active': variable.inheritFromMobile }">
                 <label class="switch">
-                  <input type="checkbox" v-model="variable.inheritFromMobile" @click="checkSetting(variable)">
+                  <input type="checkbox" v-model="variable.inheritFromMobile" @click="checkSetting(index)">
                   <span class="slider round"></span>
                 </label>
                 <span class="label-holder">Inherit styles from mobile - <template v-if="variable.inheritFromMobile">On</template><template v-else>Off</template></span>
@@ -85,16 +85,53 @@ export default {
         variable.inheritFromMobile = typeof savedValue !== 'undefined' ? savedValue : variable.inheritFromMobile
       })
     },
-    checkSetting(variable) {
-      console.log(variable)
+    checkSetting(index) {
       const obj = {
-        name: variable.id + this.context,
-        value: !variable.inheritFromMobile
+        name: this.variables[index].id + this.context,
+        value: !this.variables[index].inheritFromMobile
       }
-      saveInheritanceData(obj)
 
-      // @TODO: If false save all field variables
-      // @TODO: If true delete all fields references from the saved data
+      if (obj.value) {
+        this.deleteAllVariables(index)
+      } else {
+        this.saveAllVariables(index)
+      }
+
+      saveInheritanceData(obj)
+    },
+    saveAllVariables(index) {
+      const listOfVariable = []
+      this.variables[index].fields.forEach((field, idx) => {
+        const name = state.componentContext === 'Mobile'
+          ? field.name
+          : field.breakpoints[state.componentContext.toLowerCase()].name
+        const obj = {
+          name: name,
+          value: field.value
+        }
+        listOfVariable.push(obj)
+      })
+      listOfVariable.forEach((variable) => {
+        state.themeInstance.settings.values[variable.name] = variable.value
+      })
+    },
+    deleteAllVariables(index) {
+      const listOfVariableNames = []
+      this.variables[index].fields.forEach((variable, idx) => {
+        const name = state.componentContext === 'Mobile'
+          ? field.name
+          : field.breakpoints[state.componentContext.toLowerCase()].name
+        const defaultValue = state.componentContext === 'Mobile'
+          ? field.default
+          : field.breakpoints[state.componentContext.toLowerCase()].default
+
+        // Reset the field value
+        field.value = defaultValue
+        listOfVariableNames.push(name)
+      })
+      listOfVariableNames.forEach((name) => {
+        delete state.themeInstance.settings.values[name]
+      })
     },
     componentType(fieldType) {
       return `${fieldType}-field`
