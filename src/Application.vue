@@ -25,7 +25,9 @@
 
 <script>
 // @TODO: Handle errors
-import { state, setComponentContext, setThemeInstance, setActiveTheme, setWebFonts, setCustomFonts } from './store'
+import { state, setComponentContext,
+  setThemeInstance, setActiveTheme,
+  setWebFonts, setCustomFonts } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
@@ -163,8 +165,7 @@ export default {
         this.savedFields.values.push(data)
       }
 
-      console.log(this.savedFields)
-      this.save()
+      this.prepareToSave()
     },
     onInheritanceSave(data) {
       const objIndex = _.findIndex(this.savedFields.inheritance, (obj) => {
@@ -177,8 +178,7 @@ export default {
         this.savedFields.inheritance.push(data)
       }
 
-      console.log(this.savedFields)
-      this.save()
+      this.prepareToSave()
     },
     updateInstance(dataObj) {
       return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
@@ -191,17 +191,22 @@ export default {
         }
       })
     },
-    save(forceRefresh) {
+    prepareToSave(forceRefresh) {
       // Map data
       const dataObj = {
         values: _.mapValues(_.keyBy(this.savedFields.values, 'name'), 'value'),
         inheritance: _.mapValues(_.keyBy(this.savedFields.inheritance, 'name'), 'value')
       }
 
-      dataObj.values = _.assignIn({}, this.themeInstance.settings.values, dataObj.values)
-      dataObj.inheritance = _.assignIn({}, this.themeInstance.settings.inheritance, dataObj.inheritance)
+      dataObj.values = _.assignIn({}, state.themeInstance.settings.values, dataObj.values)
+      dataObj.inheritance = _.assignIn({}, state.themeInstance.settings.inheritance, dataObj.inheritance)
 
-      this.updateInstance(dataObj)
+      this.save(forceRefresh, dataObj)
+    },
+    save(forceRefresh, data) {
+      console.log('Data to save', data)
+
+      this.updateInstance(data)
         .then((response) => {
           if (response && response.widgetInstance && !forceRefresh) {
             var settings = response.widgetInstance.settings.assets[0];
@@ -251,7 +256,7 @@ export default {
       }
 
       // @TODO: Decide if it should force refresh
-      this.save(true)
+      this.prepareToSave(true)
     })
   },
   destroyed() {
