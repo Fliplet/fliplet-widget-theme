@@ -28,9 +28,9 @@ export default {
   data() {
     return {
       state,
-      value: this.parseValue(this.savedValue || this.data.fieldConfig.default),
+      value: this.parseValue(this.savedValue || this.getDefaultValue()),
       label: this.data.fieldConfig.label,
-      property: this.data.fieldConfig.property,
+      property: this.getDefaultProperty(),
       properties: this.data.fieldConfig.properties,
       inputIsActive: false,
       hammerInstance: undefined,
@@ -50,6 +50,27 @@ export default {
     }
   },
   methods: {
+    getDefaultValue() {
+      const defaultValue = state.componentContext === 'Mobile'
+        ? this.data.fieldConfig.default
+        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].default
+
+      return defaultValue
+    },
+    getFieldName() {
+      const fieldName = state.componentContext === 'Mobile'
+        ? this.data.fieldConfig.name
+        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].name
+
+      return fieldName
+    },
+    getDefaultProperty() {
+      const fieldName = state.componentContext === 'Mobile'
+        ? this.data.fieldConfig.property
+        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].property
+
+      return fieldName
+    },
     parseValue(value) {
       return value.replace(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'), '')
     },
@@ -59,7 +80,7 @@ export default {
     },
     prepareToSave() {
       const data = {
-        name: this.data.fieldConfig.name + (state.componentContext !== 'Mobile' ? state.componentContext : ''),
+        name: this.getFieldName(),
         value: this.value + (this.property !== 'x' ? this.property : '')
       }
       saveFieldData(data)

@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       state,
-      value: this.savedValue || this.data.fieldConfig.default,
+      value: this.savedValue || this.getDefaultValue(),
       properties: this.data.fieldConfig.properties
     }
   },
@@ -45,12 +45,26 @@ export default {
     }
   },
   methods: {
+    getDefaultValue() {
+      const defaultValue = state.componentContext === 'Mobile'
+        ? this.data.fieldConfig.default
+        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].default
+
+      return defaultValue
+    },
+    getFieldName() {
+      const fieldName = state.componentContext === 'Mobile'
+        ? this.data.fieldConfig.name
+        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].name
+
+      return fieldName
+    },
     onValueChange(value) {
       this.value = value
     },
     prepareToSave() {
       const data = {
-        name: this.data.fieldConfig.name + (state.componentContext !== 'Mobile' ? state.componentContext : ''),
+        name: this.getFieldName(),
         value: this.value
       }
 

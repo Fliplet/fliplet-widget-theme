@@ -89,7 +89,7 @@ export default {
       console.log(variable)
       const obj = {
         name: variable.id + this.context,
-        value: variable.inheritFromMobile
+        value: !variable.inheritFromMobile
       }
       saveInheritanceData(obj)
 
@@ -115,7 +115,7 @@ export default {
       let value = undefined
       if (state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
         const savedValues = state.componentOverlay.data.instance.settings.values
-        value = state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] || savedValues[field.name] : savedValues[field.name]
+        value = state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
       }
       return value
     }

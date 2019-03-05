@@ -8,7 +8,7 @@
       <template v-if="notMobile">
         <div class="inherit-settings-holder" :class="{ 'active': inheritSettings }">
           <label class="switch">
-            <input type="checkbox" v-model="inheritSettings">
+            <input type="checkbox" v-model="inheritSettings" @click="checkSetting(componentConfig)">
             <span class="slider round"></span>
           </label>
           <span class="label-holder">Inherit styles from mobile - <template v-if="inheritSettings">On</template><template v-else>Off</template></span>
@@ -16,7 +16,7 @@
       </template>
       <template v-if="!inheritSettings || !notMobile" v-for="(variable, idx) in variables"> 
         <div class="settings-field-holder">
-          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(index)"></component>
+          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(idx, index)"></component>
           <div class="label-holder">{{ variable.description }}</div>
         </div>
       </template>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { state } from '../../store'
+import { state, saveInheritanceData } from '../../store'
 import ColorField from './ColorField'
 import FontField from './FontField'
 
@@ -46,9 +46,19 @@ export default {
     FontField
   },
   methods: {
+    checkSetting(config) {
+      console.log(config)
+      const obj = {
+        name: config.id + state.componentContext,
+        value: !this.inheritSettings
+      }
+      saveInheritanceData(obj)
+
+      // @TODO: If false save all field variables
+      // @TODO: If true delete all fields references from the saved data
+    },
     getInheritance() {
-      const context = state.componentContext == 'Mobile' ? '' : state.componentContext
-      const savedValue = state.themeInstance.settings.inheritance['sampleQuickSettings' + context]
+      const savedValue = state.themeInstance.settings.inheritance && state.themeInstance.settings.inheritance[this.componentConfig.id + state.componentContext]
       return typeof savedValue !== 'undefined' ? savedValue : this.componentConfig.inheritSettings
     },
     componentType(fieldType) {
@@ -66,19 +76,25 @@ export default {
 
       return data
     },
-    savedValue(index) {
-      return this.variables[index].value
+    savedValue(variableIndex, fieldIndex) {
+      return this.variables[variableIndex].fields[fieldIndex].value
     },
     computeVars() {
       const vars = []
       const newObj = {}
-
       this.componentConfig.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
+          const fieldName = state.componentContext === 'Mobile'
+            ? field.name
+            : field.breakpoints[state.componentContext.toLowerCase()].name
+          const defaultValue = state.componentContext === 'Mobile'
+            ? field.default
+            : field.breakpoints[state.componentContext.toLowerCase()].default
+
           newObj.value = state.themeInstance.settings
             && state.themeInstance.settings.values
-            && state.themeInstance.settings.values[field.name]
-            ? state.themeInstance.settings.values[field.name] : field.default
+            && state.themeInstance.settings.values[fieldName]
+            ? state.themeInstance.settings.values[fieldName] : defaultValue
 
           _.extend(this.componentConfig.variables[index].fields[idx], newObj)
         })

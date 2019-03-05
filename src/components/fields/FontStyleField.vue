@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       state,
-      value: this.parseValue(this.savedValue || this.data.fieldConfig.default),
+      value: this.parseValue(this.savedValue || this.getDefaultValue()),
       properties: this.data.fieldConfig.properties
     }
   },
@@ -36,8 +36,15 @@ export default {
       let index
       let difference = newVal.filter(x => !oldVal.includes(x))
 
-      // Remove "lighter" if "bold" is selected
+      if (newVal.indexOf('normal') > -1) {
+        // Remove "normal"
+        index = newVal.indexOf('normal')
+        if (index > -1) {
+          newVal.splice(index, 1)
+        }
+      }
       if (difference.indexOf('bold') > -1) {
+        // Remove "lighter" if "bold" is selected
         index = newVal.indexOf('lighter')
         if (index > -1) {
           newVal.splice(index, 1)
@@ -55,13 +62,27 @@ export default {
     }
   },
   methods: {
+    getDefaultValue() {
+      const defaultValue = state.componentContext === 'Mobile'
+        ? this.data.fieldConfig.default
+        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].default
+
+      return defaultValue
+    },
+    getFieldName() {
+      const fieldName = state.componentContext === 'Mobile'
+        ? this.data.fieldConfig.name
+        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].name
+
+      return fieldName
+    },
     parseValue(value) {
       return value.split(' ')
     },
     prepareToSave() {
       const data = {
-        name: this.data.fieldConfig.name + (state.componentContext !== 'Mobile' ? state.componentContext : ''),
-        value: this.value.length ? this.value.join(' ') : ''
+        name: this.getFieldName(),
+        value: this.value.length ? this.value.join(' ') : 'normal'
       }
 
       saveFieldData(data)

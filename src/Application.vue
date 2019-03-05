@@ -198,6 +198,9 @@ export default {
         inheritance: _.mapValues(_.keyBy(this.savedFields.inheritance, 'name'), 'value')
       }
 
+      dataObj.values = _.assignIn({}, this.themeInstance.settings.values, dataObj.values)
+      dataObj.inheritance = _.assignIn({}, this.themeInstance.settings.inheritance, dataObj.inheritance)
+
       this.updateInstance(dataObj)
         .then((response) => {
           if (response && response.widgetInstance && !forceRefresh) {
