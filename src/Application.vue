@@ -6,17 +6,17 @@
     </div>
     <template v-else>
       <WidgetHeader></WidgetHeader>
-      <ThemeSelection :themes="themes" :active-theme="activeTheme" :theme-instance="themeInstance"></ThemeSelection>
+      <ThemeSelection :themes="themes"></ThemeSelection>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
         <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
-          <a :href="'#tab-' + tab.type" data-toggle="tab"><i :class="tab.icon"></i></a>
+          <a :href="'#tab-' + tab.type" data-toggle="tab" @click="setActiveTab(tab)"><i :class="tab.icon"></i></a>
         </li>
       </ul>
       <!-- Tab panes -->
       <div class="tab-content">
-        <div v-for="(tab, index) in tabs" :class="{ active: activeTab === index }" :ref="index" class="tab-pane" :id="'tab-' + tab.type">
-          <component :is="componentType(tab.type)" :web-fonts="webFonts" :custom-fonts="customFonts" :active-theme="activeTheme" :theme-instance="themeInstance"></component>
+        <div v-for="(tab, index) in tabs" v-if="activeTab === index" :class="{ active: activeTab === index }" :ref="index" class="tab-pane" :id="'tab-' + tab.type">
+          <component :is="componentType(tab.type)"></component>
         </div>
       </div>
     </template>
@@ -25,16 +25,18 @@
 
 <script>
 // @TODO: Handle errors
+import { state, setComponentContext, setThemeInstance, setActiveTheme, setWebFonts, setCustomFonts } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
 import TabletTab from './components/TabletTab'
-import WebTab from './components/WebTab'
+import DesktopTab from './components/DesktopTab'
 import bus from './libs/bus'
 
 export default {
   data() {
     return {
+      state,
       isLoading: true,
       themes: undefined,
       fonts: undefined,
@@ -58,8 +60,8 @@ export default {
           icon: 'fa fa-tablet'
         },
         {
-          name: 'Web',
-          type: 'web',
+          name: 'Desktop',
+          type: 'desktop',
           icon: 'fa fa-desktop'
         }
       ],
@@ -71,9 +73,14 @@ export default {
     ThemeSelection,
     MobileTab,
     TabletTab,
-    WebTab
+    DesktopTab
   },
   methods: {
+    setActiveTab(tab) {
+      const tabIndex = _.findIndex(this.tabs, { type: tab.type })
+      this.activeTab = tabIndex
+      setComponentContext(tab.name)
+    },
     componentType(type) {
       return `${type}-tab`
     },
@@ -108,10 +115,14 @@ export default {
           return
         }
         
-        this.themeInstance = theme.instances[0] // Get the first instance
+        this.themeInstance = theme.instances[0]
+        setThemeInstance(this.themeInstance)
         this.activeTheme = theme
+        setActiveTheme(this.activeTheme)
         this.webFonts = _.reject(this.fonts, (font) => { return font.url })
+        setWebFonts(this.webFonts)
         this.customFonts = _.filter(this.fonts, (font) => { return font.url })
+        setCustomFonts(this.customFonts)
 
         this.isLoading = false
       })
@@ -213,7 +224,9 @@ export default {
         .then((response) => {
           this.fonts = response
           this.webFonts = _.reject(this.fonts, (font) => { return font.url })
+          setWebFonts(this.webFonts)
           this.customFonts = _.filter(this.fonts, (font) => { return font.url })
+          setCustomFonts(this.customFonts)
         })
     }
   },
