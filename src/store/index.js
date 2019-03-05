@@ -1,11 +1,39 @@
 import bus from '../libs/bus'
 
+const debouncedSave = _.debounce(emitSavedData, 500)
+const debouncedSaveInheritance = _.debounce(emitSavedInheritance, 500)
+
 export const state = {
-  componentOverlay: undefined,
+  themeInstance: undefined,
+  activeTheme: undefined,
+  fonts: {
+    web: [],
+    custom: []
+  },
+  componentOverlay: {},
   dataToSave: undefined,
   inheritanceToSave: undefined,
-  debouncedSave: _.debounce(emitSavedData, 500),
-  debouncedSaveInheritance: _.debounce(emitSavedInheritance, 500)
+  componentContext: 'Mobile'
+}
+
+export function setComponentContext(context) {
+  state.componentContext = context
+}
+
+export function setThemeInstance(instance) {
+  state.themeInstance = instance
+}
+
+export function setActiveTheme(theme) {
+  state.activeTheme = theme
+}
+
+export function setWebFonts(fonts) {
+  state.fonts.web = fonts
+}
+
+export function setCustomFonts(fonts) {
+  state.fonts.custom = fonts
 }
 
 export function openComponentSettings(overlayName = '', options) {
@@ -17,6 +45,7 @@ export function openComponentSettings(overlayName = '', options) {
 
   const overlay = {
     name: overlayName,
+    context: state.componentContext,
     isOpen: overlayName !== '',
     data: options
   }
@@ -26,7 +55,7 @@ export function openComponentSettings(overlayName = '', options) {
 }
 
 export function closeComponentSettings() {
-  state.componentOverlay = undefined
+  state.componentOverlay = {}
 }
 
 function emitSavedData() {
@@ -39,10 +68,10 @@ function emitSavedInheritance() {
 
 export function saveFieldData(data) {
   state.dataToSave = _.pick(data, ['name', 'value'])
-  state.debouncedSave()
+  debouncedSave()
 }
 
 export function saveInheritanceData(data) {
   state.inheritanceToSave = _.pick(data, ['name', 'value'])
-  state.debouncedSaveInheritance()
+  debouncedSaveInheritance()
 }
