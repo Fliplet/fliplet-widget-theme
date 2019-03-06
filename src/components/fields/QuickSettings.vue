@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import { state, saveInheritanceData } from '../../store'
+import { state, saveInheritanceData,
+  setNewSavedValues, removeSavedValues } from '../../store'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
 import FontField from './FontField'
@@ -62,7 +63,7 @@ export default {
       saveInheritanceData(obj)
     },
     saveAllVariables() {
-      const listOfVariable = []
+      const listOfVariables = []
       this.variables.forEach((variable, index) => {
         const fields = Array.isArray(variable.fields) ? variable.fields : [variable];
         fields.forEach((field, idx) => {
@@ -71,14 +72,13 @@ export default {
             : field.breakpoints[state.componentContext.toLowerCase()].name
           const obj = {
             name: name,
-            value: field.value
+            value: field.default
           }
-          listOfVariable.push(obj)
+
+          listOfVariables.push(obj)
         })
       })
-      listOfVariable.forEach((variable) => {
-        state.themeInstance.settings.values[variable.name] = variable.value
-      })
+      setNewSavedValues(listOfVariables)
     },
     deleteAllVariables() {
       const listOfVariableNames = []
@@ -97,13 +97,11 @@ export default {
           listOfVariableNames.push(name)
         })
       })
-      listOfVariableNames.forEach((name) => {
-        delete state.themeInstance.settings.values[name]
-      })
+      removeSavedValues(listOfVariableNames)
     },
     getInheritance() {
       const savedValue = state.themeInstance.settings.inheritance && state.themeInstance.settings.inheritance[this.componentConfig.id + state.componentContext]
-      return typeof savedValue !== 'undefined' ? savedValue : this.componentConfig.inheritSettings
+      return typeof savedValue !== 'undefined' ? savedValue : this.componentConfig.inheritFromMobile
     },
     componentType(fieldType) {
       return `${fieldType}-field`

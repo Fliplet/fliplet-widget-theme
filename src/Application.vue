@@ -27,7 +27,7 @@
 // @TODO: Handle errors
 import { state, setComponentContext,
   setThemeInstance, setActiveTheme,
-  setWebFonts, setCustomFonts } from './store'
+  setWebFonts, setCustomFonts, setSavedFields } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
@@ -165,6 +165,7 @@ export default {
         this.savedFields.values.push(data)
       }
 
+      setSavedFields(this.savedFields)
       this.prepareToSave()
     },
     onInheritanceSave(data) {
@@ -178,6 +179,7 @@ export default {
         this.savedFields.inheritance.push(data)
       }
 
+      setSavedFields(this.savedFields)
       this.prepareToSave()
     },
     updateInstance(dataObj) {
@@ -194,8 +196,8 @@ export default {
     prepareToSave(forceRefresh) {
       // Map data
       const dataObj = {
-        values: _.mapValues(_.keyBy(this.savedFields.values, 'name'), 'value'),
-        inheritance: _.mapValues(_.keyBy(this.savedFields.inheritance, 'name'), 'value')
+        values: _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value'),
+        inheritance: _.mapValues(_.keyBy(state.savedFields.inheritance, 'name'), 'value')
       }
 
       dataObj.values = _.assignIn({}, state.themeInstance.settings.values, dataObj.values)

@@ -13,7 +13,35 @@ export const state = {
   componentOverlay: {},
   dataToSave: undefined,
   inheritanceToSave: undefined,
-  componentContext: 'Mobile'
+  componentContext: 'Mobile',
+  savedFields: {
+    values: [],
+    inheritance: []
+  }
+}
+
+export function setSavedFields(data) {
+  state.savedFields = _.assignIn({}, state.savedFields, data)
+}
+
+export function setNewSavedValues(data) {
+  data = data || []
+  data.forEach(function (value) {
+    state.savedFields.values.push(value)
+  })
+}
+
+export function removeSavedValues(data) {
+  data = data || []
+  data.forEach(function (valueName) {
+    const valueIndex = _.findIndex(state.savedFields.values, { name: valueName })
+    if (typeof valueIndex !== 'undefined') {
+      // Removes from local saved values
+      state.savedFields.values.splice(valueIndex, 1)
+    }
+    // Removes from instance saved values
+    delete state.themeInstance.settings.values[valueName]
+  })
 }
 
 export function setComponentContext(context) {

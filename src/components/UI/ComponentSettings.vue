@@ -31,7 +31,8 @@
 </template>
 
 <script>
-import { state, closeComponentSettings, saveInheritanceData } from '../../store'
+import { state, closeComponentSettings, saveInheritanceData,
+  setNewSavedValues, removeSavedValues } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'
@@ -100,7 +101,7 @@ export default {
       saveInheritanceData(obj)
     },
     saveAllVariables(index) {
-      const listOfVariable = []
+      const listOfVariables = []
       this.variables[index].fields.forEach((field, idx) => {
         const name = state.componentContext === 'Mobile'
           ? field.name
@@ -109,15 +110,14 @@ export default {
           name: name,
           value: field.value
         }
-        listOfVariable.push(obj)
+
+        listOfVariables.push(obj)
       })
-      listOfVariable.forEach((variable) => {
-        state.themeInstance.settings.values[variable.name] = variable.value
-      })
+      setNewSavedValues(listOfVariables)
     },
     deleteAllVariables(index) {
       const listOfVariableNames = []
-      this.variables[index].fields.forEach((variable, idx) => {
+      this.variables[index].fields.forEach((field, idx) => {
         const name = state.componentContext === 'Mobile'
           ? field.name
           : field.breakpoints[state.componentContext.toLowerCase()].name
@@ -129,9 +129,7 @@ export default {
         field.value = defaultValue
         listOfVariableNames.push(name)
       })
-      listOfVariableNames.forEach((name) => {
-        delete state.themeInstance.settings.values[name]
-      })
+      removeSavedValues(listOfVariableNames)
     },
     componentType(fieldType) {
       return `${fieldType}-field`
