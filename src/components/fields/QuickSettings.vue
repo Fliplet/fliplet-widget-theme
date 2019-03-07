@@ -123,7 +123,6 @@ export default {
       return data
     },
     savedValue(variableIndex, fieldIndex) {
-      debugger
       const field = this.variables[variableIndex].fields[fieldIndex]
       const isMobile = state.componentContext === 'Mobile'
       const localSavedValue = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
