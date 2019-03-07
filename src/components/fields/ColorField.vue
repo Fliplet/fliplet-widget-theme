@@ -7,14 +7,14 @@
 </template>
 
 <script>
-import { state, saveFieldData } from '../../store'
+import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
 import { ColorPicker } from 'codemirror-colorpicker'
 
 export default {
   data() {
     return {
       state,
-      value: this.savedValue || this.getDefaultValue(),
+      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId()
     }
@@ -27,7 +27,7 @@ export default {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
         const data = {
-          name: this.getFieldName(),
+          name: getFieldName(this.data.fieldConfig),
           value: newVal
         }
         saveFieldData(data)
@@ -40,20 +40,6 @@ export default {
     }
   },
   methods: {
-    getDefaultValue() {
-      const defaultValue = state.componentContext === 'Mobile'
-        ? this.data.fieldConfig.default
-        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].default
-
-      return defaultValue
-    },
-    getFieldName() {
-      const fieldName = state.componentContext === 'Mobile'
-        ? this.data.fieldConfig.name
-        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].name
-
-      return fieldName
-    },
     toggleColorPicker(e) {
       const target = e.target.getBoundingClientRect()
 

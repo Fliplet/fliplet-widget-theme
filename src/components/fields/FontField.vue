@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { state, saveFieldData } from '../../store'
+import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
@@ -72,20 +72,6 @@ export default {
     }
   },
   methods: {
-    getDefaultValue() {
-      const defaultValue = state.componentContext === 'Mobile'
-        ? this.data.fieldConfig.default
-        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].default
-
-      return defaultValue
-    },
-    getFieldName() {
-      const fieldName = state.componentContext === 'Mobile'
-        ? this.data.fieldConfig.name
-        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].name
-
-      return fieldName
-    },
     getFontValue() {
       let value = ''
       let webFont = undefined
@@ -102,7 +88,7 @@ export default {
         value = 'Custom'
         this.showInputField = true
       } else if (!this.savedValue) {
-        value = this.getDefaultValue()
+        value = getDefaultFieldValue(this.data.fieldConfig)
       }
 
       return value
@@ -168,7 +154,7 @@ export default {
     },
     prepareToSave() {
       const data = {
-        name: this.getFieldName(),
+        name: getFieldName(this.data.fieldConfig),
         value: this.value === 'Custom' && this.showInputField ? this.customValue : this.value
       }
 
