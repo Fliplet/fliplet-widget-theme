@@ -103,3 +103,101 @@ export function saveInheritanceData(data) {
   state.inheritanceToSave = _.pick(data, ['name', 'value'])
   debouncedSaveInheritance()
 }
+
+export function getFieldName(field) {
+  const fieldName = state.componentContext === 'Mobile'
+    ? field.name
+    : field.breakpoints[state.componentContext.toLowerCase()].name
+
+  return fieldName
+}
+
+function checkFieldValue(value, field) {
+  let foundValue
+  let defaultValue
+  // Checks if the UI tab selected is Mobile or not
+  const isMobile = state.componentContext === 'Mobile'
+  // Checks if the value matches a variable name
+  const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
+  // If the value matches to a variable get the name of the variable
+  const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+  // Checks if the value matches the 'inherit-x' reserved key
+  const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
+  // If the value matches the 'inherit-x' reserved key get the inheritance key
+  const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined
+
+  if ((!variableName && !inherit) || (variableName === value || inherit === value)) {
+    // If the value is not a variable
+    return value
+  }
+  
+  // If value is a variable name
+  if (variableName) {
+    // Try to find the value in the local saved values
+    foundValue = _.find(state.savedFields.values, { name: variableName })
+    if (foundValue) {
+      return checkFieldValue(foundValue.value, field)
+    }
+
+    // Try to find the value in the theme instance saved values
+    const savedValues = state.themeInstance.settings.values
+    foundValue = savedValues[variableName]
+    if (foundValue) {
+      return checkFieldValue(foundValue.value, field)
+    }
+
+    // Try to find the value in the theme json configuration
+    state.activeTheme.settings.configuration.some((config) => {
+      return config.variables.some((variable) => {
+        return variable.fields.some((field) => {
+          if (isMobile) {
+            if (field.name === variableName) {
+              value = field.default
+              return true; // short circuit
+            }
+            return;
+          } else {
+            if (field.breakpoints[state.componentContext.toLowerCase()].name === variableName) {
+              value = field.breakpoints[state.componentContext.toLowerCase()].default
+              return true; // short circuit
+            }
+            return;
+          }
+        })
+      })
+    })
+
+    return checkFieldValue(value, field)
+  }
+
+  // If value is not an inheritance key return
+  if (!inherit) { return }
+
+  foundValue = _.find(state.savedFields.values, { name: (inherit === 'mobile' ? field.name : field.breakpoints[inherit].name) })
+  if (foundValue) {
+    return checkFieldValue(foundValue.value,  field)
+  }
+
+  // Try to find the value in the theme instance saved values
+  const savedValues = state.themeInstance.settings.values
+  foundValue = savedValues[(inherit === 'mobile' ? field.name : field.breakpoints[inherit].name)]
+  if (foundValue) {
+    return checkFieldValue(foundValue.value, field)
+  }
+
+  return checkFieldValue((inherit === 'mobile' ? field.default : field.breakpoints[inherit].default), field)
+}
+
+export function getDefaultFieldValue(field) {
+  // Variables to use later down
+  let defaultValue
+  // Checks if the UI tab selected is Mobile or not
+  const isMobile = state.componentContext === 'Mobile'
+
+  // Gets the value based on which tab the user is (Mobile, Tablet or Desktop)
+  defaultValue = isMobile
+    ? field.default
+    : field.breakpoints[state.componentContext.toLowerCase()].default
+
+  return checkFieldValue(defaultValue, field)
+}
