@@ -140,6 +140,8 @@ header {
     margin-bottom: 10px; }
     #theme-application .inherit-settings-holder.active {
       margin-bottom: 0; }
+    #theme-application .inherit-settings-holder .label-holder {
+      margin-left: 0; }
 
 .slide-in-enter-active {
   transition: all .25s ease-out; }
