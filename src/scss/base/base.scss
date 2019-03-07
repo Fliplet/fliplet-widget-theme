@@ -1,5 +1,7 @@
 body {
-  padding: 0 15px 54px;
+  height: calc(100% - 40px) !important; // Because of margin in #theme-application
+  min-height: initial !important;
+  overflow: hidden;
 }
 
 .spinner-holder {
@@ -56,6 +58,19 @@ header {
 
 #theme-application {
   font-size: 13px;
+  padding: 1rem 15px 54px;
+  height: 100%;
+  overflow: auto;
+  margin-top: 40px;
+
+  header {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+  }
 
   .form-control {
     height: 30px;

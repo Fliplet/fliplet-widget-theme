@@ -1,5 +1,7 @@
 body {
-  padding: 0 15px 54px; }
+  height: calc(100% - 40px) !important;
+  min-height: initial !important;
+  overflow: hidden; }
 
 .spinner-holder {
   position: fixed;
@@ -42,7 +44,18 @@ header {
     margin: 0; }
 
 #theme-application {
-  font-size: 13px; }
+  font-size: 13px;
+  padding: 1rem 15px 54px;
+  height: 100%;
+  overflow: auto;
+  margin-top: 40px; }
+  #theme-application header {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0; }
   #theme-application .form-control {
     height: 30px;
     padding: 0 6px;
@@ -155,7 +168,7 @@ header {
       font-weight: 600; }
 
 .components-buttons-holder {
-  margin: 30px -15px; }
+  margin: 30px -15px 0; }
   .components-buttons-holder .control-label {
     text-transform: uppercase; }
     .components-buttons-holder .control-label label {
@@ -181,13 +194,24 @@ header {
   right: 0;
   bottom: 0;
   background-color: #f8f6f7;
-  padding: 0 15px; }
+  padding: 0 15px;
+  z-index: 2; }
+  #component-settings-overlay header {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0; }
   #component-settings-overlay .close-component-settings {
     font-size: 0.8em;
     margin-top: -3px;
     cursor: pointer; }
   #component-settings-overlay .settings-fields-holder {
-    margin: 0 -15px; }
+    margin: 40px -15px 0;
+    height: calc(100% - 40px);
+    overflow: auto;
+    padding: 1rem 0 0; }
     #component-settings-overlay .settings-fields-holder .control-label {
       text-transform: uppercase;
       font-weight: 600; }

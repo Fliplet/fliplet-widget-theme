@@ -6,6 +6,16 @@
   bottom: 0;
   background-color: $widget-background-color;
   padding: 0 15px;
+  z-index: 2;
+
+  header {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+  }
 
   .close-component-settings {
     font-size: 0.8em;
@@ -14,7 +24,10 @@
   }
 
   .settings-fields-holder {
-    margin: 0 -15px;
+    margin: 40px -15px 0;
+    height: calc(100% - 40px);
+    overflow: auto;
+    padding: 1rem 0 0;
 
     .control-label {
       text-transform: uppercase;
