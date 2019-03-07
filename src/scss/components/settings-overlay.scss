@@ -35,16 +35,18 @@
 
     .multi-field {
       > * {
-        display: inline-block;
+        display: flex;
         width: auto;
+        min-height: 30px;
         margin: 0 15px 5px 15px;
       }
     }
 
     .two-rows {
       > * {
-        display: inline-block;
+        display: flex;
         width: calc(50% - 30px);
+        min-height: 30px;
         margin: 0 15px 5px 15px;
       }
     }
