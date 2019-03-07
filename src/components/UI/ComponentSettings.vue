@@ -1,6 +1,6 @@
 <template>
   <transition name="slide-in">
-    <div v-show="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
+    <div v-if="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
       <header>
         <p>{{ state.componentOverlay.name }}</p>
         <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
@@ -12,15 +12,11 @@
               <label>{{ variable.description }}</label>
             </div>
             <template v-if="notMobile">
-              <div class="inherit-settings-holder col-xs-12" :class="{ 'active': variable.inheritFromMobile }">
-                <label class="switch">
-                  <input type="checkbox" v-model="variable.inheritFromMobile" @click="checkSetting(index)">
-                  <span class="slider round"></span>
-                </label>
-                <span class="label-holder">Inherit styles from mobile - <template v-if="variable.inheritFromMobile">On</template><template v-else>Off</template></span>
+              <div class="inherit-settings-holder col-xs-12">
+                <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span>
               </div>
             </template>
-            <div v-if="!variable.inheritFromMobile || !notMobile" class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
+            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
               <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
             </div>
           </div>
@@ -48,7 +44,8 @@ export default {
       state,
       notMobile: undefined,
       variables: undefined,
-      context: undefined
+      context: undefined,
+      inheritFrom: this.getInheritance(),
     }
   },
   components: {
@@ -62,43 +59,22 @@ export default {
   },
   methods: {
     closeComponentSettings,
+    getInheritance() {
+      switch(state.componentContext) {
+        case 'Desktop':
+          return 'tablet'
+          break;
+        case 'Tablet':
+          return 'mobile'
+          break;
+        default:
+          ''
+      }
+    },
     setVariables() {
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
       this.variables = _.cloneDeep(state.componentOverlay.data.component.variables)
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
-
-      // then initialize
-      this.initializeOverlay()
-    },
-    initializeOverlay() {
-      if (!state.themeInstance || (!state.componentOverlay.data && !this.variables)) {
-        return
-      }
-
-      this.variables.forEach((variable, i) => {
-        let savedValue
-        for (var prop in state.themeInstance.settings.inheritance) {
-          if (prop === variable.id + this.context) {
-            savedValue = state.themeInstance.settings.inheritance[prop]
-          }
-        }
-
-        variable.inheritFromMobile = typeof savedValue !== 'undefined' ? savedValue : variable.inheritFromMobile
-      })
-    },
-    checkSetting(index) {
-      const obj = {
-        name: this.variables[index].id + this.context,
-        value: !this.variables[index].inheritFromMobile
-      }
-
-      if (obj.value) {
-        this.deleteAllVariables(index)
-      } else {
-        this.saveAllVariables(index)
-      }
-
-      saveInheritanceData(obj)
     },
     saveAllVariables(index) {
       const listOfVariables = []
@@ -147,16 +123,22 @@ export default {
       return data
     },
     savedValue(field) {
-      let value = undefined
-      if (state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
+      const isMobile = state.componentContext === 'Mobile'
+      let foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
+
+      if (!foundField && state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
         const savedValues = state.componentOverlay.data.instance.settings.values
-        value = state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
+        return state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
       }
-      return value
+
+      return foundField.value
     }
   },
   mounted() {
     bus.$on('component-overlay-opened', this.setVariables)
-  }
+  },
+  destroyed() {
+    bus.$off('component-overlay-opened', this.setVariables)
+  } 
 }
 </script>
