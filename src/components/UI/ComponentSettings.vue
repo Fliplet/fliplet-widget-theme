@@ -42,6 +42,7 @@ export default {
     return {
       state,
       notMobile: undefined,
+      variables: undefined,
       context: undefined,
       inheritFrom: this.getInheritance(),
     }
@@ -54,25 +55,6 @@ export default {
     TextField,
     ColorField,
     FontField
-  },
-  computed: {
-    variables() {
-      const variables = _.cloneDeep(state.componentOverlay.data.component.variables)
-      variables.forEach((variable, index) => {
-        variable.fields.forEach((field, idx) => {
-          const savedValue = this.savedValue(field)
-          // To check if the field is inheriting
-          const defaultValue = state.componentContext === 'Mobile'
-            ? field.default
-            : field.breakpoints[state.componentContext.toLowerCase()].default
-          const isInheriting = this.checkIfIsInheriting(defaultValue)
-
-          field.inheriting = !savedValue && isInheriting ? true : false
-        })
-      })
-
-      return variables
-    }
   },
   methods: {
     closeComponentSettings,
@@ -90,7 +72,37 @@ export default {
     },
     setVariables() {
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+      this.variables = this.computeVariables()
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
+    },
+    computeVariables() {
+      if (!state.componentOverlay.data) {
+        return []
+      }
+
+      const variables = _.cloneDeep(state.componentOverlay.data.component.variables)
+      variables.forEach((variable, index) => {
+        variable.fields.forEach((field, idx) => {
+          const savedValue = this.savedValue(field)
+          const savedLocalValue = _.find(state.savedFields.values, { name: field.name })
+
+          // To check if the field is inheriting
+          const defaultValue = state.componentContext === 'Mobile'
+            ? field.default
+            : field.breakpoints[state.componentContext.toLowerCase()].default
+          const isInheriting = this.checkIfIsInheriting(defaultValue)
+          debugger
+          field.inheriting = (!savedLocalValue && !savedValue && isInheriting)
+        })
+      })
+
+      return variables
+    },
+    reComputeVariables() {
+      this.variables = this.computeVariables()
+      this.$nextTick(() => {
+        bus.$emit('variables-computed')
+      })
     },
     checkIfIsInheriting(value) {
       // Checks if the value matches a variable name
@@ -133,9 +145,11 @@ export default {
   },
   mounted() {
     bus.$on('component-overlay-opened', this.setVariables)
+    bus.$on('saved-fields-set', this.reComputeVariables)
   },
   destroyed() {
     bus.$off('component-overlay-opened', this.setVariables)
+    bus.$off('saved-fields-set', this.reComputeVariables)
   } 
 }
 </script>

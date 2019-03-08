@@ -21,6 +21,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
+import bus from '../../libs/bus'
 
 export default {
   data() {
@@ -72,6 +73,9 @@ export default {
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
+    reCheckInheritance() {
+      this.isInheriting = this.checkInheritance()
+    },
     prepareToSave() {
       const data = {
         name: getFieldName(this.data.fieldConfig),
@@ -80,6 +84,12 @@ export default {
 
       saveFieldData(data)
     }
+  },
+  mounted() {
+    bus.$on('variables-computed', this.reCheckInheritance)
+  },
+  destroyed() {
+    bus.$off('variables-computed', this.reCheckInheritance)
   }
 }
 </script>

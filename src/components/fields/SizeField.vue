@@ -24,6 +24,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
+import bus from '../../libs/bus'
 
 export default {
   data() {
@@ -202,11 +203,18 @@ export default {
     },
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+    },
+    reCheckInheritance() {
+      this.isInheriting = this.checkInheritance()
     }
   },
   mounted() {
     this.hammerInstance = new Hammer.Manager(this.$refs.ondrag)
     this.hammerInstance.on('hammer.input', this.onHammerInput)
+    bus.$on('variables-computed', this.reCheckInheritance)
+  },
+  destroyed() {
+    bus.$off('variables-computed', this.reCheckInheritance)
   }
 }
 </script>

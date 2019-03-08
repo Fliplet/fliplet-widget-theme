@@ -33,7 +33,8 @@ export default {
     return {
       state,
       notMobile: state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false,
-      inheritFrom: this.getInheritance()
+      inheritFrom: this.getInheritance(),
+      variables: this.computeVariables()
     }
   },
   props: {
@@ -42,36 +43,6 @@ export default {
   components: {
     ColorField,
     FontField
-  },
-  computed: {
-    variables() {
-      this.componentConfig.variables.forEach((variable, index) => {
-        variable.fields.forEach((field, idx) => {
-          const fieldName = state.componentContext === 'Mobile'
-            ? field.name
-            : field.breakpoints[state.componentContext.toLowerCase()].name
-          const savedValue = state.themeInstance.settings
-            && state.themeInstance.settings.values
-            && state.themeInstance.settings.values[fieldName]
-          const savedLocalValue = _.find(state.savedFields.values, { name: fieldName })
-
-          // To check if the field is inheriting
-          const defaultValue = state.componentContext === 'Mobile'
-            ? field.default
-            : field.breakpoints[state.componentContext.toLowerCase()].default
-          const isInheriting = this.checkIfIsInheriting(defaultValue)
-
-          const newObj = {
-            value: savedValue ? savedValue : getDefaultFieldValue(field),
-            inheriting: !savedLocalValue && !savedValue && isInheriting ? true : false
-          }
-
-          _.extend(this.componentConfig.variables[index].fields[idx], newObj)
-        })
-      })
-
-      return this.componentConfig.variables
-    }
   },
   methods: {
     getInheritance() {
@@ -119,7 +90,47 @@ export default {
       const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined
 
       return inherit || variableName ? true : false
+    },
+    computeVariables() {      
+      this.componentConfig.variables.forEach((variable, index) => {
+        variable.fields.forEach((field, idx) => {
+          const fieldName = state.componentContext === 'Mobile'
+            ? field.name
+            : field.breakpoints[state.componentContext.toLowerCase()].name
+          const savedValue = state.themeInstance.settings
+            && state.themeInstance.settings.values
+            && state.themeInstance.settings.values[fieldName]
+          const savedLocalValue = _.find(state.savedFields.values, { name: fieldName })
+
+          // To check if the field is inheriting
+          const defaultValue = state.componentContext === 'Mobile'
+            ? field.default
+            : field.breakpoints[state.componentContext.toLowerCase()].default
+          const isInheriting = this.checkIfIsInheriting(defaultValue)
+
+          const newObj = {
+            value: savedValue ? savedValue : getDefaultFieldValue(field),
+            inheriting: (!savedLocalValue && !savedValue && isInheriting)
+          }
+
+          _.extend(this.componentConfig.variables[index].fields[idx], newObj)
+        })
+      })
+
+      return this.componentConfig.variables
+    },
+    reComputeVariables() {
+      this.variables = this.computeVariables()
+      this.$nextTick(() => {
+        bus.$emit('variables-computed')
+      })
     }
+  },
+  mounted() {
+    bus.$on('saved-fields-set', this.reComputeVariables)
+  },
+  destroyed() {
+    bus.$off('saved-fields-set', this.reComputeVariables)
   }
 }
 </script>

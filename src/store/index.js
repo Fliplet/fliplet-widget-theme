@@ -19,6 +19,7 @@ export const state = {
 
 export function setSavedFields(data) {
   state.savedFields = _.assignIn({}, state.savedFields, data)
+  bus.$emit('saved-fields-set')
 }
 
 export function setNewSavedValues(data) {

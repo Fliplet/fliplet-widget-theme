@@ -9,6 +9,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
+import bus from '../../libs/bus'
 import { ColorPicker } from 'codemirror-colorpicker'
 
 export default {
@@ -55,9 +56,13 @@ export default {
     },
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+    },
+    reCheckInheritance() {
+      this.isInheriting = this.checkInheritance()
     }
   },
   mounted() {
+    bus.$on('variables-computed', this.reCheckInheritance)
     this.colorpicker = new ColorPicker({
       colorSets: [
         {
@@ -75,6 +80,9 @@ export default {
         }
       ]
     })
+  },
+  destroyed() {
+    bus.$on('variables-computed', this.reCheckInheritance)
   }
 }
 </script>
