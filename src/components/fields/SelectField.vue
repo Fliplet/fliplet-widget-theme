@@ -11,6 +11,7 @@
         </li>
       </ul>
     </div>
+    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
@@ -22,7 +23,8 @@ export default {
     return {
       state,
       value: this.parseValue(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
-      properties: this.parseProperties(this.data.fieldConfig.properties)
+      properties: this.parseProperties(this.data.fieldConfig.properties),
+      isInheriting: this.checkInheritance()
     }
   },
   props: {
@@ -76,6 +78,9 @@ export default {
     },
     onValueChange(value) {
       this.value = this.parseValue(value)
+    },
+    checkInheritance() {
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
     prepareToSave() {
       const data = {

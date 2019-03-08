@@ -29,6 +29,7 @@
       <input class="form-control custom-font" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
       <small><a href="#" @click.prevent="showListOfFonts">See full list of fonts</a></small>
     </div>
+    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
@@ -42,7 +43,8 @@ export default {
       state,
       value: this.getFontValue(),
       customValue: this.getCustomValue(),
-      showInputField: false
+      showInputField: false,
+      isInheriting: this.checkInheritance()
     }
   },
   props: {
@@ -151,6 +153,9 @@ export default {
         window.filePickerProvider = null
         return Promise.resolve()
       })
+    },
+    checkInheritance() {
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
     prepareToSave() {
       const data = {

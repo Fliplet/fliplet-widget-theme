@@ -73,8 +73,37 @@ export default {
     },
     setVariables() {
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
-      this.variables = _.cloneDeep(state.componentOverlay.data.component.variables)
+      this.variables = this.computeVariables()
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
+    },
+    computeVariables() {
+      const variables = _.cloneDeep(state.componentOverlay.data.component.variables)
+      variables.forEach((variable, index) => {
+        variable.fields.forEach((field, idx) => {
+          const savedValue = this.savedValue(field)
+          // To check if the field is inheriting
+          const defaultValue = state.componentContext === 'Mobile'
+            ? field.default
+            : field.breakpoints[state.componentContext.toLowerCase()].default
+          const isInheriting = this.checkIfIsInheriting(defaultValue)
+
+          field.inheriting = !savedValue && isInheriting ? true : false
+        })
+      })
+
+      return variables
+    },
+    checkIfIsInheriting(value) {
+      // Checks if the value matches a variable name
+      const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
+      // If the value matches to a variable get the name of the variable
+      const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+      // Checks if the value matches the 'inherit-x' reserved key
+      const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
+      // If the value matches the 'inherit-x' reserved key get the inheritance key
+      const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined
+
+      return inherit || variableName ? true : false
     },
     saveAllVariables(index) {
       const listOfVariables = []

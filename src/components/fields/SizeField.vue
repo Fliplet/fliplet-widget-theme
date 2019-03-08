@@ -14,6 +14,7 @@
         </ul>
       </div>
       <div v-if="label" class="field-label">{{ label }}</div>
+      <span v-if="!isInheriting" class="inheritance-warn"></span>
     </div>
     <div class="input-holder" v-show="inputIsActive">
       <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
@@ -35,7 +36,8 @@ export default {
       inputIsActive: false,
       hammerInstance: undefined,
       keyMap: {},
-      enterPressedToClose: false
+      enterPressedToClose: false,
+      isInheriting: this.checkInheritance()
     }
   },
   props: {
@@ -197,6 +199,9 @@ export default {
           this.value = parseInt(this.value) - 1
         }
       }
+    },
+    checkInheritance() {
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     }
   },
   mounted() {

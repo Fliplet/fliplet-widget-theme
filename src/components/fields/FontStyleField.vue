@@ -1,18 +1,21 @@
 <template>
   <div class="style-field-holder">
-    <div class="checkbox-holder" v-for="(prop, idx) in properties" :key="idx">
-      <input type="checkbox" :id="'checkbox-' + prop" :value="prop" v-model="value">
-      <label :for="'checkbox-' + prop">
-        <span class="check-icon">
-          <template v-if="prop !== 'lighter'">
-            <i :class="'fa fa-' + prop"></i>
-          </template>
-          <template v-else>
-            <span>L</span>
-          </template>
-        </span>
-      </label>
+    <div class="style-field-container">
+      <div class="checkbox-holder" v-for="(prop, idx) in properties" :key="idx">
+        <input type="checkbox" :id="'checkbox-' + prop" :value="prop" v-model="value">
+        <label :for="'checkbox-' + prop">
+          <span class="check-icon">
+            <template v-if="prop !== 'lighter'">
+              <i :class="'fa fa-' + prop"></i>
+            </template>
+            <template v-else>
+              <span>L</span>
+            </template>
+          </span>
+        </label>
+      </div>
     </div>
+    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
@@ -24,7 +27,8 @@ export default {
     return {
       state,
       value: this.parseValue(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
-      properties: this.data.fieldConfig.properties
+      properties: this.data.fieldConfig.properties,
+      isInheriting: this.checkInheritance()
     }
   },
   props: {
@@ -64,6 +68,9 @@ export default {
   methods: {
     parseValue(value) {
       return value.split(' ')
+    },
+    checkInheritance() {
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
     prepareToSave() {
       const data = {

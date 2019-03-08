@@ -143,24 +143,26 @@ function checkFieldValue(value, field) {
     const savedValues = state.themeInstance.settings.values
     foundValue = savedValues[variableName]
     if (foundValue) {
-      return checkFieldValue(foundValue.value, field)
+      return checkFieldValue(foundValue, field)
     }
 
     // Try to find the value in the theme json configuration
     state.activeTheme.settings.configuration.some((config) => {
       return config.variables.some((variable) => {
         return variable.fields.some((field) => {
-          if (isMobile) {
-            if (field.name === variableName) {
-              value = field.default
-              return true; // short circuit
-            }
-            return;
+          if (field.name === variableName) {
+            value = field.default
+            return true; // short circuit
           } else {
-            if (field.breakpoints[state.componentContext.toLowerCase()].name === variableName) {
-              value = field.breakpoints[state.componentContext.toLowerCase()].default
+            if (field.breakpoints.tablet.name === variableName) {
+              value = field.breakpoints.tablet.default
               return true; // short circuit
             }
+            if (field.breakpoints.desktop.name === variableName) {
+              value = field.breakpoints.desktop.default
+              return true; // short circuit
+            }
+
             return;
           }
         })
@@ -182,7 +184,7 @@ function checkFieldValue(value, field) {
   const savedValues = state.themeInstance.settings.values
   foundValue = savedValues[(inherit === 'mobile' ? field.name : field.breakpoints[inherit].name)]
   if (foundValue) {
-    return checkFieldValue(foundValue.value, field)
+    return checkFieldValue(foundValue, field)
   }
 
   return checkFieldValue((inherit === 'mobile' ? field.default : field.breakpoints[inherit].default), field)

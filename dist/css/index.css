@@ -132,8 +132,17 @@ header {
         #theme-application .switch .slider.round:before {
           border-radius: 50%; }
   #theme-application .label-holder {
+    position: relative;
     margin-left: 15px;
     color: rgba(51, 51, 51, 0.5); }
+    #theme-application .label-holder span {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      background-color: blue;
+      border-radius: 50%; }
   #theme-application .inherit-settings-holder {
     display: flex;
     align-items: center;
@@ -142,6 +151,16 @@ header {
       margin-bottom: 0; }
     #theme-application .inherit-settings-holder .label-holder {
       margin-left: 0; }
+
+.inheritance-warn {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  background-color: #00abd1;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%; }
 
 .slide-in-enter-active {
   transition: all .25s ease-out; }
@@ -316,23 +335,26 @@ header {
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px; }
 
-.color-picker-background {
-  width: 30px !important;
-  height: 30px;
-  background-position: center center;
-  background-repeat: no-repeat;
-  border: 1px solid #eeeeee;
-  border-radius: 6px;
-  overflow: hidden; }
-  .color-picker-background .color-holder {
-    width: 100%;
-    height: 100%;
-    cursor: pointer; }
+.color-field-holder {
+  position: relative; }
+  .color-field-holder .color-picker-background {
+    width: 30px !important;
+    height: 30px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: 1px solid #eeeeee;
+    border-radius: 6px;
+    overflow: hidden; }
+    .color-field-holder .color-picker-background .color-holder {
+      width: 100%;
+      height: 100%;
+      cursor: pointer; }
 
 .font-field-holder {
+  position: relative;
   display: flex !important;
   align-items: center;
-  height: 30px; }
+  min-height: 30px; }
   .font-field-holder .form-control.custom-font {
     padding: 0 8px;
     line-height: 1;
@@ -342,6 +364,7 @@ header {
   position: relative;
   overflow: visible; }
   .size-field-holder .interactive-holder {
+    position: relative;
     display: flex;
     align-items: center;
     min-width: 50px; }
@@ -373,15 +396,19 @@ header {
       background-color: transparent; }
 
 .style-field-holder {
-  display: flex !important;
-  align-items: center; }
+  position: relative; }
+  .style-field-holder .style-field-container {
+    display: flex !important;
+    align-items: center; }
 
 .select-field-holder {
+  position: relative;
   display: flex !important;
   align-items: center;
   height: 30px; }
 
 .border-style-field-holder {
+  position: relative;
   display: flex !important;
   align-items: center;
   height: 30px; }

@@ -3,6 +3,7 @@
     <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
       <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
     </div>
+    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
@@ -16,7 +17,8 @@ export default {
       state,
       value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
       colorpicker: undefined,
-      widgetId: Fliplet.Widget.getDefaultId()
+      widgetId: Fliplet.Widget.getDefaultId(),
+      isInheriting: this.checkInheritance()
     }
   },
   props: {
@@ -50,6 +52,9 @@ export default {
     },
     onColorChange(color) {
       this.value = color
+    },
+    checkInheritance() {
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     }
   },
   mounted() {

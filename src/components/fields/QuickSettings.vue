@@ -12,8 +12,10 @@
       </template>
       <template v-for="(variable, idx) in variables"> 
         <div class="settings-field-holder">
-          <component v-for="(field, index) in variable.fields" :key="index" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(idx, index)"></component>
-          <div class="label-holder">{{ variable.description }}</div>
+          <template v-for="(field, index) in variable.fields">
+            <component :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(idx, index)"></component>
+            <div class="label-holder">{{ variable.description }}</div>
+          </template>
         </div>
       </template>
     </div>
@@ -33,7 +35,7 @@ export default {
       state,
       notMobile: state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false,
       inheritFrom: this.getInheritance(),
-      variables: this.componentConfig.variables
+      variables: this.computeVars()
     }
   },
   props: {
@@ -129,19 +131,40 @@ export default {
 
       return localSavedValue ? localSavedValue.value : field.value
     },
+    checkIfIsInheriting(value) {
+      // Checks if the value matches a variable name
+      const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
+      // If the value matches to a variable get the name of the variable
+      const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+      // Checks if the value matches the 'inherit-x' reserved key
+      const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
+      // If the value matches the 'inherit-x' reserved key get the inheritance key
+      const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined
+
+      return inherit || variableName ? true : false
+    },
     computeVars() {
       const vars = []
-      const newObj = {}
+      
       this.componentConfig.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const fieldName = state.componentContext === 'Mobile'
             ? field.name
             : field.breakpoints[state.componentContext.toLowerCase()].name
-
-          newObj.value = state.themeInstance.settings
+          const savedValue = state.themeInstance.settings
             && state.themeInstance.settings.values
             && state.themeInstance.settings.values[fieldName]
-            ? state.themeInstance.settings.values[fieldName] : getDefaultFieldValue(field)
+
+          // To check if the field is inheriting
+          const defaultValue = state.componentContext === 'Mobile'
+            ? field.default
+            : field.breakpoints[state.componentContext.toLowerCase()].default
+          const isInheriting = this.checkIfIsInheriting(defaultValue)
+
+          const newObj = {
+            value: savedValue ? savedValue : getDefaultFieldValue(field),
+            inheriting: !savedValue && isInheriting ? true : false
+          }
 
           _.extend(this.componentConfig.variables[index].fields[idx], newObj)
         })

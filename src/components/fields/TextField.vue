@@ -1,5 +1,8 @@
 <template>
-  <input type="text" class="form-control" v-model="value">
+  <div class="text-field-holder">
+    <input type="text" class="form-control" v-model="value">
+    <span v-if="!isInheriting" class="inheritance-warn"></span>
+  </div>
 </template>
 
 <script>
@@ -9,7 +12,8 @@ export default {
   data() {
     return {
       state,
-      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig)
+      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
+      isInheriting: this.checkInheritance()
     }
   },
   props: {
@@ -25,6 +29,11 @@ export default {
         }
         saveFieldData(data)
       }
+    }
+  },
+  methods: {
+    checkInheritance() {
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     }
   }
 }
