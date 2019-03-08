@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       state,
+      widgetData: undefined,
       isLoading: true,
       themes: undefined,
       fonts: undefined,
@@ -86,6 +87,16 @@ export default {
       return `${type}-tab`
     },
     initialize() {
+      // Get widget provider data
+      const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10);
+      this.widgetData = Fliplet.Widget.getData(widgetId) || {};
+
+      // Check if there's a value to set as the active tab
+      if (this.widgetData && this.widgetData.activeTab) {
+        this.setActiveTab(this.tabs[this.widgetData.activeTab])
+      }
+      
+      console.log('data', this.widgetData)
       // Get themes and fonts simultaneously
       return Promise.all([this.getThemes(), this.getFonts()])
         .then((response) => {
