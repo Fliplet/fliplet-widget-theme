@@ -47,8 +47,7 @@ export default {
       webFonts: undefined,
       customFonts: undefined,
       savedFields: {
-        values: [],
-        inheritance: []
+        values: []
       },
       tabs: [
         {
@@ -168,40 +167,23 @@ export default {
       setSavedFields(this.savedFields)
       this.prepareToSave()
     },
-    onInheritanceSave(data) {
-      const objIndex = _.findIndex(this.savedFields.inheritance, (obj) => {
-        return obj && obj.name === data.name
-      })
-      
-      if (objIndex >= 0) {
-        this.savedFields.inheritance[objIndex].value = data.value
-      } else {
-        this.savedFields.inheritance.push(data)
-      }
-
-      setSavedFields(this.savedFields)
-      this.prepareToSave()
-    },
     updateInstance(dataObj) {
       return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
         url: 'v1/widget-instances/' + this.themeInstance.id,
         method: 'PUT',
         data: {
           package: this.activeTheme.package,
-          values: dataObj.values || {},
-          inheritance: dataObj.inheritance || {}
+          values: dataObj.values || {}
         }
       })
     },
     prepareToSave(forceRefresh) {
       // Map data
       const dataObj = {
-        values: _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value'),
-        inheritance: _.mapValues(_.keyBy(state.savedFields.inheritance, 'name'), 'value')
+        values: _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
       }
 
       dataObj.values = _.assignIn({}, state.themeInstance.settings.values, dataObj.values)
-      dataObj.inheritance = _.assignIn({}, state.themeInstance.settings.inheritance, dataObj.inheritance)
 
       this.save(forceRefresh, dataObj)
     },
@@ -243,7 +225,6 @@ export default {
   created() {
     // Listeners
     bus.$on('field-saved', this.onFieldSave)
-    bus.$on('inheritance-saved', this.onInheritanceSave)
     bus.$on('initialize-widget', this.initialize)
     bus.$on('reload-custom-fonts', this.reloadCustomFonts)
 
@@ -263,7 +244,6 @@ export default {
   },
   destroyed() {
     bus.$off('field-saved', this.onFieldSave)
-    bus.$off('inheritance-saved', this.onInheritanceSave)
     bus.$off('initialize-widget', this.initialize)
     bus.$off('reload-custom-fonts', this.reloadCustomFonts)
   }

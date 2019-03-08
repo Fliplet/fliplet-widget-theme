@@ -1,7 +1,6 @@
 import bus from '../libs/bus'
 
 const debouncedSave = _.debounce(emitSavedData, 500)
-const debouncedSaveInheritance = _.debounce(emitSavedInheritance, 500)
 
 export const state = {
   themeInstance: undefined,
@@ -12,11 +11,9 @@ export const state = {
   },
   componentOverlay: {},
   dataToSave: undefined,
-  inheritanceToSave: undefined,
   componentContext: 'Mobile',
   savedFields: {
-    values: [],
-    inheritance: []
+    values: []
   }
 }
 
@@ -90,18 +87,9 @@ function emitSavedData() {
   bus.$emit('field-saved', state.dataToSave)
 }
 
-function emitSavedInheritance() {
-  bus.$emit('inheritance-saved', state.inheritanceToSave)
-}
-
 export function saveFieldData(data) {
   state.dataToSave = _.pick(data, ['name', 'value'])
   debouncedSave()
-}
-
-export function saveInheritanceData(data) {
-  state.inheritanceToSave = _.pick(data, ['name', 'value'])
-  debouncedSaveInheritance()
 }
 
 export function getFieldName(field) {

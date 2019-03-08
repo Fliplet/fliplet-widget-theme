@@ -27,8 +27,7 @@
 </template>
 
 <script>
-import { state, closeComponentSettings, saveInheritanceData,
-  setNewSavedValues, removeSavedValues } from '../../store'
+import { state, closeComponentSettings, saveInheritanceData } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'

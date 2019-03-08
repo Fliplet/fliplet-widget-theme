@@ -23,8 +23,7 @@
 </template>
 
 <script>
-import { state, saveInheritanceData,
-  setNewSavedValues, removeSavedValues, getDefaultFieldValue } from '../../store'
+import { state, getDefaultFieldValue } from '../../store'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
 import FontField from './FontField'
@@ -46,57 +45,6 @@ export default {
     FontField
   },
   methods: {
-    checkSetting(config) {
-      const obj = {
-        name: config.id + state.componentContext,
-        value: !this.inheritSettings
-      }
-
-      if (obj.value) {
-        this.deleteAllVariables()
-      } else {
-        this.saveAllVariables()
-      }
-
-      saveInheritanceData(obj)
-    },
-    saveAllVariables() {
-      const listOfVariables = []
-      this.variables.forEach((variable, index) => {
-        const fields = Array.isArray(variable.fields) ? variable.fields : [variable];
-        fields.forEach((field, idx) => {
-          const name = state.componentContext === 'Mobile'
-            ? field.name
-            : field.breakpoints[state.componentContext.toLowerCase()].name
-          const obj = {
-            name: name,
-            value: field.default
-          }
-
-          listOfVariables.push(obj)
-        })
-      })
-      setNewSavedValues(listOfVariables)
-    },
-    deleteAllVariables() {
-      const listOfVariableNames = []
-      this.variables.forEach((variable, index) => {
-        const fields = Array.isArray(variable.fields) ? variable.fields : [variable];
-        fields.forEach((field, idx) => {
-          const name = state.componentContext === 'Mobile'
-            ? field.name
-            : field.breakpoints[state.componentContext.toLowerCase()].name
-          const defaultValue = state.componentContext === 'Mobile'
-            ? field.default
-            : field.breakpoints[state.componentContext.toLowerCase()].default
-
-          // Reset the field value
-          field.value = defaultValue
-          listOfVariableNames.push(name)
-        })
-      })
-      removeSavedValues(listOfVariableNames)
-    },
     getInheritance() {
       switch(state.componentContext) {
         case 'Desktop':
