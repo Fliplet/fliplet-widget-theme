@@ -8,6 +8,7 @@
       <template v-if="notMobile">
         <div class="inherit-settings-holder">
           <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span>
+          <span v-if="showNotInheritingInfo" class="label-holder inheritance"><span class="inheritance-warn"></span> Not inheriting styles</span>
         </div>
       </template>
       <template v-for="(variable, idx) in variables"> 
@@ -34,7 +35,8 @@ export default {
       state,
       notMobile: state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false,
       inheritFrom: this.getInheritance(),
-      variables: this.computeVariables()
+      variables: this.computeVariables(),
+      showNotInheritingInfo: this.existsFieldsNotInheriting()
     }
   },
   props: {
@@ -79,6 +81,16 @@ export default {
 
       return localSavedValue ? localSavedValue.value : field.value
     },
+    existsFieldsNotInheriting() {
+      return this.componentConfig.variables.some((variable) => {
+        const fields = _.filter(variable.fields, { inheriting: false })
+        if (fields.length) {
+          return true
+        }
+
+        return
+      })
+    },
     checkIfIsInheriting(value) {
       // Checks if the value matches a variable name
       const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
@@ -121,6 +133,7 @@ export default {
     },
     reComputeVariables() {
       this.variables = this.computeVariables()
+      this.showNotInheritingInfo = this.existsFieldsNotInheriting()
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })

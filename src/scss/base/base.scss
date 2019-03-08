@@ -175,20 +175,23 @@ header {
     margin-left: 15px;
     color: rgba($text-color, 0.5);
 
-    span {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 10px;
-      height: 10px;
-      background-color: blue;
-      border-radius: 50%;
+    &.inheritance {
+      color: $primary-color;
+      font-size: 12px;
+
+      .inheritance-warn {
+        position: relative;
+        top: auto;
+        right: auto;
+        display: inline-block;
+      }
     }
   }
 
   .inherit-settings-holder {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     margin-bottom: 10px;
 
     &.active {
@@ -207,7 +210,7 @@ header {
   right: -4px;
   width: 10px;
   height: 10px;
-  background-color: #00abd1;
+  background-color: $primary-color;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
 }

@@ -14,6 +14,7 @@
             <template v-if="notMobile">
               <div class="inherit-settings-holder col-xs-12">
                 <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span>
+                <span v-if="showNotInheritingInfo[index]" class="label-holder inheritance"><span class="inheritance-warn"></span> Not inheriting styles</span>
               </div>
             </template>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
@@ -44,7 +45,8 @@ export default {
       notMobile: undefined,
       variables: undefined,
       context: undefined,
-      inheritFrom: this.getInheritance(),
+      showNotInheritingInfo: [],
+      inheritFrom: this.getInheritance()
     }
   },
   components: {
@@ -74,6 +76,7 @@ export default {
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
       this.variables = this.computeVariables()
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
+      this.showNotInheritingInfo = this.existsFieldsNotInheriting()
     },
     computeVariables() {
       if (!state.componentOverlay.data) {
@@ -91,7 +94,7 @@ export default {
             ? field.default
             : field.breakpoints[state.componentContext.toLowerCase()].default
           const isInheriting = this.checkIfIsInheriting(defaultValue)
-          debugger
+
           field.inheriting = (!savedLocalValue && !savedValue && isInheriting)
         })
       })
@@ -100,9 +103,24 @@ export default {
     },
     reComputeVariables() {
       this.variables = this.computeVariables()
+      this.showNotInheritingInfo = this.existsFieldsNotInheriting()
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })
+    },
+    existsFieldsNotInheriting() {
+      const newArr = []
+      this.variables.forEach((variable) => {
+        const fields = _.filter(variable.fields, { inheriting: false })
+        if (fields.length) {
+          newArr.push(true)
+          return
+        }
+
+        newArr.push(false)
+      })
+
+      return newArr
     },
     checkIfIsInheriting(value) {
       // Checks if the value matches a variable name
