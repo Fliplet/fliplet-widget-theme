@@ -175,16 +175,11 @@ header {
     margin-left: 15px;
     color: rgba($text-color, 0.5);
 
-    &.inheritance {
-      color: $primary-color;
-      font-size: 12px;
-
-      .inheritance-warn {
-        position: relative;
-        top: auto;
-        right: auto;
-        display: inline-block;
-      }
+    .inheritance-warn {
+      position: relative;
+      top: auto;
+      right: auto;
+      display: inline-block;
     }
   }
 

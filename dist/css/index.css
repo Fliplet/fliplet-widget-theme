@@ -135,14 +135,11 @@ header {
     position: relative;
     margin-left: 15px;
     color: rgba(51, 51, 51, 0.5); }
-    #theme-application .label-holder.inheritance {
-      color: #00abd1;
-      font-size: 12px; }
-      #theme-application .label-holder.inheritance .inheritance-warn {
-        position: relative;
-        top: auto;
-        right: auto;
-        display: inline-block; }
+    #theme-application .label-holder .inheritance-warn {
+      position: relative;
+      top: auto;
+      right: auto;
+      display: inline-block; }
   #theme-application .inherit-settings-holder {
     display: flex;
     flex-direction: column;

@@ -7,8 +7,8 @@
     <div class="col-xs-12">
       <template v-if="notMobile">
         <div class="inherit-settings-holder">
-          <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span>
-          <span v-if="showNotInheritingInfo" class="label-holder inheritance"><span class="inheritance-warn"></span> Not inheriting styles</span>
+          <!-- <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span> -->
+          <span v-if="showNotInheritingInfo" class="label-holder"><span class="inheritance-warn"></span> Nullam id dolor id nibh ultricies vehicula ut id elit.</span>
         </div>
       </template>
       <template v-for="(variable, idx) in variables"> 

@@ -13,8 +13,8 @@
             </div>
             <template v-if="notMobile">
               <div class="inherit-settings-holder col-xs-12">
-                <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span>
-                <span v-if="showNotInheritingInfo[index]" class="label-holder inheritance"><span class="inheritance-warn"></span> Not inheriting styles</span>
+                <!-- <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span> -->
+                <span v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Nullam id dolor id nibh ultricies vehicula ut id elit.</span>
               </div>
             </template>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
