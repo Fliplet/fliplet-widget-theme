@@ -1,7 +1,7 @@
 <template>
   <div class="style-field-holder">
     <div class="style-field-container">
-      <div class="checkbox-holder" v-for="(prop, idx) in properties" :key="idx">
+      <div class="checkbox-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
         <input type="checkbox" :id="'checkbox-' + prop" :value="prop" v-model="value">
         <label :for="'checkbox-' + prop">
           <span class="check-icon">
