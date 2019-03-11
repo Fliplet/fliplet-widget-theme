@@ -2,7 +2,7 @@
   <div class="select-field-holder">
     <div class="btn-group select-box">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{ value }}
+        {{ valueToShow }}
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-left">
@@ -23,9 +23,11 @@ export default {
   data() {
     return {
       state,
-      value: this.parseValue(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
+      valueToShow: this.parseValueToShow(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
+      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
       properties: this.parseProperties(this.data.fieldConfig.properties),
-      isInheriting: this.checkInheritance()
+      isInheriting: this.checkInheritance(),
+      fieldsToHide: this.data.fieldConfig.hasOwnProperty('fieldsToHide') ? this.data.fieldConfig.fieldsToHide : []
     }
   },
   props: {
@@ -35,12 +37,18 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
+        if (newVal === 'static') {
+          this.triggerPositionValueChange(this.fieldsToHide)
+        } else {
+          this.triggerPositionValueChange([])
+        }
+
         this.prepareToSave()
       }
     }
   },
   methods: {
-    parseValue(value) {
+    parseValueToShow(value) {
       const properties = this.data.fieldConfig.properties
       // Checks if it is an object
       if (properties instanceof Object && properties.constructor === Object) {
@@ -78,7 +86,8 @@ export default {
       return propsArr
     },
     onValueChange(value) {
-      this.value = this.parseValue(value)
+      this.valueToShow = this.parseValueToShow(value)
+      this.value = value
     },
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
@@ -93,13 +102,26 @@ export default {
       }
 
       saveFieldData(data)
+    },
+    triggerPositionValueChange(fieldsToHide) {
+      fieldsToHide = fieldsToHide || this.fieldsToHide
+      bus.$emit('position-value-changed', fieldsToHide)
     }
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckInheritance)
+
+    // For position group of fields
+    bus.$on('check-visibility', this.triggerPositionValueChange)
+    this.$nextTick(() => {
+      if (this.value === 'static') {
+        this.triggerPositionValueChange(this.fieldsToHide)
+      }
+    })
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckInheritance)
+    bus.$off('check-visibility', this.triggerPositionValueChange)
   }
 }
 </script>
