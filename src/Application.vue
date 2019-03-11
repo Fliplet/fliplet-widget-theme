@@ -88,6 +88,7 @@ export default {
         this.setActiveTab(this.tabs[this.widgetData.activeTab])
       }
       
+      // @TODO: Remove console.log
       console.log('data', this.widgetData)
       // Get themes and fonts simultaneously
       return Promise.all([this.getThemes(), this.getFonts()])
@@ -191,6 +192,7 @@ export default {
       this.save(forceRefresh, dataObj)
     },
     save(forceRefresh, data) {
+      // @TODO: Remove console.log
       console.log('Data to save', data)
 
       this.updateInstance(data)
