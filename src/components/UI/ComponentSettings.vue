@@ -90,14 +90,15 @@ export default {
         return []
       }
 
+      const isMobile = state.componentContext === 'Mobile'
       const variables = _.cloneDeep(state.componentOverlay.data.component.variables)
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const savedValue = this.savedValue(field)
-          const savedLocalValue = _.find(state.savedFields.values, { name: field.name })
+          const savedLocalValue = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
 
           // To check if the field is inheriting
-          const defaultValue = state.componentContext === 'Mobile'
+          const defaultValue = isMobile
             ? field.default
             : field.breakpoints[state.componentContext.toLowerCase()].default
           const isInheriting = this.checkIfIsInheriting(defaultValue)

@@ -20,7 +20,6 @@ export default {
   },
   methods: {
     componentSettings(component) {
-      debugger
       component = component && component.hasOwnProperty('variables') ? component : this.componentConfig
       openComponentSettings(component.name, {
         component: component,
