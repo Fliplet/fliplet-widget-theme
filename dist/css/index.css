@@ -42,7 +42,7 @@ header {
   content: '\00d7'; }
 
 .control-label {
-  margin-bottom: 10px; }
+  margin-bottom: 8px; }
   .control-label label {
     margin: 0; }
 
@@ -141,14 +141,13 @@ header {
       right: auto;
       display: inline-block; }
   #theme-application .inherit-settings-holder {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     margin-bottom: 10px; }
     #theme-application .inherit-settings-holder.active {
       margin-bottom: 0; }
     #theme-application .inherit-settings-holder .label-holder {
       margin-left: 0; }
+    #theme-application .inherit-settings-holder a {
+      margin-left: 10px; }
 
 .inheritance-warn {
   position: absolute;
@@ -180,7 +179,7 @@ header {
     display: flex;
     align-items: center; }
     .quick-settings-holder .settings-field-holder + .settings-field-holder {
-      margin-top: 10px; }
+      margin-top: 5px; }
 
 .form-holder {
   margin: 0 -15px; }
@@ -248,13 +247,11 @@ header {
     #component-settings-overlay .settings-fields-holder .multi-field > * {
       display: flex;
       width: auto;
-      min-height: 30px;
-      margin: 0 15px 5px 15px; }
+      margin: 0 15px 8px 15px; }
     #component-settings-overlay .settings-fields-holder .two-rows > * {
       display: flex;
       width: calc(50% - 30px);
-      min-height: 30px;
-      margin: 0 15px 5px 15px; }
+      margin: 0 15px 8px 15px; }
 
 .btn-group.select-box .dropdown-toggle {
   background-color: transparent;
