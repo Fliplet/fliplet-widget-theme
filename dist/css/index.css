@@ -295,7 +295,7 @@ header {
 
 .checkbox-holder {
   position: relative; }
-  .checkbox-holder label {
+  .checkbox-holder.inline-boxed label {
     width: 30px;
     height: 30px;
     margin: 0;
@@ -306,12 +306,12 @@ header {
     background-color: transparent;
     border: 1px solid #e3e3e3;
     border-left: none; }
-    .checkbox-holder label:hover {
+    .checkbox-holder.inline-boxed label:hover {
       background-color: #efebed; }
-    .checkbox-holder label[for="checkbox-lighter"] {
+    .checkbox-holder.inline-boxed label[for="checkbox-lighter"] {
       font-weight: lighter;
       font-size: 16px; }
-  .checkbox-holder input[type="checkbox"] {
+  .checkbox-holder.inline-boxed input[type="checkbox"] {
     z-index: -1;
     position: absolute;
     margin: 0;
@@ -320,15 +320,46 @@ header {
     opacity: 0;
     background: none;
     display: block; }
-    .checkbox-holder input[type="checkbox"]:checked + label {
+    .checkbox-holder.inline-boxed input[type="checkbox"]:checked + label {
       background-color: #dcdae0; }
-  .checkbox-holder:first-child label {
+  .checkbox-holder.inline-boxed:first-child label {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     border-left: 1px solid #e3e3e3; }
-  .checkbox-holder:last-child label {
+  .checkbox-holder.inline-boxed:last-child label {
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px; }
+  .checkbox-holder.inline-circle {
+    display: inline-block; }
+    .checkbox-holder.inline-circle label {
+      cursor: pointer;
+      color: rgba(51, 51, 51, 0.5);
+      display: flex;
+      align-items: center;
+      font-weight: normal; }
+      .checkbox-holder.inline-circle label:hover {
+        color: #333333; }
+      .checkbox-holder.inline-circle label .check-icon {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        background-color: transparent;
+        border: 1px solid #e3e3e3;
+        border-radius: 50%; }
+    .checkbox-holder.inline-circle input[type="checkbox"] {
+      z-index: -1;
+      position: absolute;
+      margin: 0;
+      width: 30px;
+      height: 30px;
+      opacity: 0;
+      background: none;
+      display: block; }
+      .checkbox-holder.inline-circle input[type="checkbox"]:checked + label .check-icon {
+        background-color: #333333; }
+    .checkbox-holder.inline-circle + .inline-circle {
+      margin-left: 15px; }
 
 .color-field-holder {
   position: relative; }
