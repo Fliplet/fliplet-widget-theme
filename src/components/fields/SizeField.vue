@@ -1,5 +1,5 @@
 <template>
-  <div v-if="fieldToShow" class="size-field-holder">
+  <div v-if="showField" class="size-field-holder">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ value }}</span>
       <div v-if="property && properties" class="btn-group select-box">
@@ -40,7 +40,9 @@ export default {
       enterPressedToClose: false,
       isInheriting: this.checkInheritance(),
       allowNegative: !!this.data.fieldConfig.allowNegative,
-      fieldToShow: true
+      showField: typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   props: {
@@ -55,10 +57,6 @@ export default {
     }
   },
   methods: {
-    hideField(arrayOfFieldNames) {
-      arrayOfFieldNames = arrayOfFieldNames || []
-      this.fieldToShow = arrayOfFieldNames.indexOf(this.data.fieldConfig.name) < 0
-    },
     getDefaultProperty() {
       const fieldName = state.componentContext === 'Mobile'
         ? this.data.fieldConfig.property
@@ -215,25 +213,21 @@ export default {
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
-    reCheckInheritance() {
+    reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   mounted() {
     this.hammerInstance = new Hammer.Manager(this.$refs.ondrag)
     this.hammerInstance.on('hammer.input', this.onHammerInput)
 
-    bus.$on('variables-computed', this.reCheckInheritance)
-
-    // For position group of fields
-    bus.$on('position-value-changed', this.hideField)
-    this.$nextTick(() => {
-      bus.$emit('check-visibility')
-    })
+    bus.$on('variables-computed', this.reCheckProps)
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckInheritance)
-    bus.$off('position-value-changed', this.hideField)
+    bus.$off('variables-computed', this.reCheckProps)
   }
 }
 </script>

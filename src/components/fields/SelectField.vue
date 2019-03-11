@@ -37,12 +37,7 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        if (newVal === 'static') {
-          this.triggerPositionValueChange(this.fieldsToHide)
-        } else {
-          this.triggerPositionValueChange([])
-        }
-
+        this.checkLogic()
         this.prepareToSave()
       }
     }
@@ -57,7 +52,10 @@ export default {
 
       // Checks if it is an Array
       if (Array.isArray(properties)) {
-        return properties
+        const propIndex = _.findIndex(properties, (prop) => {
+          return prop == value
+        });
+        return properties[propIndex]
       }
     },
     parseProperties(properties) {
@@ -103,25 +101,25 @@ export default {
 
       saveFieldData(data)
     },
-    triggerPositionValueChange(fieldsToHide) {
-      fieldsToHide = fieldsToHide || this.fieldsToHide
-      bus.$emit('position-value-changed', fieldsToHide)
+    checkLogic() {
+      if (this.data.fieldConfig.hasOwnProperty('logic')) {
+        for (const prop in this.data.fieldConfig.logic) {
+          // skip loop if the property is from prototype
+          if (prop === this.value) {
+            bus.$emit('check-field-visibility', this.data.fieldConfig, this.data.fieldConfig.logic[prop])
+            continue
+          }
+        }
+      }
     }
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckInheritance)
 
-    // For position group of fields
-    bus.$on('check-visibility', this.triggerPositionValueChange)
-    this.$nextTick(() => {
-      if (this.value === 'static') {
-        this.triggerPositionValueChange(this.fieldsToHide)
-      }
-    })
+    this.checkLogic()
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckInheritance)
-    bus.$off('check-visibility', this.triggerPositionValueChange)
   }
 }
 </script>

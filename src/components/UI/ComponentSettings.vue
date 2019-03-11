@@ -36,6 +36,7 @@ import SelectField from '../fields/SelectField'
 import TextField from '../fields/TextField'
 import ColorField from '../fields/ColorField'
 import FontField from '../fields/FontField'
+import BackgroundField from '../fields/BackgroundField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -58,7 +59,8 @@ export default {
     SelectField,
     TextField,
     ColorField,
-    FontField
+    FontField,
+    BackgroundField
   },
   methods: {
     closeComponentSettings,
@@ -91,7 +93,7 @@ export default {
       }
 
       const isMobile = state.componentContext === 'Mobile'
-      const variables = _.cloneDeep(state.componentOverlay.data.component.variables)
+      const variables = _.cloneDeep(this.variables || state.componentOverlay.data.component.variables)
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const savedValue = this.savedValue(field)
@@ -167,15 +169,41 @@ export default {
       }
 
       return foundField.value
+    },
+    runFieldLogic(fieldConfig, logic) {
+      this.variables.forEach((variable, index) => {
+        const field = _.find(variable.fields, { name: fieldConfig.name })
+
+        if (field) {
+          variable.fields.forEach((field, index) => {
+            if (logic.hide) {
+              if (logic.hide.indexOf(field.name) >= 0){
+                field.showField = false
+              }
+            }
+            if (logic.show) {
+              if (logic.show.indexOf(field.name) >= 0){
+                field.showField = true
+              }
+            }
+          })
+        }
+      })
+      console.log('Variables', this.variables)
+      this.$nextTick(() => {
+        bus.$emit('variables-computed')
+      })
     }
   },
   mounted() {
     bus.$on('component-overlay-opened', this.setVariables)
     bus.$on('saved-fields-set', this.reComputeVariables)
+    bus.$on('check-field-visibility', this.runFieldLogic)
   },
   destroyed() {
     bus.$off('component-overlay-opened', this.setVariables)
     bus.$off('saved-fields-set', this.reComputeVariables)
+    bus.$off('check-field-visibility', this.runFieldLogic)
   } 
 }
 </script>
