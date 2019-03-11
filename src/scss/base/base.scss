@@ -53,7 +53,7 @@ header {
 }
 
 .control-label {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 
   label {
     margin: 0;
@@ -184,9 +184,6 @@ header {
   }
 
   .inherit-settings-holder {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     margin-bottom: 10px;
 
     &.active {
@@ -195,6 +192,10 @@ header {
 
     .label-holder {
       margin-left: 0;
+    }
+
+    a {
+      margin-left: 10px;
     }
   }
 }
