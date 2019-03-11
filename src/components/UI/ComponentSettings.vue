@@ -2,7 +2,7 @@
   <transition name="slide-in">
     <div v-if="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
       <header>
-        <p>{{ state.componentOverlay.name }}</p>
+        <p>{{ state.componentOverlay.name }} - ({{ state.componentContext }})</p>
         <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <div v-if="variables && variables.length" class="settings-fields-holder">
@@ -13,8 +13,8 @@
             </div>
             <template v-if="notMobile">
               <div class="inherit-settings-holder col-xs-12">
-                <!-- <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span> -->
-                <span v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Nullam id dolor id nibh ultricies vehicula ut id elit.</span>
+                <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
+          <div v-if="showNotInheritingInfo" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
               </div>
             </template>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
@@ -36,6 +36,7 @@ import SelectField from '../fields/SelectField'
 import TextField from '../fields/TextField'
 import ColorField from '../fields/ColorField'
 import FontField from '../fields/FontField'
+import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
 export default {
@@ -46,7 +47,8 @@ export default {
       variables: undefined,
       context: undefined,
       showNotInheritingInfo: [],
-      inheritFrom: this.getInheritance()
+      inheritingFrom: this.getInheritance(),
+      currentContext: state.componentContext.toLowerCase()
     }
   },
   components: {
@@ -71,6 +73,11 @@ export default {
         default:
           ''
       }
+    },
+    goToDeviceTab(inheritingFrom) {
+      const tab = _.find(deviceTypes, { type: inheritingFrom })
+      bus.$emit('set-active-tab', tab, state.componentOverlay.data.component)
+      closeComponentSettings()
     },
     setVariables() {
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false

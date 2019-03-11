@@ -6,6 +6,7 @@
 
 <script>
 import { state, openComponentSettings } from '../../store'
+import bus from '../../libs/bus'
 
 export default {
   data() {
@@ -18,12 +19,20 @@ export default {
     componentIndex: Number
   },
   methods: {
-    componentSettings() {
-      openComponentSettings(this.componentConfig.name, {
-        component: this.componentConfig,
+    componentSettings(component) {
+      debugger
+      component = component && component.hasOwnProperty('variables') ? component : this.componentConfig
+      openComponentSettings(component.name, {
+        component: component,
         instance: state.themeInstance
       })
     }
+  },
+  mounted() {
+    bus.$on('open-component-overlay', this.componentSettings)
+  },
+  destroyed() {
+    bus.$off('open-component-overlay', this.componentSettings)
   }
 }
 </script>

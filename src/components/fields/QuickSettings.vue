@@ -7,8 +7,8 @@
     <div class="col-xs-12">
       <template v-if="notMobile">
         <div class="inherit-settings-holder">
-          <!-- <span class="label-holder">Inheriting styles from {{ inheritFrom }}</span> -->
-          <span v-if="showNotInheritingInfo" class="label-holder"><span class="inheritance-warn"></span> Nullam id dolor id nibh ultricies vehicula ut id elit.</span>
+          <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
+          <div v-if="showNotInheritingInfo" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
         </div>
       </template>
       <template v-for="(variable, idx) in variables"> 
@@ -25,6 +25,7 @@
 
 <script>
 import { state, getDefaultFieldValue } from '../../store'
+import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
 import FontField from './FontField'
@@ -34,7 +35,8 @@ export default {
     return {
       state,
       notMobile: state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false,
-      inheritFrom: this.getInheritance(),
+      inheritingFrom: this.getInheritance(),
+      currentContext: state.componentContext.toLowerCase(),
       variables: this.computeVariables(),
       showNotInheritingInfo: this.existsFieldsNotInheriting()
     }
@@ -58,6 +60,10 @@ export default {
         default:
           ''
       }
+    },
+    goToDeviceTab(inheritingFrom) {
+      const tab = _.find(deviceTypes, { type: inheritingFrom })
+      bus.$emit('set-active-tab', tab)
     },
     componentType(fieldType) {
       return `${fieldType}-field`

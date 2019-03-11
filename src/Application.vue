@@ -33,6 +33,7 @@ import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
 import TabletTab from './components/TabletTab'
 import DesktopTab from './components/DesktopTab'
+import deviceTypes from './libs/device-types'
 import bus from './libs/bus'
 
 export default {
@@ -50,23 +51,7 @@ export default {
       savedFields: {
         values: []
       },
-      tabs: [
-        {
-          name: 'Mobile',
-          type: 'mobile',
-          icon: 'fa fa-mobile'
-        },
-        {
-          name: 'Tablet',
-          type: 'tablet',
-          icon: 'fa fa-tablet'
-        },
-        {
-          name: 'Desktop',
-          type: 'desktop',
-          icon: 'fa fa-desktop'
-        }
-      ],
+      tabs: deviceTypes,
       activeTab: 0
     }
   },
@@ -78,10 +63,17 @@ export default {
     DesktopTab
   },
   methods: {
-    setActiveTab(tab) {
+    setActiveTab(tab, component) {
+      tab = tab || this.tabs[0]
       const tabIndex = _.findIndex(this.tabs, { type: tab.type })
       this.activeTab = tabIndex
       setComponentContext(tab.name)
+
+      if (component) {
+        this.$nextTick(() => {
+          bus.$emit('open-component-overlay', component)
+        })
+      }
     },
     componentType(type) {
       return `${type}-tab`
@@ -238,6 +230,7 @@ export default {
     bus.$on('field-saved', this.onFieldSave)
     bus.$on('initialize-widget', this.initialize)
     bus.$on('reload-custom-fonts', this.reloadCustomFonts)
+    bus.$on('set-active-tab', this.setActiveTab)
 
     // Initialize
     this.initialize()
@@ -257,6 +250,7 @@ export default {
     bus.$off('field-saved', this.onFieldSave)
     bus.$off('initialize-widget', this.initialize)
     bus.$off('reload-custom-fonts', this.reloadCustomFonts)
+    bus.$off('set-active-tab', this.setActiveTab)
   }
 }
 </script>
