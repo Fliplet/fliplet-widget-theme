@@ -1,5 +1,5 @@
 <template>
-  <div class="color-field-holder">
+  <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
       <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
     </div>
@@ -19,7 +19,11 @@ export default {
       value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId(),
-      isInheriting: this.checkInheritance()
+      isFullRow: this.data.fieldConfig.isFullRow,
+      isInheriting: this.checkInheritance(),
+      showField: typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   props: {
@@ -57,12 +61,15 @@ export default {
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
-    reCheckInheritance() {
+    reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckInheritance)
+    bus.$on('variables-computed', this.reCheckProps)
     this.colorpicker = new ColorPicker({
       colorSets: [
         {
@@ -82,7 +89,7 @@ export default {
     })
   },
   destroyed() {
-    bus.$on('variables-computed', this.reCheckInheritance)
+    bus.$on('variables-computed', this.reCheckProps)
   }
 }
 </script>

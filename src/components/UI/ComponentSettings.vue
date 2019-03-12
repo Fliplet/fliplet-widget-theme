@@ -37,6 +37,7 @@ import TextField from '../fields/TextField'
 import ColorField from '../fields/ColorField'
 import FontField from '../fields/FontField'
 import BackgroundField from '../fields/BackgroundField'
+import ImageField from '../fields/ImageField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -60,7 +61,8 @@ export default {
     TextField,
     ColorField,
     FontField,
-    BackgroundField
+    BackgroundField,
+    ImageField
   },
   methods: {
     closeComponentSettings,
@@ -189,7 +191,7 @@ export default {
           })
         }
       })
-      console.log('Variables', this.variables)
+
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })

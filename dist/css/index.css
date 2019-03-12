@@ -252,6 +252,8 @@ header {
       display: flex;
       width: calc(50% - 30px);
       margin: 0 15px 8px 15px; }
+    #component-settings-overlay .settings-fields-holder .full-width {
+      min-width: calc(100% - 30px); }
 
 .btn-group.select-box .dropdown-toggle {
   background-color: transparent;
@@ -360,6 +362,65 @@ header {
         background-color: #333333; }
     .checkbox-holder.inline-circle + .inline-circle {
       margin-left: 15px; }
+
+.radio-holder {
+  position: relative; }
+  .radio-holder.inline-circle {
+    display: inline-block; }
+    .radio-holder.inline-circle label {
+      cursor: pointer;
+      color: rgba(51, 51, 51, 0.5);
+      display: flex;
+      align-items: center;
+      font-weight: normal; }
+      .radio-holder.inline-circle label:hover {
+        color: #333333; }
+      .radio-holder.inline-circle label .check-icon {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        background-color: transparent;
+        border: 1px solid #e3e3e3;
+        border-radius: 50%; }
+    .radio-holder.inline-circle input[type="radio"] {
+      z-index: -1;
+      position: absolute;
+      margin: 0;
+      width: 30px;
+      height: 30px;
+      opacity: 0;
+      background: none;
+      display: block; }
+      .radio-holder.inline-circle input[type="radio"]:checked + label .check-icon {
+        background-color: #333333; }
+    .radio-holder.inline-circle + .inline-circle {
+      margin-left: 15px; }
+
+.image-field-holder .btn {
+  width: 55px;
+  height: 55px;
+  border: 1px solid #e3e3e3;
+  color: rgba(51, 51, 51, 0.5);
+  font-size: 1.5em;
+  background-color: transparent;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: initial;
+  line-height: 1; }
+  .image-field-holder .btn:hover {
+    color: #333333;
+    border-color: #bfbfbf; }
+  .image-field-holder .btn:active:hover, .image-field-holder .btn:active:focus {
+    background-color: transparent;
+    border-color: #bfbfbf;
+    color: #333333; }
+  .image-field-holder .btn.has-image {
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat; }
 
 .color-field-holder {
   position: relative; }

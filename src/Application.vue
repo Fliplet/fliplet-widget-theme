@@ -52,7 +52,8 @@ export default {
         values: []
       },
       tabs: deviceTypes,
-      activeTab: 0
+      activeTab: 0,
+      isFromUpdate: false
     }
   },
   components: {
@@ -84,7 +85,7 @@ export default {
       this.widgetData = Fliplet.Widget.getData(widgetId) || {};
 
       // Check if there's a value to set as the active tab
-      if (this.widgetData && this.widgetData.activeTab) {
+      if (this.widgetData && this.widgetData.activeTab && !this.isFromUpdate) {
         this.setActiveTab(this.tabs[this.widgetData.activeTab])
       }
       
@@ -208,6 +209,7 @@ export default {
             this.reloadPage()
           }
 
+          this.isFromUpdate = true
           return 
         })
         .then(this.initialize)

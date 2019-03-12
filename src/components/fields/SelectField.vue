@@ -1,12 +1,12 @@
 <template>
-  <div class="select-field-holder">
+  <div v-if="showField" class="select-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="btn-group select-box">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{ valueToShow }}
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-left">
-        <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop.name == value }">
+        <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop.value == value }">
           <a href="#" @click.prevent="onValueChange(prop.value)">{{ prop.name }}</a>
         </li>
       </ul>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
+import { state, saveFieldData, getDefaultFieldValue, getFieldName, checkLogic } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
@@ -26,8 +26,11 @@ export default {
       valueToShow: this.parseValueToShow(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
       value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
       properties: this.parseProperties(this.data.fieldConfig.properties),
+      isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),
-      fieldsToHide: this.data.fieldConfig.hasOwnProperty('fieldsToHide') ? this.data.fieldConfig.fieldsToHide : []
+      showField: typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   props: {
@@ -37,7 +40,7 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.checkLogic()
+        checkLogic(this.data.fieldConfig, newVal)
         this.prepareToSave()
       }
     }
@@ -90,8 +93,11 @@ export default {
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
-    reCheckInheritance() {
+    reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     },
     prepareToSave() {
       const data = {
@@ -100,26 +106,15 @@ export default {
       }
 
       saveFieldData(data)
-    },
-    checkLogic() {
-      if (this.data.fieldConfig.hasOwnProperty('logic')) {
-        for (const prop in this.data.fieldConfig.logic) {
-          // skip loop if the property is from prototype
-          if (prop === this.value) {
-            bus.$emit('check-field-visibility', this.data.fieldConfig, this.data.fieldConfig.logic[prop])
-            continue
-          }
-        }
-      }
     }
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckInheritance)
+    bus.$on('variables-computed', this.reCheckProps)
 
-    this.checkLogic()
+    checkLogic(this.data.fieldConfig, this.value)
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckInheritance)
+    bus.$off('variables-computed', this.reCheckProps)
   }
 }
 </script>

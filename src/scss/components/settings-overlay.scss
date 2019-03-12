@@ -61,6 +61,10 @@
         margin: 0 15px 8px 15px;
       }
     }
+
+    .full-width {
+      min-width: calc(100% - 30px);
+    }
   }
 }
 

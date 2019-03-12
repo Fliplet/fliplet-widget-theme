@@ -192,3 +192,15 @@ export function getDefaultFieldValue(field) {
 
   return checkFieldValue(defaultValue, field)
 }
+
+export function checkLogic(fieldConfig, value) {
+  if (fieldConfig.hasOwnProperty('logic')) {
+    for (const prop in fieldConfig.logic) {
+      // skip loop if the property is from prototype
+      if (prop === value) {
+        bus.$emit('check-field-visibility', fieldConfig, fieldConfig.logic[prop])
+        continue
+      }
+    }
+  }
+}

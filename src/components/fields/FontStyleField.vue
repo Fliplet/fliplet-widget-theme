@@ -1,5 +1,5 @@
 <template>
-  <div class="style-field-holder">
+  <div v-if="showField" class="style-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="style-field-container">
       <div class="checkbox-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
         <input type="checkbox" :id="'checkbox-' + prop" :value="prop" v-model="value">
@@ -29,7 +29,11 @@ export default {
       state,
       value: this.parseValue(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
       properties: this.data.fieldConfig.properties,
-      isInheriting: this.checkInheritance()
+      isFullRow: this.data.fieldConfig.isFullRow,
+      isInheriting: this.checkInheritance(),
+      showField: typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   props: {
@@ -73,8 +77,11 @@ export default {
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
-    reCheckInheritance() {
+    reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     },
     prepareToSave() {
       const data = {
@@ -86,10 +93,10 @@ export default {
     }
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckInheritance)
+    bus.$on('variables-computed', this.reCheckProps)
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckInheritance)
+    bus.$off('variables-computed', this.reCheckProps)
   }
 }
 </script>

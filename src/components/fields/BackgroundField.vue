@@ -1,23 +1,30 @@
 <template>
-  <div class="background-field-holder">
-    <div class="checkbox-holder inline-circle" v-for="(option, idx) in options" :key="idx">
-      <input type="checkbox" :id="'checkbox-' + option" :value="option" v-model="value">
-      <label :for="'checkbox-' + option">
-        <span class="check-icon"></span> {{ option }}
+  <div v-if="showField" class="background-field-holder" :class="{ 'full-width': isFullRow }">
+    <div class="radio-holder inline-circle" v-for="(prop, idx) in properties" :key="idx">
+      <input type="radio" :id="'radio-background-' + prop.toLowerCase()" :name="'radio-background-' + data.fieldConfig.name" :value="prop" v-model="value">
+      <label :for="'radio-background-' + prop.toLowerCase()">
+        <span class="check-icon"></span> {{ prop }}
       </label>
     </div>
+    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
 <script>
-import { state, getDefaultFieldValue } from '../../store'
+import { state, getDefaultFieldValue, getFieldName, saveFieldData, checkLogic } from '../../store'
+import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
       state,
       value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
-      options: ['None', 'Image', 'Color']
+      properties: this.data.fieldConfig.properties,
+      isFullRow: this.data.fieldConfig.isFullRow,
+      isInheriting: this.checkInheritance(),
+      showField: typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   props: {
@@ -26,12 +33,37 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      console.log('New value', newVal)
-      console.log('Old value', oldVal)
+      if (newVal !== oldVal) {
+        checkLogic(this.data.fieldConfig, newVal)
+        this.prepareToSave()
+      }
+    }
+  },
+  methods: {
+    prepareToSave() {
+      const data = {
+        name: getFieldName(this.data.fieldConfig),
+        value: this.value
+      }
+
+      saveFieldData(data)
+    },
+    checkInheritance() {
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+    },
+    reCheckProps() {
+      this.isInheriting = this.checkInheritance()
+      this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   mounted() {
-    console.log('Default value', this.value)
+    bus.$on('variables-computed', this.reCheckProps)
+    checkLogic(this.data.fieldConfig, this.value)
+  },
+  destroyed() {
+    bus.$off('variables-computed', this.reCheckProps)
   }
 }
 </script>

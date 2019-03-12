@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="size-field-holder">
+  <div v-if="showField" class="size-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ value }}</span>
       <div v-if="property && properties" class="btn-group select-box">
@@ -34,6 +34,7 @@ export default {
       label: this.data.fieldConfig.label,
       property: this.getDefaultProperty(),
       properties: this.data.fieldConfig.properties,
+      isFullRow: this.data.fieldConfig.isFullRow,
       inputIsActive: false,
       hammerInstance: undefined,
       keyMap: {},

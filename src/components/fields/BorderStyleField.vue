@@ -1,5 +1,5 @@
 <template>
-  <div class="border-style-field-holder">
+  <div v-if="showField" class="border-style-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="btn-group select-box">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <template v-if="value == 'none'">
@@ -33,7 +33,11 @@ export default {
       state,
       value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
       properties: this.data.fieldConfig.properties,
-      isInheriting: this.checkInheritance()
+      isFullRow: this.data.fieldConfig.isFullRow,
+      isInheriting: this.checkInheritance(),
+      showField: typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   props: {
@@ -62,15 +66,18 @@ export default {
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
-    reCheckInheritance() {
+    reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
+        ? this.data.fieldConfig.showField
+        : true
     }
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckInheritance)
+    bus.$on('variables-computed', this.reCheckProps)
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckInheritance)
+    bus.$off('variables-computed', this.reCheckProps)
   }
 }
 </script>
