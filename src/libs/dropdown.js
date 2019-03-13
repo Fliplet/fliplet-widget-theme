@@ -8,6 +8,7 @@ function addDropdownListener() {
     var spaceLeft = ulOffset.left;
     // Width of the dropdown
     var dropdownWidth = $ul.width();
+    // Total width of the screen plus dropdown opened
     var totalWidthWithDropdown = spaceLeft + dropdownWidth;
     // how much space would be left on the top if the dropdown opened that direction
     var spaceUp = (ulOffset.top - $button.height() - $ul.height()) - $(window).scrollTop();
