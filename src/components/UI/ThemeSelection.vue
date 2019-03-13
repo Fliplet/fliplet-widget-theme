@@ -5,7 +5,7 @@
         <label for="select-theme">Selected theme</label>
       </div>
       <div class="col-xs-12">
-        <div class="btn-group select-box">
+        <div class="dropdown select-box">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {{ selectedTheme.name }}
             <span class="caret"></span>

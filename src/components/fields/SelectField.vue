@@ -1,6 +1,6 @@
 <template>
   <div v-if="showField" class="select-field-holder" :class="{ 'full-width': isFullRow }">
-    <div class="btn-group select-box">
+    <div class="dropdown select-box">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{ valueToShow }}
         <span class="caret"></span>
@@ -11,6 +11,7 @@
         </li>
       </ul>
     </div>
+    <div v-if="label" class="field-label">{{ label }}</div>
     <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
@@ -25,6 +26,7 @@ export default {
       state,
       valueToShow: this.parseValueToShow(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
       value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
+      label: this.data.fieldConfig.label,
       properties: this.parseProperties(this.data.fieldConfig.properties),
       isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),

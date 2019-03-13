@@ -2,7 +2,7 @@
   <div v-if="showField" class="size-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ value }}</span>
-      <div v-if="property && properties" class="btn-group select-box">
+      <div v-if="property && properties" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
           <span class="caret"></span>

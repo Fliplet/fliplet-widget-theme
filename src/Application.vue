@@ -35,6 +35,8 @@ import TabletTab from './components/TabletTab'
 import DesktopTab from './components/DesktopTab'
 import deviceTypes from './libs/device-types'
 import bus from './libs/bus'
+import { dropdown } from './libs/dropdown'
+dropdown()
 
 export default {
   data() {

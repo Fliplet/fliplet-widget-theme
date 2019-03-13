@@ -1,6 +1,6 @@
 <template>
   <div v-if="showField" class="border-style-field-holder" :class="{ 'full-width': isFullRow }">
-    <div class="btn-group select-box">
+    <div class="dropdown select-box">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <template v-if="value == 'none'">
           None
