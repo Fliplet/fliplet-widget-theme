@@ -1,14 +1,17 @@
 <template>
   <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow }">
-    <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
-      <div id="color-picker-container" class="color-holder" :style="'background-color: ' + value" @click.prevent="toggleColorPicker"></div>
+    <div class="wrapper">
+      <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
+        <div id="color-picker-container" class="color-holder" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
+      </div>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
+import { state, saveFieldData, getDefaultFieldValue,
+  getFieldName, getInheritance } from '../../store'
 import bus from '../../libs/bus'
 import { ColorPicker } from 'codemirror-colorpicker'
 
@@ -16,11 +19,13 @@ export default {
   data() {
     return {
       state,
-      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
+      value: getDefaultFieldValue(this.data.fieldConfig),
+      valueToShow: this.computeValueToShow(),
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId(),
       isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),
+      inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
@@ -47,13 +52,19 @@ export default {
     }
   },
   methods: {
+    computeValueToShow() {
+      return getDefaultFieldValue(this.data.fieldConfig)
+    },
+    inheritValue(value) {
+      this.value = value
+    },
     toggleColorPicker(e) {
       const target = e.target.getBoundingClientRect()
 
       this.colorpicker.show({
         left: target.left,
         top: target.bottom
-      }, this.value, this.onColorChange, this.onColorChange)
+      }, this.valueToShow, this.onColorChange, this.onColorChange)
     },
     onColorChange(color) {
       this.value = color
@@ -63,6 +74,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.valueToShow = this.computeValueToShow()
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
@@ -89,7 +101,7 @@ export default {
     })
   },
   destroyed() {
-    bus.$on('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps)
   }
 }
 </script>

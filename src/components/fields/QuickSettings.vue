@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue } from '../../store'
+import { state, getDefaultFieldValue, getInheritance } from '../../store'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
@@ -37,10 +37,10 @@ export default {
     return {
       state,
       notMobile: state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false,
-      inheritingFrom: this.getInheritance(),
+      inheritingFrom: getInheritance(),
       currentContext: state.componentContext.toLowerCase(),
       variables: this.computeVariables(),
-      showNotInheritingInfo: this.existsFieldsNotInheriting()
+      showNotInheritingInfo: this.checkFieldsNotInheriting()
     }
   },
   props: {
@@ -51,18 +51,6 @@ export default {
     FontField
   },
   methods: {
-    getInheritance() {
-      switch(state.componentContext) {
-        case 'Desktop':
-          return 'tablet'
-          break;
-        case 'Tablet':
-          return 'mobile'
-          break;
-        default:
-          ''
-      }
-    },
     goToDeviceTab(inheritingFrom) {
       const tab = _.find(deviceTypes, { type: inheritingFrom })
       bus.$emit('set-active-tab', tab)
@@ -89,7 +77,7 @@ export default {
 
       return localSavedValue ? localSavedValue.value : field.value
     },
-    existsFieldsNotInheriting() {
+    checkFieldsNotInheriting() {
       return this.componentConfig.variables.some((variable) => {
         const fields = _.filter(variable.fields, { inheriting: false })
         if (fields.length) {
@@ -121,16 +109,18 @@ export default {
             && state.themeInstance.settings.values
             && state.themeInstance.settings.values[fieldName]
           const savedLocalValue = _.find(state.savedFields.values, { name: fieldName })
-
-          // To check if the field is inheriting
           const defaultValue = state.componentContext === 'Mobile'
             ? field.default
             : field.breakpoints[state.componentContext.toLowerCase()].default
-          const isInheriting = this.checkIfIsInheriting(defaultValue)
+
+          // To check if the field is inheriting
+          const isDefaultInheriting = this.checkIfIsInheriting(defaultValue)
+          const isSavedValueInheriting = this.checkIfIsInheriting(savedValue)
+          const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
 
           const newObj = {
-            value: savedValue ? savedValue : getDefaultFieldValue(field),
-            inheriting: (!savedLocalValue && !savedValue && isInheriting)
+            value: savedLocalValue ? savedLocalValue.value : savedValue || getDefaultFieldValue(field),
+            inheriting: !!(isLocalSavedValueInheriting || (!savedLocalValue && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting))
           }
 
           _.extend(this.componentConfig.variables[index].fields[idx], newObj)
@@ -141,7 +131,7 @@ export default {
     },
     reComputeVariables() {
       this.variables = this.computeVariables()
-      this.showNotInheritingInfo = this.existsFieldsNotInheriting()
+      this.showNotInheritingInfo = this.checkFieldsNotInheriting()
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })

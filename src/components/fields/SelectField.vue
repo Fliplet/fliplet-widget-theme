@@ -1,35 +1,39 @@
 <template>
   <div v-if="showField" class="select-field-holder" :class="{ 'full-width': isFullRow }">
-    <div class="dropdown select-box">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{ valueToShow }}
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-left">
-        <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop.value == value }">
-          <a href="#" @click.prevent="onValueChange(prop.value)">{{ prop.name }}</a>
-        </li>
-      </ul>
+    <div class="wrapper">
+      <div class="dropdown select-box">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ valueToShow }}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-left">
+          <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop.value == value }">
+            <a href="#" @click.prevent="onValueChange(prop.value)">{{ prop.name }}</a>
+          </li>
+        </ul>
+      </div>
+      <div v-if="label" class="field-label">{{ label }}</div>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div v-if="label" class="field-label">{{ label }}</div>
-    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue, getFieldName, checkLogic } from '../../store'
+import { state, saveFieldData, getDefaultFieldValue,
+  getFieldName, checkLogic, getInheritance } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
       state,
-      valueToShow: this.parseValueToShow(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
-      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
+      value: getDefaultFieldValue(this.data.fieldConfig),
+      valueToShow: this.computeValueToShow(),
       label: this.data.fieldConfig.label,
       properties: this.parseProperties(this.data.fieldConfig.properties),
       isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),
+      inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
@@ -48,6 +52,12 @@ export default {
     }
   },
   methods: {
+    computeValueToShow() {
+      return this.parseValueToShow(getDefaultFieldValue(this.data.fieldConfig))
+    },
+    inheritValue() {
+      this.value = value
+    },
     parseValueToShow(value) {
       const properties = this.data.fieldConfig.properties
       // Checks if it is an object
@@ -97,6 +107,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.valueToShow = this.computeValueToShow()
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true

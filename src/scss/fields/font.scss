@@ -4,6 +4,10 @@
   align-items: center;
   min-height: 30px;
 
+  .wrapper {
+    position: relative;
+  }
+
   .form-control {
     &.custom-font {
       padding: 0 8px;

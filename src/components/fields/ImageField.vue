@@ -1,29 +1,34 @@
 <template>
   <div v-if="showField" class="image-field-holder" :class="{ 'full-width': isFullRow }">
-    <template v-if="!hasImage">
-      <div class="btn btn-default" @click.prevent="openFilePicker">
-        <i class="fa fa-plus"></i>
-      </div>
-    </template>
-    <template v-else>
-      <div class="btn btn-default has-image" :style="'background-image: url(' + value.url + ')'" @click.prevent="openFilePicker"></div>
-    </template>
-    <span v-if="!isInheriting" class="inheritance-warn"></span>
+    <div class="wrapper">
+      <template v-if="!hasImage">
+        <div class="btn btn-default" @click.prevent="openFilePicker">
+          <i class="fa fa-plus"></i>
+        </div>
+      </template>
+      <template v-else>
+        <div class="btn btn-default has-image" :style="'background-image: url(' + valueToShow.url + ')'" @click.prevent="openFilePicker"></div>
+      </template>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
+    </div>
   </div>
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getFieldName, saveFieldData, checkLogic } from '../../store'
+import { state, getDefaultFieldValue, getFieldName,
+  saveFieldData, checkLogic, getInheritance } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
       state,
-      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
+      value: getDefaultFieldValue(this.data.fieldConfig),
+      valueToShow: this.computeValueToShow(),
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),
+      inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
@@ -43,7 +48,7 @@ export default {
   },
   computed: {
     hasImage() {
-      if (typeof this.value === 'object' && this.value.url) {
+      if (typeof this.valueToShow === 'object' && this.valueToShow.url) {
         return true
       }
 
@@ -51,6 +56,12 @@ export default {
     }
   },
   methods: {
+    computeValueToShow() {
+      return getDefaultFieldValue(this.data.fieldConfig)
+    },
+    inheritValue(value) {
+      this.value = value
+    },
     prepareToSave() {
       const data = {
         name: getFieldName(this.data.fieldConfig),
@@ -93,6 +104,7 @@ export default {
         }
 
         result.data[0].url = imageUrl
+        this.valueToShow = result.data[0]
         this.value = result.data[0]
 
         window.filePickerProvider = null
@@ -105,6 +117,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.valueToShow = this.computeValueToShow()
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true

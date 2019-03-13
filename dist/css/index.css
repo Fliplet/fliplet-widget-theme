@@ -145,14 +145,7 @@ header {
     #theme-application .inherit-settings-holder.active {
       margin-bottom: 0; }
     #theme-application .inherit-settings-holder .inheritance-warn {
-      cursor: default;
-      -webkit-transition: none;
-      -moz-transition: none;
-      -ms-transition: none;
-      -o-transition: none;
-      transition: none; }
-      #theme-application .inherit-settings-holder .inheritance-warn:hover {
-        transform: none; }
+      cursor: default; }
     #theme-application .inherit-settings-holder .label-holder {
       margin-left: 0; }
     #theme-application .inherit-settings-holder a {
@@ -161,20 +154,45 @@ header {
 .inheritance-warn {
   position: absolute;
   top: -4px;
-  right: -4px;
+  right: -10px;
   width: 10px;
   height: 10px;
   background-color: #FF9800;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
-  cursor: pointer;
-  -webkit-transition: transform 0.15s ease-out;
-  -moz-transition: transform 0.15s ease-out;
-  -ms-transition: transform 0.15s ease-out;
-  -o-transition: transform 0.15s ease-out;
-  transition: transform 0.15s ease-out; }
-  .inheritance-warn:hover {
-    transform: scale(1.5); }
+  cursor: pointer; }
+  .inheritance-warn .inheritance-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    z-index: 1000;
+    min-width: 200px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 13px 20px 9px;
+    color: rgba(51, 51, 51, 0.8);
+    box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    cursor: default; }
+    .inheritance-warn .inheritance-dropdown.to-right {
+      left: auto;
+      right: 0; }
+    .inheritance-warn .inheritance-dropdown.to-top {
+      top: auto;
+      bottom: 100%; }
+    .inheritance-warn .inheritance-dropdown .inherit-action {
+      color: #00abd1;
+      margin-top: 20px;
+      margin-left: -20px;
+      margin-right: -20px;
+      padding: 4px 20px;
+      cursor: pointer; }
+      .inheritance-warn .inheritance-dropdown .inherit-action:hover {
+        background-color: #efebed; }
 
 .slide-in-enter-active {
   transition: all .25s ease-out; }
@@ -312,6 +330,8 @@ header {
     color: rgba(51, 51, 51, 0.8); }
     .dropdown.select-box .dropdown-menu li a:hover {
       background-color: #efebed; }
+    .dropdown.select-box .dropdown-menu li a .text-primary {
+      color: #00abd1; }
   .dropdown.select-box .dropdown-menu li.active a {
     background-color: #dcdae0;
     color: #333333; }
@@ -418,33 +438,39 @@ header {
     .radio-holder.inline-circle + .inline-circle {
       margin-left: 15px; }
 
-.image-field-holder .btn {
-  width: 55px;
-  height: 55px;
-  border: 1px solid #e3e3e3;
-  color: rgba(51, 51, 51, 0.5);
-  font-size: 1.5em;
-  background-color: transparent;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: initial;
-  line-height: 1; }
-  .image-field-holder .btn:hover {
-    color: #333333;
-    border-color: #bfbfbf; }
-  .image-field-holder .btn:active:hover, .image-field-holder .btn:active:focus {
+.image-field-holder {
+  position: relative; }
+  .image-field-holder .wrapper {
+    position: relative; }
+  .image-field-holder .btn {
+    width: 55px;
+    height: 55px;
+    border: 1px solid #e3e3e3;
+    color: rgba(51, 51, 51, 0.5);
+    font-size: 1.5em;
     background-color: transparent;
-    border-color: #bfbfbf;
-    color: #333333; }
-  .image-field-holder .btn.has-image {
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat; }
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: initial;
+    line-height: 1; }
+    .image-field-holder .btn:hover {
+      color: #333333;
+      border-color: #bfbfbf; }
+    .image-field-holder .btn:active:hover, .image-field-holder .btn:active:focus {
+      background-color: transparent;
+      border-color: #bfbfbf;
+      color: #333333; }
+    .image-field-holder .btn.has-image {
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat; }
 
 .color-field-holder {
   position: relative; }
+  .color-field-holder .wrapper {
+    position: relative; }
   .color-field-holder .color-picker-background {
     width: 30px !important;
     height: 30px;
@@ -463,6 +489,8 @@ header {
   display: flex !important;
   align-items: center;
   min-height: 30px; }
+  .font-field-holder .wrapper {
+    position: relative; }
   .font-field-holder .form-control.custom-font {
     padding: 0 8px;
     line-height: 1;
@@ -505,21 +533,26 @@ header {
 
 .style-field-holder {
   position: relative; }
+  .style-field-holder .wrapper {
+    position: relative; }
   .style-field-holder .style-field-container {
     display: flex !important;
     align-items: center; }
 
 .select-field-holder {
-  position: relative;
-  display: flex !important;
-  align-items: center;
-  height: 30px; }
+  position: relative; }
+  .select-field-holder .wrapper {
+    position: relative;
+    display: flex !important;
+    align-items: center; }
 
 .border-style-field-holder {
   position: relative;
   display: flex !important;
   align-items: center;
   height: 30px; }
+  .border-style-field-holder .wrapper {
+    position: relative; }
   .border-style-field-holder .dropdown-toggle {
     display: flex;
     align-items: center; }
@@ -534,3 +567,8 @@ header {
     margin-right: 5px;
     border-width: 4px;
     border-color: #707070; }
+
+.background-field-holder {
+  position: relative; }
+  .background-field-holder .wrapper {
+    position: relative; }

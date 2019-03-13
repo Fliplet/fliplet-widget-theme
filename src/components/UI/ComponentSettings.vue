@@ -20,7 +20,7 @@
               </div>
             </template>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
-              <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(field)"></component>
+              <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
             </div>
           </div>
         </div>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { state, closeComponentSettings, saveInheritanceData } from '../../store'
+import { state, closeComponentSettings, saveInheritanceData, getInheritance, checkSavedValue } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'
@@ -51,7 +51,7 @@ export default {
       variables: undefined,
       context: undefined,
       showNotInheritingInfo: [],
-      inheritingFrom: this.getInheritance(),
+      inheritingFrom: getInheritance(),
       currentContext: state.componentContext.toLowerCase()
     }
   },
@@ -67,19 +67,8 @@ export default {
     ImageField
   },
   methods: {
+    checkSavedValue,
     closeComponentSettings,
-    getInheritance() {
-      switch(state.componentContext) {
-        case 'Desktop':
-          return 'tablet'
-          break;
-        case 'Tablet':
-          return 'mobile'
-          break;
-        default:
-          ''
-      }
-    },
     goToDeviceTab(inheritingFrom) {
       const tab = _.find(deviceTypes, { type: inheritingFrom })
       bus.$emit('set-active-tab', tab, state.componentOverlay.data.component)
@@ -89,7 +78,7 @@ export default {
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
       this.variables = this.computeVariables()
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
-      this.showNotInheritingInfo = this.existsFieldsNotInheriting()
+      this.showNotInheritingInfo = this.checkFieldsNotInheriting()
     },
     computeVariables() {
       if (!state.componentOverlay.data) {
@@ -100,16 +89,18 @@ export default {
       const variables = _.cloneDeep(this.variables || state.componentOverlay.data.component.variables)
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
-          const savedValue = this.savedValue(field)
+          const savedValue = checkSavedValue(field)
           const savedLocalValue = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
 
           // To check if the field is inheriting
           const defaultValue = isMobile
             ? field.default
             : field.breakpoints[state.componentContext.toLowerCase()].default
-          const isInheriting = this.checkIfIsInheriting(defaultValue)
+          const isDefaultInheriting = this.checkIfIsInheriting(defaultValue)
+          const isSavedValueInheriting = this.checkIfIsInheriting(savedValue)
+          const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
 
-          field.inheriting = (!savedLocalValue && !savedValue && isInheriting)
+          field.inheriting = !!(isLocalSavedValueInheriting || (!isLocalSavedValueInheriting && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting))
         })
       })
 
@@ -117,12 +108,12 @@ export default {
     },
     reComputeVariables() {
       this.variables = this.computeVariables()
-      this.showNotInheritingInfo = this.existsFieldsNotInheriting()
+      this.showNotInheritingInfo = this.checkFieldsNotInheriting()
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })
     },
-    existsFieldsNotInheriting() {
+    checkFieldsNotInheriting() {
       const newArr = []
       this.variables.forEach((variable) => {
         const fields = _.filter(variable.fields, { inheriting: false })
@@ -162,17 +153,6 @@ export default {
       }
 
       return data
-    },
-    savedValue(field) {
-      const isMobile = state.componentContext === 'Mobile'
-      let foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
-
-      if (!foundField && state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
-        const savedValues = state.componentOverlay.data.instance.settings.values
-        return state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
-      }
-
-      return foundField.value
     },
     runFieldLogic(fieldConfig, logic) {
       this.variables.forEach((variable, index) => {

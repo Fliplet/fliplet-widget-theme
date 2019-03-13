@@ -1,6 +1,10 @@
 .style-field-holder {
   position: relative;
 
+  .wrapper {
+    position: relative;
+  }
+
   .style-field-container {
     display: flex !important;
     align-items: center;

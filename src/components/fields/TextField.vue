@@ -1,7 +1,6 @@
 <template>
   <div class="text-field-holder">
     <input type="text" class="form-control" v-model="value">
-    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 

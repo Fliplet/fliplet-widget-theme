@@ -63,6 +63,10 @@
           &:hover {
             background-color: $highlight-gray-hover;
           }
+
+          .text-primary {
+            color: $primary-color;
+          }
         }
 
         &.active {

@@ -1,6 +1,10 @@
 .color-field-holder {
   position: relative;
 
+  .wrapper {
+    position: relative;
+  }
+
   .color-picker-background {
     width: 30px !important;
     height: 30px;

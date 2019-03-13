@@ -192,11 +192,6 @@ header {
 
     .inheritance-warn {
       cursor: default;
-      @include transition(none);
-
-      &:hover {
-        transform: none;
-      }
     }
 
     .label-holder {
@@ -212,16 +207,53 @@ header {
 .inheritance-warn {
   position: absolute;
   top: -4px;
-  right: -4px;
+  right: -10px;
   width: 10px;
   height: 10px;
   background-color: $warning-color;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
   cursor: pointer;
-  @include transition(transform 0.15s ease-out);
 
-  &:hover {
-    transform: scale(1.5);
+  .inheritance-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    z-index: 1000;
+    min-width: 200px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 13px 20px 9px;
+    color: rgba(51, 51, 51, 0.8);
+    box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    cursor: default;
+
+    &.to-right {
+      left: auto;
+      right: 0;
+    }
+
+    &.to-top {
+      top: auto;
+      bottom: 100%;
+    }
+
+    .inherit-action {
+      color: $primary-color;
+      margin-top: 20px;
+      margin-left: -20px;
+      margin-right: -20px;
+      padding: 4px 20px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $highlight-gray-hover;
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div v-if="showField" class="size-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="interactive-holder">
-      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ value }}</span>
+      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
@@ -14,7 +14,7 @@
         </ul>
       </div>
       <div v-if="label" class="field-label">{{ label }}</div>
-      <span v-if="!isInheriting" class="inheritance-warn"></span>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
     <div class="input-holder" v-show="inputIsActive">
       <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
@@ -23,16 +23,18 @@
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
+import { state, saveFieldData, getDefaultFieldValue,
+  getFieldName, getInheritance } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
       state,
-      value: this.parseValue(this.savedValue || getDefaultFieldValue(this.data.fieldConfig)),
+      value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
+      valueToShow: this.computeValueToShow(),
       label: this.data.fieldConfig.label,
-      property: this.getDefaultProperty(),
+      property: undefined,
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
       inputIsActive: false,
@@ -40,10 +42,12 @@ export default {
       keyMap: {},
       enterPressedToClose: false,
       isInheriting: this.checkInheritance(),
+      inheritingFrom: getInheritance(),
       allowNegative: !!this.data.fieldConfig.allowNegative,
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true,
+      fromReset: false
     }
   },
   props: {
@@ -52,22 +56,57 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal !== oldVal) {
+      const isInheriting = this.checkIfIsInheriting(newVal)
+      this.valueToShow = isInheriting ? oldVal : newVal
+
+      if (newVal !== oldVal && !this.fromReset) {
         this.prepareToSave()
+        return
       }
+
+      this.fromReset = false
     }
   },
   methods: {
-    getDefaultProperty() {
+    computeValueToShow() {
+      return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
+    },
+    inheritValue(value) {
+      this.value = value
+      this.$nextTick(() => {
+        this.fromReset = true
+      })
+    },
+    checkIfIsInheriting(value) {
+      // Checks if the value matches a variable name
+      const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
+      // If the value matches to a variable get the name of the variable
+      const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+      // Checks if the value matches the 'inherit-x' reserved key
+      const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
+      // If the value matches the 'inherit-x' reserved key get the inheritance key
+      const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined
+
+      return inherit || variableName ? true : false
+    },
+    getProperty(value) {
       const fieldName = state.componentContext === 'Mobile'
         ? this.data.fieldConfig.property
         : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].property
+      const match = value.match(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'))
+      
+      if (match && match.length) {
+        return match[0]
+      }
 
       return fieldName
     },
     parseValue(value) {
       const parsedValue = value.replace(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'), '')
       const parsedFloatVal = parseFloat(parsedValue, 10)
+
+      this.property = this.getProperty(value)
+
       return isNaN(parsedFloatVal) ? parsedValue : parsedFloatVal
     },
     onValueChange(value) {
@@ -75,9 +114,10 @@ export default {
       this.prepareToSave()
     },
     prepareToSave() {
+      const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: this.value + (this.property !== 'x' && this.property !== 'none' ? this.property : '')
+        value: isInheriting ? this.value : this.value + (this.property !== 'x' && this.property !== 'none' ? this.property : '')
       }
       saveFieldData(data)
     },
@@ -205,7 +245,7 @@ export default {
         this.value = parseInt(this.value) + 1
       } else if (e.deltaX < 0 && distanceX < distanceY) {
         // If dragging left, remove 1
-        if (parseInt(this.value) > 0) {
+        if (parseInt(this.value) > 0 || (this.allowNegative && parseInt(this.value) <= 0)) {
           // If value is 0 do nothing
           this.value = parseInt(this.value) - 1
         }
@@ -216,6 +256,12 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.valueToShow = this.computeValueToShow()
+
+      if (this.fromReset) {
+        this.value = this.computeValueToShow()
+      }
+
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true

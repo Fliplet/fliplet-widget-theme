@@ -1,4 +1,10 @@
 .image-field-holder {
+  position: relative;
+
+  .wrapper {
+    position: relative;
+  }
+
   .btn {
     width: 55px;
     height: 55px;

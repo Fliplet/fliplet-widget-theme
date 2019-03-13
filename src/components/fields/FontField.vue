@@ -1,51 +1,56 @@
 <template>
   <div v-if="showField" class="font-field-holder" :class="{ 'full-width': isFullRow }">
-    <div v-if="!showInputField" class="dropdown select-box">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{ value }}
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-left">
-        <template v-if="customFonts && customFonts.length">
-          <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === value }">
-            <a href="#" @click.prevent="onValueChange(customFont.name)">{{ customFont.name }}</a>
+    <div class="wrapper">
+      <div v-if="!showInputField" class="dropdown select-box">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ valueToShow }}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-left">
+          <template v-if="customFonts && customFonts.length">
+            <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === valueToShow }">
+              <a href="#" @click.prevent="onValueChange(customFont.name)">{{ customFont.name }}</a>
+            </li>
+            <li class="divider"></li>
+          </template>
+          <li v-for="(webFont, index) in webFonts" :key="index" :class="{ active: webFont.name === valueToShow }">
+            <a href="#" @click.prevent="onValueChange(webFont.name)">{{ webFont.name }}</a>
           </li>
           <li class="divider"></li>
-        </template>
-        <li v-for="(webFont, index) in webFonts" :key="index" :class="{ active: webFont.name === value }">
-          <a href="#" @click.prevent="onValueChange(webFont.name)">{{ webFont.name }}</a>
-        </li>
-        <li class="divider"></li>
-        <li :class="{ active: value === 'Custom' }">
-          <a href="#" @click.prevent="onValueChange('Custom')">Custom...</a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#" @click.prevent="openFontUploader"><span class="text-primary">Upload a new font</span></a>
-        </li>
-      </ul>
+          <li :class="{ active: valueToShow === 'Custom' }">
+            <a href="#" @click.prevent="onValueChange('Custom')">Custom...</a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a href="#" @click.prevent="openFontUploader"><span class="text-primary">Upload a new font</span></a>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <input class="form-control custom-font" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
+        <small><a href="#" @click.prevent="showListOfFonts">See full list of fonts</a></small>
+      </div>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div v-else>
-      <input class="form-control custom-font" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
-      <small><a href="#" @click.prevent="showListOfFonts">See full list of fonts</a></small>
-    </div>
-    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue, getFieldName } from '../../store'
+import { state, saveFieldData, getDefaultFieldValue,
+  getFieldName, getInheritance } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
       state,
-      value: this.getFontValue(),
+      value: getDefaultFieldValue(this.data.fieldConfig),
+      valueToShow: this.computeValueToShow(),
       customValue: this.getCustomValue(),
       showInputField: false,
       isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),
+      inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
@@ -78,6 +83,12 @@ export default {
     }
   },
   methods: {
+    computeValueToShow() {
+      return getDefaultFieldValue(this.data.fieldConfig)
+    },
+    inheritValue(value) {
+      this.value = value
+    },
     getFontValue() {
       let value = ''
       let webFont = undefined
@@ -118,6 +129,7 @@ export default {
       return value
     },
     onValueChange(value) {
+      this.valueToShow = value
       this.value = value
     },
     showListOfFonts() {
@@ -163,6 +175,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.valueToShow = this.computeValueToShow()
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true

@@ -4,6 +4,10 @@
   align-items: center;
   height: 30px;
 
+  .wrapper {
+    position: relative;
+  }
+
   .dropdown-toggle {
     display: flex;
     align-items: center;

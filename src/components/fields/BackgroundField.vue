@@ -1,30 +1,35 @@
 <template>
   <div v-if="showField" class="background-field-holder" :class="{ 'full-width': isFullRow }">
-    <div class="radio-holder inline-circle" v-for="(prop, idx) in properties" :key="idx">
-      <input type="radio" :id="'radio-background-' + prop.toLowerCase()" :name="'radio-background-' + data.fieldConfig.name" :value="prop" v-model="value">
-      <label :for="'radio-background-' + prop.toLowerCase()">
-        <span class="check-icon"></span> {{ prop }}
-      </label>
+    <div class="wrapper">
+      <div class="radio-holder inline-circle" v-for="(prop, idx) in properties" :key="idx">
+        <input type="radio" :id="'radio-background-' + prop.toLowerCase()" :name="'radio-background-' + data.fieldConfig.name" :value="prop" v-model="value">
+        <label :for="'radio-background-' + prop.toLowerCase()">
+          <span class="check-icon"></span> {{ prop }}
+        </label>
+      </div>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <span v-if="!isInheriting" class="inheritance-warn"></span>
   </div>
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getFieldName, saveFieldData, checkLogic } from '../../store'
+import { state, getDefaultFieldValue, getFieldName,
+  saveFieldData, checkLogic, getInheritance } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
   data() {
     return {
       state,
-      value: this.savedValue || getDefaultFieldValue(this.data.fieldConfig),
+      value: getDefaultFieldValue(this.data.fieldConfig),
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),
+      inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true,
+      fromReset: false
     }
   },
   props: {
@@ -33,13 +38,25 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal !== oldVal) {
+      if (newVal !== oldVal && !this.fromReset) {
         checkLogic(this.data.fieldConfig, newVal)
         this.prepareToSave()
+        return
       }
+
+      this.fromReset = false
     }
   },
   methods: {
+    computeValueToShow() {
+      return getDefaultFieldValue(this.data.fieldConfig)
+    },
+    inheritValue(value) {
+      this.value = value
+      this.$nextTick(() => {
+        this.fromReset = true
+      })
+    },
     prepareToSave() {
       const data = {
         name: getFieldName(this.data.fieldConfig),
@@ -53,6 +70,12 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+
+      if (this.fromReset) {
+        this.value = this.computeValueToShow()
+        checkLogic(this.data.fieldConfig, this.value)
+      }
+
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true

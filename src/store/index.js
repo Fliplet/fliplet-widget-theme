@@ -101,6 +101,18 @@ export function getFieldName(field) {
   return fieldName
 }
 
+export function checkSavedValue(field) {
+  const isMobile = state.componentContext === 'Mobile'
+  let foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
+
+  if (!foundField && state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
+    const savedValues = state.componentOverlay.data.instance.settings.values
+    return state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
+  }
+
+  return foundField ? foundField.value : undefined
+}
+
 function checkFieldValue(value, field) {
   let foundValue
   let defaultValue
@@ -182,6 +194,7 @@ function checkFieldValue(value, field) {
 export function getDefaultFieldValue(field) {
   // Variables to use later down
   let defaultValue
+  let savedValue
   // Checks if the UI tab selected is Mobile or not
   const isMobile = state.componentContext === 'Mobile'
 
@@ -190,7 +203,9 @@ export function getDefaultFieldValue(field) {
     ? field.default
     : field.breakpoints[state.componentContext.toLowerCase()].default
 
-  return checkFieldValue(defaultValue, field)
+  savedValue = field.value || checkSavedValue(field)
+
+  return checkFieldValue(savedValue || defaultValue, field)
 }
 
 export function checkLogic(fieldConfig, value) {
@@ -202,5 +217,18 @@ export function checkLogic(fieldConfig, value) {
         continue
       }
     }
+  }
+}
+
+export function getInheritance() {
+  switch(state.componentContext) {
+    case 'Desktop':
+      return 'tablet'
+      break;
+    case 'Tablet':
+      return 'mobile'
+      break;
+    default:
+      ''
   }
 }
