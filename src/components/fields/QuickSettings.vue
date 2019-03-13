@@ -7,11 +7,13 @@
     <div class="col-xs-12">
       <template v-if="notMobile">
         <div class="inherit-settings-holder">
-          <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
           <div v-if="showNotInheritingInfo" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
+          <template v-else>
+            <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
+          </template>
         </div>
       </template>
-      <template v-for="(variable, idx) in variables"> 
+      <template v-for="(variable, idx) in variables">
         <div class="settings-field-holder">
           <template v-for="(field, index) in variable.fields">
             <component :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(idx, index)"></component>
