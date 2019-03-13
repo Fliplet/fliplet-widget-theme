@@ -144,6 +144,15 @@ header {
     margin-bottom: 10px; }
     #theme-application .inherit-settings-holder.active {
       margin-bottom: 0; }
+    #theme-application .inherit-settings-holder .inheritance-warn {
+      cursor: default;
+      -webkit-transition: none;
+      -moz-transition: none;
+      -ms-transition: none;
+      -o-transition: none;
+      transition: none; }
+      #theme-application .inherit-settings-holder .inheritance-warn:hover {
+        transform: none; }
     #theme-application .inherit-settings-holder .label-holder {
       margin-left: 0; }
     #theme-application .inherit-settings-holder a {
@@ -157,7 +166,15 @@ header {
   height: 10px;
   background-color: #FF9800;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 50%; }
+  border-radius: 50%;
+  cursor: pointer;
+  -webkit-transition: transform 0.15s ease-out;
+  -moz-transition: transform 0.15s ease-out;
+  -ms-transition: transform 0.15s ease-out;
+  -o-transition: transform 0.15s ease-out;
+  transition: transform 0.15s ease-out; }
+  .inheritance-warn:hover {
+    transform: scale(1.5); }
 
 .slide-in-enter-active {
   transition: all .25s ease-out; }
@@ -255,24 +272,28 @@ header {
     #component-settings-overlay .settings-fields-holder .full-width {
       min-width: calc(100% - 30px); }
 
-.btn-group.select-box .dropdown-toggle {
+.select-field-holder .field-label {
+  margin-left: 10px;
+  color: rgba(51, 51, 51, 0.5); }
+
+.dropdown.select-box .dropdown-toggle {
   background-color: transparent;
   padding: 0;
   line-height: 1;
   box-shadow: none;
   font-size: 13px; }
-  .btn-group.select-box .dropdown-toggle:hover, .btn-group.select-box .dropdown-toggle:focus, .btn-group.select-box .dropdown-toggle:active, .btn-group.select-box .dropdown-toggle:active:hover, .btn-group.select-box .dropdown-toggle:active:focus {
+  .dropdown.select-box .dropdown-toggle:hover, .dropdown.select-box .dropdown-toggle:focus, .dropdown.select-box .dropdown-toggle:active, .dropdown.select-box .dropdown-toggle:active:hover, .dropdown.select-box .dropdown-toggle:active:focus {
     background-color: transparent;
     box-shadow: none; }
 
-.btn-group.select-box.open .dropdown-toggle {
+.dropdown.select-box.open .dropdown-toggle {
   background-color: transparent;
   box-shadow: none; }
-  .btn-group.select-box.open .dropdown-toggle:hover, .btn-group.select-box.open .dropdown-toggle:focus, .btn-group.select-box.open .dropdown-toggle:active, .btn-group.select-box.open .dropdown-toggle:active:hover, .btn-group.select-box.open .dropdown-toggle:active:focus {
+  .dropdown.select-box.open .dropdown-toggle:hover, .dropdown.select-box.open .dropdown-toggle:focus, .dropdown.select-box.open .dropdown-toggle:active, .dropdown.select-box.open .dropdown-toggle:active:hover, .dropdown.select-box.open .dropdown-toggle:active:focus {
     background-color: transparent;
     box-shadow: none; }
 
-.btn-group.select-box .dropdown-menu {
+.dropdown.select-box .dropdown-menu {
   margin-top: 0;
   padding: 9px 0;
   border-radius: 0;
@@ -281,7 +302,7 @@ header {
   color: rgba(51, 51, 51, 0.8);
   box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.15);
   background-color: #ffffff; }
-  .btn-group.select-box .dropdown-menu li a {
+  .dropdown.select-box .dropdown-menu li a {
     display: block;
     clear: both;
     font-weight: normal;
@@ -289,9 +310,9 @@ header {
     white-space: nowrap;
     padding: 4px 20px;
     color: rgba(51, 51, 51, 0.8); }
-    .btn-group.select-box .dropdown-menu li a:hover {
+    .dropdown.select-box .dropdown-menu li a:hover {
       background-color: #efebed; }
-  .btn-group.select-box .dropdown-menu li.active a {
+  .dropdown.select-box .dropdown-menu li.active a {
     background-color: #dcdae0;
     color: #333333; }
 
