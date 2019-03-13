@@ -190,6 +190,15 @@ header {
       margin-bottom: 0;
     }
 
+    .inheritance-warn {
+      cursor: default;
+      @include transition(none);
+
+      &:hover {
+        transform: none;
+      }
+    }
+
     .label-holder {
       margin-left: 0;
     }
@@ -209,4 +218,10 @@ header {
   background-color: $warning-color;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
+  cursor: pointer;
+  @include transition(transform 0.15s ease-out);
+
+  &:hover {
+    transform: scale(1.5);
+  }
 }
