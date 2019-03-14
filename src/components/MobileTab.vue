@@ -2,7 +2,7 @@
   <div class="mobile-tab-content">
     <QuickSettings :component-config="getQuickSettings()"></QuickSettings>
     <div class="components-buttons-holder">
-      <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="configuration.name !== 'Quick settings'" :component-config="configuration" :component-index="index"></SettingsButtons>
+      <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="!configuration.quickSettings" :component-config="configuration"></SettingsButtons>
     </div>
     <ComponentSettings></ComponentSettings>
   </div>

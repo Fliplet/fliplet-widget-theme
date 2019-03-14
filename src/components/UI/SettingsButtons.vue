@@ -15,8 +15,7 @@ export default {
     }
   },
   props: {
-    componentConfig: Object,
-    componentIndex: Number
+    componentConfig: Object
   },
   methods: {
     componentSettings(component) {
