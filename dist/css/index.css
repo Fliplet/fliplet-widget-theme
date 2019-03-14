@@ -470,7 +470,12 @@ header {
 .color-field-holder {
   position: relative; }
   .color-field-holder .wrapper {
-    position: relative; }
+    position: relative;
+    display: flex;
+    align-items: center; }
+    .color-field-holder .wrapper .field-label {
+      margin-left: 10px;
+      color: rgba(51, 51, 51, 0.5); }
   .color-field-holder .color-picker-background {
     width: 30px !important;
     height: 30px;
