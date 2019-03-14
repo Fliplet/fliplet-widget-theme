@@ -4,6 +4,7 @@
       <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
         <div id="color-picker-container" class="color-holder" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
       </div>
+      <div v-if="label" class="field-label">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -21,6 +22,7 @@ export default {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
       valueToShow: this.computeValueToShow(),
+      label: this.data.fieldConfig.label,
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId(),
       isFullRow: this.data.fieldConfig.isFullRow,
