@@ -31,10 +31,10 @@ export default {
   data() {
     return {
       state,
+      property: undefined,
       value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
       valueToShow: this.computeValueToShow(),
       label: this.data.fieldConfig.label,
-      property: undefined,
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
       inputIsActive: false,
@@ -94,7 +94,7 @@ export default {
         ? this.data.fieldConfig.property
         : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].property
       const match = value.match(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'))
-      
+
       if (match && match.length) {
         return match[0]
       }
@@ -104,8 +104,6 @@ export default {
     parseValue(value) {
       const parsedValue = value.replace(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'), '')
       const parsedFloatVal = parseFloat(parsedValue, 10)
-
-      this.property = this.getProperty(value)
 
       return isNaN(parsedFloatVal) ? parsedValue : parsedFloatVal
     },
@@ -270,6 +268,9 @@ export default {
     }
   },
   mounted() {
+    // Set property
+    this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
+
     this.hammerInstance = new Hammer.Manager(this.$refs.ondrag)
     this.hammerInstance.on('hammer.input', this.onHammerInput)
 
