@@ -80,13 +80,13 @@ export default {
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
       this.showNotInheritingInfo = this.checkFieldsNotInheriting()
     },
-    computeVariables() {
+    computeVariables(toRecompute) {
       if (!state.componentOverlay.data) {
         return []
       }
 
       const isMobile = state.componentContext === 'Mobile'
-      const variables = _.cloneDeep(this.variables || state.componentOverlay.data.component.variables)
+      const variables = _.cloneDeep(toRecompute && this.variables ? this.variables : state.componentOverlay.data.component.variables)
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const savedValue = checkSavedValue(field)
@@ -106,8 +106,8 @@ export default {
 
       return variables
     },
-    reComputeVariables() {
-      this.variables = this.computeVariables()
+    reComputeVariables(toRecompute) {
+      this.variables = this.computeVariables(toRecompute)
       this.showNotInheritingInfo = this.checkFieldsNotInheriting()
       this.$nextTick(() => {
         bus.$emit('variables-computed')
@@ -181,12 +181,16 @@ export default {
   },
   mounted() {
     bus.$on('component-overlay-opened', this.setVariables)
-    bus.$on('saved-fields-set', this.reComputeVariables)
+    bus.$on('saved-fields-set', () => {
+      this.reComputeVariables(true)
+    })
     bus.$on('check-field-visibility', this.runFieldLogic)
   },
   destroyed() {
     bus.$off('component-overlay-opened', this.setVariables)
-    bus.$off('saved-fields-set', this.reComputeVariables)
+    bus.$off('saved-fields-set', () => {
+      this.reComputeVariables(true)
+    })
     bus.$off('check-field-visibility', this.runFieldLogic)
   } 
 }
