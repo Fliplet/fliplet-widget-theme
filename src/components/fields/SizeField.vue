@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="size-field-holder" :class="{ 'full-width': isFullRow }">
+  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow }">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
@@ -117,7 +117,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting ? this.value : this.value + (this.property !== 'x' && this.property !== 'none' ? this.property : '')
+        value: isInheriting || this.value == 'auto' ? this.value : this.value + (this.property !== 'x' && this.property !== 'none' ? this.property : '')
       }
       saveFieldData(data)
     },
@@ -242,8 +242,10 @@ export default {
 
       if (e.deltaX > 0 && distanceX < distanceY) {
         // If dragging right, add 1
+        this.value = isNaN(this.value) ? 0 : this.value
         this.value = parseInt(this.value) + 1
       } else if (e.deltaX < 0 && distanceX < distanceY) {
+        this.value = isNaN(this.value) ? 0 : this.value
         // If dragging left, remove 1
         if (parseInt(this.value) > 0 || (this.allowNegative && parseInt(this.value) <= 0)) {
           // If value is 0 do nothing
