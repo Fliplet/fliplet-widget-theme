@@ -6,7 +6,7 @@
         <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <div v-if="variables && variables.length" class="settings-fields-holder">
-        <div v-for="(variable, index) in variables" :key="index">
+        <div v-for="(variable, index) in variables" v-if="toShow(variable)" :key="index">
           <div class="form-group clearfix">
             <div class="col-xs-12 control-label">
               <label>{{ variable.description }}</label>
@@ -69,6 +69,16 @@ export default {
   methods: {
     checkSavedValue,
     closeComponentSettings,
+    toShow(variable) {
+      const toHide = variable.hide
+      const context = state.componentContext.toLowerCase()
+
+      if (toHide && Array.isArray(toHide)) {
+        return toHide.indexOf(context) < 0
+      }
+
+      return true
+    },
     goToDeviceTab(inheritingFrom) {
       const tab = _.find(deviceTypes, { type: inheritingFrom })
       bus.$emit('set-active-tab', tab, state.componentOverlay.data.component)
