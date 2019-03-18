@@ -1,5 +1,5 @@
 <template>
-  <div class="components-buttons" @click.prevent="componentSettings">
+  <div v-if="!componentConfig.hide" class="components-buttons" @click.prevent="componentSettings">
     {{ componentConfig.name }} <i class="fa fa-angle-right"></i>
   </div>
 </template>
