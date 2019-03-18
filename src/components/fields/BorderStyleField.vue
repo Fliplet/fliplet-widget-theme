@@ -20,6 +20,7 @@
           </li>
         </ul>
       </div>
+      <div v-if="label" class="field-label">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -36,6 +37,7 @@ export default {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
       valueToShow: this.computeValueToShow(),
+      label: this.data.fieldConfig.label,
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
       isInheriting: this.checkInheritance(),
