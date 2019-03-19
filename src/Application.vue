@@ -83,7 +83,7 @@ export default {
     },
     initialize() {
       // Get widget provider data
-      const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10);
+      const widgetId = Fliplet.Widget.getDefaultId();
       this.widgetData = Fliplet.Widget.getData(widgetId) || {};
 
       // Check if there's a value to set as the active tab
