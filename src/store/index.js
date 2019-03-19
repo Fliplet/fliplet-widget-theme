@@ -142,7 +142,9 @@ function checkFieldValue(value, field) {
 
     // Try to find the value in the theme instance saved values
     const savedValues = state.themeInstance.settings.values
-    foundValue = savedValues[variableName]
+    if (savedValues) {
+      foundValue = savedValues[variableName]
+    }
     if (foundValue) {
       return checkFieldValue(foundValue, field)
     }
