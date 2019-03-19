@@ -87,7 +87,7 @@ export default {
       this.widgetData = Fliplet.Widget.getData(widgetId) || {};
 
       // Check if there's a value to set as the active tab
-      if (this.widgetData && this.widgetData.activeTab && !this.isFromUpdate) {
+      if (this.widgetData && typeof this.widgetData.activeTab !== 'undefined' && !this.isFromUpdate) {
         this.setActiveTab(this.tabs[this.widgetData.activeTab])
       }
       
@@ -137,7 +137,7 @@ export default {
 
       if (themeWithoutInstances == this.themes.length) {
         // @TODO: Update Fliplet Theme name
-        const flipletTheme = _.find(this.themes, { name: 'Bootstrap' })
+        const flipletTheme = _.find(this.themes, { name: 'Fliplet theme' })
         this.createDefaultInstance(flipletTheme.id)
           .then(this.initialize)
           .then(this.reloadPage) // @TODO: Confirm we need this
