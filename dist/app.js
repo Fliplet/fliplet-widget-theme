@@ -1280,7 +1280,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n// This bus can be used like 
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar tabs = [{\n  name: 'Mobile',\n  type: 'mobile',\n  icon: 'fa fa-mobile'\n}, {\n  name: 'Tablet',\n  type: 'tablet',\n  icon: 'fa fa-tablet'\n}, {\n  name: 'Desktop',\n  type: 'desktop',\n  icon: 'fa fa-desktop'\n}];\n/* harmony default export */ __webpack_exports__[\"default\"] = (tabs);\n\n//# sourceURL=webpack:///./src/libs/device-types.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar tabs = [{\n  name: 'Mobile',\n  type: 'mobile',\n  icon: 'fl-icon-mobile'\n}, {\n  name: 'Tablet',\n  type: 'tablet',\n  icon: 'fl-icon-tablet'\n}, {\n  name: 'Desktop',\n  type: 'desktop',\n  icon: 'fl-icon-desktop'\n}];\n/* harmony default export */ __webpack_exports__[\"default\"] = (tabs);\n\n//# sourceURL=webpack:///./src/libs/device-types.js?");
 
 /***/ }),
 

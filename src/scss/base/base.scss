@@ -88,14 +88,17 @@ header {
     margin-right: -15px;
 
     &.nav-tabs > li {
+      display: flex;
+      height: 5.2rem;
+
       > a {
         display: flex;
         align-items: flex-end;
         justify-content: center;
         width: 55px;
         min-width: 55px;
+        line-height: 1;
         padding: 10px 0 6px;
-        font-size: 2.2em;
         border-radius: 0;
         color: rgba($text-color, 0.7) !important;
 
@@ -110,6 +113,24 @@ header {
           color: $text-color !important;
           border-color: $text-color;
           background-color: $highlight-gray;
+        }
+      }
+
+      &#mobile {
+        > a {
+          font-size: 1.9em;
+        }
+      }
+
+      &#tablet {
+        > a {
+          font-size: 2.2em;
+        }
+      }
+
+      &#desktop {
+        > a {
+          font-size: 2.5em;
         }
       }
     }

@@ -2,17 +2,17 @@ const tabs = [
   {
     name: 'Mobile',
     type: 'mobile',
-    icon: 'fa fa-mobile'
+    icon: 'fl-icon-mobile'
   },
   {
     name: 'Tablet',
     type: 'tablet',
-    icon: 'fa fa-tablet'
+    icon: 'fl-icon-tablet'
   },
   {
     name: 'Desktop',
     type: 'desktop',
-    icon: 'fa fa-desktop'
+    icon: 'fl-icon-desktop'
   }
 ]
 
