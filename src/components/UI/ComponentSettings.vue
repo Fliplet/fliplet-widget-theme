@@ -40,6 +40,7 @@ import ColorField from '../fields/ColorField'
 import FontField from '../fields/FontField'
 import BackgroundField from '../fields/BackgroundField'
 import ImageField from '../fields/ImageField'
+import AlignField from '../fields/AlignField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -64,7 +65,8 @@ export default {
     ColorField,
     FontField,
     BackgroundField,
-    ImageField
+    ImageField,
+    AlignField
   },
   methods: {
     checkSavedValue,

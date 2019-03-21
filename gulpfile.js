@@ -28,6 +28,13 @@ function copyFonts() {
   .pipe(gulp.dest('dist/fonts/'))
 }
 
+// Copy fonts from static folder
+function copyIcons() {
+  return gulp
+  .src(['static/icons/*'])
+  .pipe(gulp.dest('dist/icons/'))
+}
+
 // SASS task
 function scss() {
   return gulp
@@ -55,7 +62,7 @@ function watchFiles() {
   gulp.watch('src/**/*.vue', js);
 }
 
-const build = gulp.series(clean, gulp.parallel(copyCss, copyFonts, scss, js));
+const build = gulp.series(clean, gulp.parallel(copyCss, copyFonts, copyIcons, scss, js));
 const watch = gulp.parallel(watchFiles);
 
 exports.build = build;
