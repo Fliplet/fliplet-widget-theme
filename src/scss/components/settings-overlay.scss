@@ -38,8 +38,7 @@
       margin-bottom: 25px;
     }
 
-    .multi-field,
-    .two-rows {
+    .multi-field {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
@@ -54,16 +53,12 @@
       }
     }
 
-    .two-rows {
-      > * {
-        display: flex;
-        width: calc(50% - 30px);
-        margin: 0 15px 8px 15px;
-      }
-    }
-
     .full-width {
       min-width: calc(100% - 30px);
+    }
+
+    .half-width {
+      min-width: calc(50% - 30px);
     }
   }
 }

@@ -10,12 +10,15 @@
 
     .drag-input-holder {
       cursor: ew-resize;
-      margin-right: 5px;
 
       &.expanded {
         width: 50px;
         overflow: hidden;
       }
+    }
+
+    .select-box {
+      margin-left: 5px;
     }
   }
 

@@ -19,7 +19,7 @@
                 </template>
               </div>
             </template>
-            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1, 'two-rows': variable.fields.length == 4 }">
+            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
               <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
             </div>
           </div>

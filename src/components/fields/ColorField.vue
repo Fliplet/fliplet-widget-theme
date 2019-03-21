@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow }">
+  <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
     <div class="wrapper">
       <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
         <div id="color-picker-container" class="color-holder" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
@@ -26,6 +26,7 @@ export default {
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId(),
       isFullRow: this.data.fieldConfig.isFullRow,
+      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="font-field-holder" :class="{ 'full-width': isFullRow }">
+  <div v-if="showField" class="font-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
     <div class="wrapper">
       <div v-if="!showInputField" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -49,6 +49,7 @@ export default {
       customValue: this.getCustomValue(),
       showInputField: false,
       isFullRow: this.data.fieldConfig.isFullRow,
+      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'

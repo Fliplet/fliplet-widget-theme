@@ -1,8 +1,8 @@
 <template>
-  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow }">
+  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ valueToShow }}</span>
-      <div v-if="property && properties" class="dropdown select-box">
+      <div v-if="property && properties && valueToShow !== 'auto'" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
           <span class="caret"></span>
@@ -37,6 +37,7 @@ export default {
       label: this.data.fieldConfig.label,
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
+      isHalfRow: this.data.fieldConfig.isHalfRow,
       inputIsActive: false,
       hammerInstance: undefined,
       keyMap: {},

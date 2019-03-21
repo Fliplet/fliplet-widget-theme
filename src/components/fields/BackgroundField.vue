@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="background-field-holder" :class="{ 'full-width': isFullRow }">
+  <div v-if="showField" class="background-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
     <div class="wrapper">
       <div class="radio-holder inline-circle" v-for="(prop, idx) in properties" :key="idx">
         <input type="radio" :id="'radio-background-' + prop.toLowerCase()" :name="'radio-background-' + data.fieldConfig.name" :value="prop" v-model="value">
@@ -24,6 +24,7 @@ export default {
       value: getDefaultFieldValue(this.data.fieldConfig),
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
+      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'

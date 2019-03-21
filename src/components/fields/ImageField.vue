@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="image-field-holder" :class="{ 'full-width': isFullRow }">
+  <div v-if="showField" class="image-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
     <div class="wrapper">
       <template v-if="!hasImage">
         <div class="btn btn-default" @click.prevent="openFilePicker">
@@ -27,6 +27,7 @@ export default {
       valueToShow: this.computeValueToShow(),
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
+      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'

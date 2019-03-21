@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="style-field-holder" :class="{ 'full-width': isFullRow }">
+  <div v-if="showField" class="style-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
     <div class="wrapper">
       <div class="style-field-container">
         <div class="checkbox-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
@@ -33,6 +33,7 @@ export default {
       value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
+      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
