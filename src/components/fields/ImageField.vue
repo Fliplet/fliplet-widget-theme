@@ -77,7 +77,8 @@ export default {
         selectMultiple: false,
         type: 'image',
         fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF', 'SVG'],
-        autoSelectOnUpload: true
+        autoSelectOnUpload: true,
+        cdn: false
       }
 
       window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
