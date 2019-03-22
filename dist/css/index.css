@@ -976,12 +976,35 @@ header {
       background-color: transparent; }
 
 .style-field-holder {
-  position: relative; }
+  position: relative;
+  margin-right: 0 !important; }
+  .style-field-holder .checkbox-holder.inline-boxed:last-child label {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px; }
+  .style-field-holder ~ .style-field-holder {
+    margin-left: 0 !important; }
+    .style-field-holder ~ .style-field-holder .checkbox-holder.inline-boxed:last-child label {
+      border-radius: 0px;
+      border-left: none; }
+    .style-field-holder ~ .style-field-holder ~ .style-field-holder {
+      margin-right: 15px !important; }
+      .style-field-holder ~ .style-field-holder ~ .style-field-holder .checkbox-holder.inline-boxed:last-child label {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        border-left: none; }
   .style-field-holder .wrapper {
     position: relative; }
   .style-field-holder .style-field-container {
     display: flex !important;
     align-items: center; }
+    .style-field-holder .style-field-container label .check-icon {
+      opacity: 0.8; }
+    .style-field-holder .style-field-container label:hover .check-icon {
+      opacity: 1; }
+    .style-field-holder .style-field-container .checkbox-holder.inline-boxed input[type="checkbox"]:checked + label .check-icon {
+      opacity: 1; }
 
 .select-field-holder {
   position: relative; }
@@ -1029,6 +1052,7 @@ header {
       .align-field-holder .align-field-container label .check-icon {
         width: 100%;
         height: 100%;
+        opacity: 0.4;
         background-size: cover;
         background-repeat: no-repeat; }
         .align-field-holder .align-field-container label .check-icon.check-align-left-h {
@@ -1049,3 +1073,7 @@ header {
         .align-field-holder .align-field-container label .check-icon.check-align-bottom-v {
           background-image: url("dist/icons/bottom-align.svg");
           background-position: center bottom; }
+      .align-field-holder .align-field-container label:hover .check-icon {
+        opacity: 0.7; }
+    .align-field-holder .align-field-container .radio-holder.inline-boxed input[type="radio"]:checked + label .check-icon {
+      opacity: 1; }

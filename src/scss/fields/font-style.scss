@@ -1,5 +1,32 @@
 .style-field-holder {
   position: relative;
+  margin-right: 0 !important;
+
+  .checkbox-holder.inline-boxed:last-child label {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+
+  ~ .style-field-holder {
+    margin-left: 0 !important;
+
+    .checkbox-holder.inline-boxed:last-child label {
+      border-radius: 0px;
+      border-left: none;
+    }
+
+    ~ .style-field-holder {
+      margin-right: 15px !important;
+
+      .checkbox-holder.inline-boxed:last-child label {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        border-left: none;
+      }
+    }
+  }
 
   .wrapper {
     position: relative;
@@ -8,5 +35,29 @@
   .style-field-container {
     display: flex !important;
     align-items: center;
+
+    label {
+      .check-icon {
+        opacity: 0.8;
+      }
+
+      &:hover {
+        .check-icon {
+          opacity: 1;
+        }
+      }
+    }
+
+    .checkbox-holder {
+      &.inline-boxed {
+        input[type="checkbox"] {
+          &:checked + label {
+            .check-icon {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
   }
 }

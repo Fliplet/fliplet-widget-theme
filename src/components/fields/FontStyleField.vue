@@ -32,6 +32,7 @@ export default {
       state,
       value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
       properties: this.data.fieldConfig.properties,
+      subType: this.data.fieldConfig.subType,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
@@ -59,6 +60,13 @@ export default {
       if (newVal.indexOf('normal') > -1) {
         // Remove "normal"
         index = newVal.indexOf('normal')
+        if (index > -1) {
+          newVal.splice(index, 1)
+        }
+      }
+      if (newVal.indexOf('none') > -1) {
+        // Remove "none"
+        index = newVal.indexOf('none')
         if (index > -1) {
           newVal.splice(index, 1)
         }
@@ -124,7 +132,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting ? this.value : this.value.length ? this.value.join(' ') : 'normal'
+        value: isInheriting ? this.value : this.value.length ? this.value.join(' ') : this.subType === 'decoration' ? 'none' : 'normal'
       }
 
       saveFieldData(data)
