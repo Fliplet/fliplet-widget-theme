@@ -6,12 +6,12 @@
         <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <div v-if="variables && variables.length" class="settings-fields-holder">
-        <div v-for="(variable, index) in variables" v-if="toShow(variable)" :key="index">
+        <div v-for="(variable, index) in variables" v-if="showVariable(variable)" :key="index">
           <div class="form-group clearfix">
             <div class="col-xs-12 control-label">
               <label>{{ variable.description }}</label>
             </div>
-            <template v-if="notMobile">
+            <template v-if="notMobile && !ignoreInheritance(variable)">
               <div class="inherit-settings-holder col-xs-12">
                 <div v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
                 <template v-else>
@@ -20,7 +20,7 @@
               </div>
             </template>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
-              <component v-for="(field, idx) in variable.fields" :key="idx" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
+              <component v-for="(field, idx) in variable.fields" :key="idx" v-if="showField(field)" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
             </div>
           </div>
         </div>
@@ -53,6 +53,10 @@ export default {
       context: undefined,
       showNotInheritingInfo: [],
       inheritingFrom: getInheritance(),
+      inheritMap: {
+        'tablet': 'mobile',
+        'desktop': 'tablet'
+      },
       currentContext: state.componentContext.toLowerCase()
     }
   },
@@ -71,8 +75,28 @@ export default {
   methods: {
     checkSavedValue,
     closeComponentSettings,
-    toShow(variable) {
+    ignoreInheritance(object) {
+      const toHide = object.hide
+      const context = state.componentContext.toLowerCase()
+
+      if (toHide && Array.isArray(toHide)) {
+        return toHide.indexOf(this.inheritMap[context]) > -1
+      }
+
+      return false
+    },
+    showVariable(variable) {
       const toHide = variable.hide
+      const context = state.componentContext.toLowerCase()
+
+      if (toHide && Array.isArray(toHide)) {
+        return toHide.indexOf(context) < 0
+      }
+
+      return true
+    },
+    showField(field) {
+      const toHide = field.hide
       const context = state.componentContext.toLowerCase()
 
       if (toHide && Array.isArray(toHide)) {
@@ -111,8 +135,8 @@ export default {
           const isDefaultInheriting = this.checkIfIsInheriting(defaultValue)
           const isSavedValueInheriting = this.checkIfIsInheriting(savedValue)
           const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
-
-          field.inheriting = !!(isLocalSavedValueInheriting || (!isLocalSavedValueInheriting && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting))
+          debugger
+          field.inheriting = !!((isLocalSavedValueInheriting || (!isLocalSavedValueInheriting && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting)) || (this.ignoreInheritance(variable) || this.ignoreInheritance(field)))
         })
       })
 
