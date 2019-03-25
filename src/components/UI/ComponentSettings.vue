@@ -135,7 +135,7 @@ export default {
           const isDefaultInheriting = this.checkIfIsInheriting(defaultValue)
           const isSavedValueInheriting = this.checkIfIsInheriting(savedValue)
           const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
-          debugger
+
           field.inheriting = !!((isLocalSavedValueInheriting || (!isLocalSavedValueInheriting && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting)) || (this.ignoreInheritance(variable) || this.ignoreInheritance(field)))
         })
       })
