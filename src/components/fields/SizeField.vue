@@ -249,7 +249,16 @@ export default {
         this.valueToShow = tempValue
       } else if (e.deltaX < 0 && distanceX < distanceY) {
         // If dragging left
-        if (parseInt(this.value) > 0 || (this.allowNegative && parseInt(this.value) <= 0)) {
+        if (!this.allowNegative && this.valueToShow > 0) {
+          // If value is 0 do nothing
+          tempValue -= Math.abs(e.deltaX)
+
+          if (tempValue < 0) {
+            this.valueToShow = 0
+          } else {
+            this.valueToShow = tempValue
+          }
+        } else if(this.allowNegative && this.valueToShow <= 0) {
           // If value is 0 do nothing
           tempValue -= Math.abs(e.deltaX)
           this.valueToShow = tempValue
@@ -257,7 +266,7 @@ export default {
       }
 
       if (e.isFinal) {
-        this.value = tempValue
+        this.value = this.valueToShow
       }
     },
     checkInheritance() {
