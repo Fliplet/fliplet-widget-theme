@@ -20,7 +20,16 @@
               </div>
             </template>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
-              <component v-for="(field, idx) in variable.fields" :key="idx" v-if="showField(field)" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
+              <template v-for="(field, idx) in checkForFontStyle(variable.fields)">
+                <template v-if="Array.isArray(field)">
+                  <div class="field-group-wrapper">
+                    <component v-for="(groupedField, i) in field" :key="i" v-if="showField(groupedField)" :is="componentType(groupedField.type)" :data="fieldData(groupedField)" :saved-value="checkSavedValue(groupedField)"></component>
+                  </div>
+                </template>
+                <template v-else>
+                  <component v-if="showField(field)" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
+                </template>
+              </template>
             </div>
           </div>
         </div>
@@ -75,6 +84,22 @@ export default {
   methods: {
     checkSavedValue,
     closeComponentSettings,
+    checkForFontStyle(fields) {
+      // Get the index of the first 'font-style' field
+      const firsIndex = _.findIndex(fields, { type: 'font-style' })
+      // Get the array with all the 'font-style' fields
+      const fontTypeArray = _.filter(fields, { type: 'font-style' })
+
+      // If there is an index
+      if (firsIndex > -1) {
+        // Remove the fields from the 'fields' array
+        _.remove(fields, { type: 'font-style' })
+        // The add them as an array field back in in the index saved above
+        fields.splice(firsIndex, 0, fontTypeArray)
+      }
+
+      return fields
+    },
     ignoreInheritance(object) {
       const toHide = object.hide
       const context = state.componentContext.toLowerCase()

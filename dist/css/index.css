@@ -986,14 +986,12 @@ header {
     .style-field-holder ~ .style-field-holder .checkbox-holder.inline-boxed:last-child label {
       border-radius: 0px;
       border-left: none; }
-    .style-field-holder ~ .style-field-holder ~ .style-field-holder {
-      margin-right: 15px !important; }
-      .style-field-holder ~ .style-field-holder ~ .style-field-holder .checkbox-holder.inline-boxed:last-child label {
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-        border-left: none; }
+    .style-field-holder ~ .style-field-holder ~ .style-field-holder .checkbox-holder.inline-boxed:last-child label {
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+      border-left: none; }
   .style-field-holder .wrapper {
     position: relative; }
   .style-field-holder .style-field-container {
