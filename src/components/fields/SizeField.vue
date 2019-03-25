@@ -239,17 +239,25 @@ export default {
       const distanceX = e.distance - Math.abs(e.deltaX)
       const distanceY = e.distance - Math.abs(e.deltaY)
 
+      // Normalize
+      this.value = isNaN(this.value) ? 0 : parseInt(this.value)
+      let tempValue = this.value
+
       if (e.deltaX > 0 && distanceX < distanceY) {
-        // If dragging right, add 1
-        this.value = isNaN(this.value) ? 0 : this.value
-        this.value = parseInt(this.value) + 1
+        // If dragging right
+        tempValue += e.deltaX
+        this.valueToShow = tempValue
       } else if (e.deltaX < 0 && distanceX < distanceY) {
-        this.value = isNaN(this.value) ? 0 : this.value
-        // If dragging left, remove 1
+        // If dragging left
         if (parseInt(this.value) > 0 || (this.allowNegative && parseInt(this.value) <= 0)) {
           // If value is 0 do nothing
-          this.value = parseInt(this.value) - 1
+          tempValue -= Math.abs(e.deltaX)
+          this.valueToShow = tempValue
         }
+      }
+
+      if (e.isFinal) {
+        this.value = tempValue
       }
     },
     checkInheritance() {
