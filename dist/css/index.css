@@ -682,8 +682,10 @@ header {
     font-size: 0.8em;
     margin-top: -3px;
     cursor: pointer; }
+  #component-settings-overlay .breakpoint-tabs {
+    margin-top: 40px; }
   #component-settings-overlay .settings-fields-holder {
-    margin: 40px -15px 0;
+    margin: 30px -15px 0;
     height: calc(100% - 40px);
     overflow: auto;
     padding: 1rem 0 0; }

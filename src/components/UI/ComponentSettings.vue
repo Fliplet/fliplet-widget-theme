@@ -2,9 +2,15 @@
   <transition name="slide-in">
     <div v-if="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
       <header>
-        <p>{{ state.componentOverlay.name }} - ({{ state.componentContext }})</p>
+        <p>{{ state.componentOverlay.name }}</p>
         <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs breakpoint-tabs">
+        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
+          <a :href="'#tab-' + tab.type" data-toggle="tab" @click="setActiveTab(tab)"><i :class="tab.icon"></i></a>
+        </li>
+      </ul>
       <div v-if="variables && variables.length" class="settings-fields-holder">
         <div v-for="(variable, index) in variables" v-if="showVariable(variable)" :key="index">
           <div class="form-group clearfix">
@@ -39,7 +45,8 @@
 </template>
 
 <script>
-import { state, closeComponentSettings, saveInheritanceData, getInheritance, checkSavedValue } from '../../store'
+import { state, closeComponentSettings, saveInheritanceData,
+  getInheritance, checkSavedValue, setComponentContext } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'
@@ -66,7 +73,9 @@ export default {
         'tablet': 'mobile',
         'desktop': 'tablet'
       },
-      currentContext: state.componentContext.toLowerCase()
+      currentContext: state.componentContext.toLowerCase(),
+      tabs: deviceTypes,
+      activeTab: this.getActiveTab()
     }
   },
   components: {
@@ -84,21 +93,39 @@ export default {
   methods: {
     checkSavedValue,
     closeComponentSettings,
+    setActiveTab(tab, component) {
+      tab = tab || this.tabs[0]
+      const tabIndex = _.findIndex(this.tabs, { type: tab.type })
+      this.activeTab = tabIndex
+      setComponentContext(tab.name)
+      this.reComputeVariables(true)
+      bus.$emit('variables-computed')
+
+      if (component) {
+        this.$nextTick(() => {
+          bus.$emit('open-component-overlay', component)
+        })
+      }
+    },
+    getActiveTab() {
+      return _.findIndex(deviceTypes, { name: state.componentContext })
+    },
     checkForFontStyle(fields) {
+      const clonedFields = _.cloneDeep(fields)
       // Get the index of the first 'font-style' field
-      const firsIndex = _.findIndex(fields, { type: 'font-style' })
+      const firsIndex = _.findIndex(clonedFields, { type: 'font-style' })
       // Get the array with all the 'font-style' fields
-      const fontTypeArray = _.filter(fields, { type: 'font-style' })
+      const fontTypeArray = _.filter(clonedFields, { type: 'font-style' })
 
       // If there is an index
       if (firsIndex > -1) {
         // Remove the fields from the 'fields' array
-        _.remove(fields, { type: 'font-style' })
+        _.remove(clonedFields, { type: 'font-style' })
         // The add them as an array field back in in the index saved above
-        fields.splice(firsIndex, 0, fontTypeArray)
+        clonedFields.splice(firsIndex, 0, fontTypeArray)
       }
 
-      return fields
+      return clonedFields
     },
     ignoreInheritance(object) {
       const toHide = object.hide
@@ -170,6 +197,7 @@ export default {
     reComputeVariables(toRecompute) {
       this.variables = this.computeVariables(toRecompute)
       this.showNotInheritingInfo = this.checkFieldsNotInheriting()
+      this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })

@@ -23,8 +23,12 @@
     cursor: pointer;
   }
 
+  .breakpoint-tabs {
+    margin-top: 40px;
+  }
+
   .settings-fields-holder {
-    margin: 40px -15px 0;
+    margin: 30px -15px 0;
     height: calc(100% - 40px);
     overflow: auto;
     padding: 1rem 0 0;

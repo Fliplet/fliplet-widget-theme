@@ -238,7 +238,7 @@ export default {
     onHammerInput(e) {
       const distanceX = e.distance - Math.abs(e.deltaX)
       const distanceY = e.distance - Math.abs(e.deltaY)
-
+      console.log(this.value)
       // Normalize
       this.value = isNaN(this.value) ? 0 : parseInt(this.value)
       let tempValue = this.value
