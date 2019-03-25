@@ -56,7 +56,7 @@ export default {
     computeValueToShow() {
       return this.parseValueToShow(getDefaultFieldValue(this.data.fieldConfig))
     },
-    inheritValue() {
+    inheritValue(value) {
       this.value = value
     },
     parseValueToShow(value) {
