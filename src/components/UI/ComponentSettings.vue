@@ -68,12 +68,12 @@ export default {
       variables: undefined,
       context: undefined,
       showNotInheritingInfo: [],
-      inheritingFrom: getInheritance(),
+      inheritingFrom: undefined,
       inheritMap: {
         'tablet': 'mobile',
         'desktop': 'tablet'
       },
-      currentContext: state.componentContext.toLowerCase(),
+      currentContext: undefined,
       tabs: deviceTypes,
       activeTab: this.getActiveTab(),
       componentKey: 0,
@@ -170,6 +170,8 @@ export default {
       this.variables = this.computeVariables()
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
       this.showNotInheritingInfo = this.checkFieldsNotInheriting()
+      this.currentContext = state.componentContext.toLowerCase()
+      this.inheritingFrom = getInheritance()
     },
     computeVariables(toRecompute) {
       if (!state.componentOverlay.data) {
