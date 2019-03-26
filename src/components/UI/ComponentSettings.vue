@@ -162,8 +162,7 @@ export default {
     },
     goToDeviceTab(inheritingFrom) {
       const tab = _.find(deviceTypes, { type: inheritingFrom })
-      bus.$emit('set-active-tab', tab, state.componentOverlay.data.component)
-      closeComponentSettings()
+      this.setActiveTab(tab)
     },
     setVariables() {
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
