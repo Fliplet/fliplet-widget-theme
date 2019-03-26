@@ -234,12 +234,17 @@ header {
   position: absolute;
   top: -4px;
   right: -10px;
+  z-index: 1;
   width: 10px;
   height: 10px;
   background-color: $warning-color;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
   cursor: pointer;
+
+  &.closer {
+    right: -4px;
+  }
 
   .inheritance-dropdown {
     position: absolute;

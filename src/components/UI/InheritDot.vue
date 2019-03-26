@@ -1,5 +1,5 @@
 <template>
-  <div class="inheritance-warn" @click.prevent="toggleDropdown" v-click-outside="closeDropDown">
+  <div class="inheritance-warn" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" v-click-outside="closeDropDown">
     <div v-show="showDropdown" ref="dropdown" class="inheritance-dropdown">
       <div>The value will be inherited from {{ inheritingFrom }}.</div>
       <div class="inherit-action" @click="$emit('trigger-inherit', value)">Inherit</div>
@@ -15,7 +15,8 @@ export default {
     }
   },
   props: {
-    inheritingFrom: String
+    inheritingFrom: String,
+    moveLeft: Boolean
   },
   computed: {
     value() {
