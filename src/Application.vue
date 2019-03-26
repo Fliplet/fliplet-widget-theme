@@ -78,6 +78,10 @@ export default {
         })
       }
     },
+    changeContext() {
+      const tab = _.find(this.tabs, { name: state.componentContext })
+      this.setActiveTab(tab)
+    },
     componentType(type) {
       return `${type}-tab`
     },
@@ -237,6 +241,7 @@ export default {
     bus.$on('initialize-widget', this.initialize)
     bus.$on('reload-custom-fonts', this.reloadCustomFonts)
     bus.$on('set-active-tab', this.setActiveTab)
+    bus.$on('context-changed', this.changeContext)
 
     // Initialize
     this.initialize()
@@ -257,6 +262,7 @@ export default {
     bus.$off('initialize-widget', this.initialize)
     bus.$off('reload-custom-fonts', this.reloadCustomFonts)
     bus.$off('set-active-tab', this.setActiveTab)
+    bus.$off('context-changed', this.changeContext)
   }
 }
 </script>

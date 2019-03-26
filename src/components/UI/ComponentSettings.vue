@@ -3,7 +3,7 @@
     <div v-if="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
       <header>
         <p>{{ state.componentOverlay.name }}</p>
-        <span class="close-component-settings" @click.prevent="closeComponentSettings"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <span class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
@@ -29,11 +29,11 @@
               <template v-for="(field, idx) in checkForFontStyle(variable.fields)">
                 <template v-if="Array.isArray(field)">
                   <div class="field-group-wrapper">
-                    <component v-for="(groupedField, i) in field" :key="i" v-if="showField(groupedField)" :is="componentType(groupedField.type)" :data="fieldData(groupedField)" :saved-value="checkSavedValue(groupedField)"></component>
+                    <component v-for="(groupedField, i) in field" :key="groupedComponentKey" v-if="showField(groupedField)" :is="componentType(groupedField.type)" :data="fieldData(groupedField)" :saved-value="checkSavedValue(groupedField)"></component>
                   </div>
                 </template>
                 <template v-else>
-                  <component v-if="showField(field)" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
+                  <component :key="componentKey" v-if="showField(field)" :is="componentType(field.type)" :data="fieldData(field)" :saved-value="checkSavedValue(field)"></component>
                 </template>
               </template>
             </div>
@@ -75,7 +75,9 @@ export default {
       },
       currentContext: state.componentContext.toLowerCase(),
       tabs: deviceTypes,
-      activeTab: this.getActiveTab()
+      activeTab: this.getActiveTab(),
+      componentKey: 0,
+      groupedComponentKey: 0
     }
   },
   components: {
@@ -92,20 +94,21 @@ export default {
   },
   methods: {
     checkSavedValue,
-    closeComponentSettings,
-    setActiveTab(tab, component) {
+    closeComponent() {
+      bus.$emit('context-changed')
+      closeComponentSettings()
+    },
+    forceRerender() {
+      this.groupedComponentKey += 1
+      this.componentKey += 1
+      this.setVariables()
+    },
+    setActiveTab(tab) {
       tab = tab || this.tabs[0]
       const tabIndex = _.findIndex(this.tabs, { type: tab.type })
       this.activeTab = tabIndex
-      setComponentContext(tab.name)
-      this.reComputeVariables(true)
-      bus.$emit('variables-computed')
-
-      if (component) {
-        this.$nextTick(() => {
-          bus.$emit('open-component-overlay', component)
-        })
-      }
+      setComponentContext(tab.name, true)
+      this.forceRerender()
     },
     getActiveTab() {
       return _.findIndex(deviceTypes, { name: state.componentContext })
