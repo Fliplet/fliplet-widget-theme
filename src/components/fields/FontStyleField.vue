@@ -3,8 +3,8 @@
     <div class="wrapper">
       <div class="style-field-container">
         <div class="checkbox-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="checkbox" :id="'checkbox-' + prop" :value="prop" v-model="value">
-          <label :for="'checkbox-' + prop">
+          <input type="checkbox" :id="'checkbox-' + prop + uuid" :value="prop" v-model="value">
+          <label :for="'checkbox-' + prop + uuid">
             <span class="check-icon">
               <template v-if="prop !== 'lighter'">
                 <i :class="'fa fa-' + prop"></i>
@@ -40,7 +40,8 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true,
-      fromReset: false
+      fromReset: false,
+      uuid: Fliplet.guid()
     }
   },
   props: {

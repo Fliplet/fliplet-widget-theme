@@ -3,8 +3,8 @@
     <div class="wrapper">
       <div class="align-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + orientationSufix" :name="'align-' + orientation" :value="prop" v-model="value">
-          <label :for="'radio-' + prop + orientationSufix">
+          <input type="radio" :id="'radio-' + prop + orientationSufix + uuid" :name="'align-' + orientation" :value="prop" v-model="value">
+          <label :for="'radio-' + prop + orientationSufix + uuid">
             <span :class="'check-icon check-align-' + prop + orientationSufix"></span>
           </label>
         </div>
@@ -34,7 +34,8 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true,
-      fromReset: false
+      fromReset: false,
+      uuid: Fliplet.guid()
     }
   },
   props: {
