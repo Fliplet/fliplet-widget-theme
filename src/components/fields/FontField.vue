@@ -1,7 +1,7 @@
 <template>
   <div v-if="showField" class="font-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
     <div class="wrapper">
-      <div v-if="!showInputField" class="dropdown select-box">
+      <div class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ valueToShow }}
           <span class="caret"></span>
@@ -17,18 +17,10 @@
             <a href="#" @click.prevent="onValueChange(webFont.name)">{{ webFont.name }}</a>
           </li>
           <li class="divider"></li>
-          <li :class="{ active: valueToShow === 'Custom' }">
-            <a href="#" @click.prevent="onValueChange('Custom')">Custom...</a>
-          </li>
-          <li class="divider"></li>
           <li>
             <a href="#" @click.prevent="openFontUploader"><span class="text-primary">Upload a new font</span></a>
           </li>
         </ul>
-      </div>
-      <div v-else>
-        <input class="form-control custom-font" type="text" v-model="customValue" placeholder="Helvetica, sans-serif">
-        <small><a href="#" @click.prevent="showListOfFonts">See full list of fonts</a></small>
       </div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
@@ -46,8 +38,6 @@ export default {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
       valueToShow: this.computeValueToShow(),
-      customValue: this.getCustomValue(),
-      showInputField: false,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
@@ -63,13 +53,6 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.prepareToSave()
-      }
-
-      this.showInputField = newVal === 'Custom'
-    },
-    customValue(newVal, oldVal) {
       if (newVal !== oldVal) {
         this.prepareToSave()
       }
@@ -102,29 +85,8 @@ export default {
 
       if (this.savedValue && (webFont || customFont)) {
         value = this.savedValue
-      } else if (this.savedValue && !webFont && !customFont) {
-        value = 'Custom'
-        this.showInputField = true
       } else if (!this.savedValue) {
         value = getDefaultFieldValue(this.data.fieldConfig)
-      }
-
-      return value
-    },
-    getCustomValue() {
-      let value = ''
-      let webFont = undefined
-      let customFont = undefined
-
-      webFont = _.find(this.data.webFonts, { name: this.savedValue })
-      if (!webFont) {
-        customFont = _.find(this.data.customFonts, { name: this.savedValue })
-      }
-
-      if (this.savedValue && !webFont && !customFont) {
-        value = this.savedValue
-      } else {
-        value = ''
       }
 
       return value
@@ -135,7 +97,6 @@ export default {
     },
     showListOfFonts() {
       this.value = this.webFonts[0].name
-      this.showInputField = false
     },
     openFontUploader() {
       if (Fliplet.Env.get('development')) {
@@ -184,7 +145,7 @@ export default {
     prepareToSave() {
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: this.value === 'Custom' && this.showInputField ? this.customValue : this.value
+        value: this.value
       }
 
       saveFieldData(data)
