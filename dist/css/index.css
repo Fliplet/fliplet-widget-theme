@@ -685,10 +685,10 @@ header {
   #component-settings-overlay .breakpoint-tabs {
     margin-top: 40px; }
   #component-settings-overlay .settings-fields-holder {
-    margin: 30px -15px 0;
+    margin: 0 -15px;
     height: calc(100% - 40px);
     overflow: auto;
-    padding: 1rem 0 0; }
+    padding: 30px 0 0; }
     #component-settings-overlay .settings-fields-holder .control-label {
       text-transform: uppercase;
       font-weight: 600; }
