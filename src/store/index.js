@@ -9,6 +9,7 @@ export const state = {
     web: [],
     custom: []
   },
+  componentMode: false,
   componentOverlay: {},
   dataToSave: undefined,
   componentContext: 'Mobile',
@@ -60,6 +61,14 @@ export function setWebFonts(fonts) {
 
 export function setCustomFonts(fonts) {
   state.fonts.custom = fonts
+}
+
+export function setComponentMode(value) {
+  state.componentMode = value
+}
+
+export function toggleComponentMode() {
+  state.componentMode = !state.componentMode
 }
 
 export function openComponentSettings(overlayName = '', options) {

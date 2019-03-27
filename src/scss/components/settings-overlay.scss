@@ -21,6 +21,10 @@
     font-size: 0.8em;
     margin-top: -3px;
     cursor: pointer;
+
+    + p {
+      margin-left: 10px;
+    }
   }
 
   .breakpoint-tabs {

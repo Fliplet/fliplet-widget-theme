@@ -26,7 +26,7 @@
 <script>
 // @TODO: Handle errors
 import { state, setComponentContext,
-  setThemeInstance, setActiveTheme,
+  setThemeInstance, setActiveTheme, setComponentMode,
   setWebFonts, setCustomFonts, setSavedFields } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
@@ -87,16 +87,9 @@ export default {
     },
     initialize() {
       // Get widget provider data
-      const widgetId = Fliplet.Widget.getDefaultId();
-      this.widgetData = Fliplet.Widget.getData(widgetId) || {};
+      const widgetId = Fliplet.Widget.getDefaultId()
+      this.widgetData = Fliplet.Widget.getData(widgetId) || {}
 
-      // Check if there's a value to set as the active tab
-      if (this.widgetData && typeof this.widgetData.activeTab !== 'undefined' && !this.isFromUpdate) {
-        this.setActiveTab(this.tabs[this.widgetData.activeTab])
-      }
-      
-      // @TODO: Remove console.log
-      console.log('data', this.widgetData)
       // Get themes and fonts simultaneously
       return Promise.all([this.getThemes(), this.getFonts()])
         .then((response) => {
@@ -120,8 +113,6 @@ export default {
       let themeWithoutInstances = 0
 
       this.themes.forEach((theme) => {
-        // @TODO: Remove console.log
-        console.log(theme)
         if (!theme.instances.length) {
           themeWithoutInstances++
           return
@@ -136,15 +127,41 @@ export default {
         this.customFonts = _.filter(this.fonts, (font) => { return font.url })
         setCustomFonts(this.customFonts)
 
-        this.isLoading = false
+        if (this.widgetData) {
+          let tab
+          let component
+
+          // Check if there's a package name to open its component settings
+          if (typeof this.widgetData.widgetPackage !== 'undefined') {
+            component = _.find(this.activeTheme.settings.configuration, (config) => {
+              return config.packages && config.packages.indexOf(this.widgetData.widgetPackage) > -1
+            })
+
+            setComponentMode(!!component)
+          }
+
+          // Check if there's a tab to be open
+          if (typeof this.widgetData.activeTab !== 'undefined') {
+            tab = this.tabs[this.widgetData.activeTab]
+          }
+
+          // If it's not from an update set the active tab from widget data
+          if (!this.isFromUpdate) {
+            this.isLoading = false
+            this.setActiveTab(tab, component)
+          }
+
+          return
+        }
+
+        this.isLoading = false    
       })
 
       if (themeWithoutInstances == this.themes.length) {
-        // @TODO: Update Fliplet Theme name
         const flipletTheme = _.find(this.themes, { name: 'Fliplet theme' })
         this.createDefaultInstance(flipletTheme.id)
           .then(this.initialize)
-          .then(this.reloadPage) // @TODO: Confirm we need this
+          .then(this.reloadPage)
           .catch((err) => {
             const error = Fliplet.parseError(err)
             console.error(error)
@@ -199,9 +216,6 @@ export default {
       this.save(forceRefresh, dataObj)
     },
     save(forceRefresh, data) {
-      // @TODO: Remove console.log
-      console.log('Data to save', data)
-
       this.updateInstance(data)
         .then((response) => {
           if (response && response.widgetInstance && !forceRefresh) {
@@ -253,7 +267,6 @@ export default {
         return
       }
 
-      // @TODO: Decide if it should force refresh
       this.prepareToSave(true)
     })
   },

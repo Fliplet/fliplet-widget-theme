@@ -1,9 +1,10 @@
 <template>
-  <transition name="slide-in">
+  <transition :name="transition">
     <div v-if="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
       <header>
+        <span v-if="state.componentMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
         <p>{{ state.componentOverlay.name }}</p>
-        <span class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <span v-if="!state.componentMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
@@ -92,9 +93,18 @@ export default {
     ImageField,
     AlignField
   },
+  computed: {
+    transition() {
+      return !state.componentMode ? 'slide-in' : ''
+    }
+  },
   methods: {
     checkSavedValue,
     closeComponent() {
+      if (state.componentMode) {
+        bus.$emit('close-appearance')
+        return
+      }
       bus.$emit('context-changed')
       closeComponentSettings()
     },

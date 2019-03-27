@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import bus from '../libs/bus'
+
 export default {
   data() {
     return {}
@@ -13,6 +15,12 @@ export default {
     closeSideView() {
       Fliplet.Studio.emit('navigate', { name: 'appEdit' });
     }
+  },
+  mounted() {
+    bus.$on('close-appearance', this.closeSideView)
+  },
+  destroyed() {
+    bus.$off('close-appearance', this.closeSideView)
   }
 }
 </script>
