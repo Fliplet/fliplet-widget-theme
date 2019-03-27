@@ -1,6 +1,6 @@
 const componentsMap = {
   'com.fliplet.menu.bottom-bar': 'menuBottom',
-  'com.fliplet.menu.expandable', 'menuCircle',
+  'com.fliplet.menu.expandable': 'menuCircle',
   'com.fliplet.menu.default': 'menuOverlay',
   'com.fliplet.menu.push-in': 'menuPushIn',
   'com.fliplet.menu.slide-in': 'menuSlideIn',

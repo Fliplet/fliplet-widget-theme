@@ -210,7 +210,7 @@ export default {
         }
       } else {
         if (state.componentMode) {
-          const dataObj {
+          const dataObj = {
             id: state.componentId,
             component: componentsMap[this.widgetData.widgetPackage],
             values: undefined
