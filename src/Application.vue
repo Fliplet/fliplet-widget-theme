@@ -26,7 +26,7 @@
 <script>
 // @TODO: Handle errors
 import { state, setComponentContext,
-  setThemeInstance, setActiveTheme, setComponentMode,
+  setThemeInstance, setActiveTheme, setComponentMode, setComponentId,
   setWebFonts, setCustomFonts, setSavedFields } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
@@ -34,6 +34,7 @@ import MobileTab from './components/MobileTab'
 import TabletTab from './components/TabletTab'
 import DesktopTab from './components/DesktopTab'
 import deviceTypes from './libs/device-types'
+import componentsMap from './libs/components-map'
 import bus from './libs/bus'
 import { dropdown } from './libs/dropdown'
 dropdown()
@@ -127,9 +128,15 @@ export default {
         this.customFonts = _.filter(this.fonts, (font) => { return font.url })
         setCustomFonts(this.customFonts)
 
+        console.log('Widget Data', this.widgetData)
+
         if (this.widgetData) {
           let tab
           let component
+
+          if (typeof this.widgetData.widgetId !== 'undefined') {
+            setComponentId(this.widgetData.widgetId)
+          }
 
           // Check if there's a package name to open its component settings
           if (typeof this.widgetData.widgetPackage !== 'undefined') {
@@ -182,14 +189,38 @@ export default {
       Fliplet.Studio.emit('reload-page-preview');
     },
     onFieldSave(data) {
-      const fieldIndex = _.findIndex(this.savedFields.values, (field) => {
-        return field && field.name === data.name
-      })
-      
-      if (fieldIndex >= 0) {
-        this.savedFields.values[fieldIndex].value = data.value
+      // @TODO - Test
+      let fieldIndex
+
+      if (state.componentMode) {
+        fieldIndex = _.findIndex(this.savedFields.widgetInstances, (field) => {
+          return field && field.values && field.values.hasOwnProperty(data.name)
+        })
       } else {
-        this.savedFields.values.push(data)
+        fieldIndex = _.findIndex(this.savedFields.values, (field) => {
+          return field && field.name === data.name
+        })
+      }
+
+      if (fieldIndex >= 0) {
+        if (state.componentMode) {
+          this.savedFields.widgetInstances[fieldIndex].values[data.name] = data.value
+        } else {
+          this.savedFields.values[fieldIndex].value = data.value
+        }
+      } else {
+        if (state.componentMode) {
+          const dataObj {
+            id: state.componentId,
+            component: componentsMap[this.widgetData.widgetPackage],
+            values: undefined
+          }
+          dataObj.values[data.name] = data.value
+
+          this.savedFields.widgetInstances.push(dataObj)
+        } else {
+          this.savedFields.values.push(data)
+        }
       }
 
       setSavedFields(this.savedFields)
@@ -201,17 +232,22 @@ export default {
         method: 'PUT',
         data: {
           package: this.activeTheme.package,
-          values: dataObj.values || {}
+          values: dataObj.values || {},
+          widgetInstances: dataObj.widgetInstances || []
         }
       })
     },
     prepareToSave(forceRefresh) {
-      // Map data
-      const dataObj = {
-        values: _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
-      }
+      // @TODO - Test
+      const dataObj = {}
 
-      dataObj.values = _.assignIn({}, state.themeInstance.settings.values, dataObj.values)
+      if (state.componentMode) {
+        dataObj.widgetInstances = state.savedFields.widgetInstances
+      } else {
+        // Map data
+        dataObj.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
+        dataObj.values = _.assignIn({}, state.themeInstance.settings.values, dataObj.values)
+      }
 
       this.save(forceRefresh, dataObj)
     },
