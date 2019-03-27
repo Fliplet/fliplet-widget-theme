@@ -10,6 +10,7 @@ export const state = {
     custom: []
   },
   componentMode: false,
+  componentId: undefined,
   componentOverlay: {},
   dataToSave: undefined,
   componentContext: 'Mobile',
@@ -21,26 +22,6 @@ export const state = {
 export function setSavedFields(data) {
   state.savedFields = _.assignIn({}, state.savedFields, data)
   bus.$emit('saved-fields-set')
-}
-
-export function setNewSavedValues(data) {
-  data = data || []
-  data.forEach(function (value) {
-    state.savedFields.values.push(value)
-  })
-}
-
-export function removeSavedValues(data) {
-  data = data || []
-  data.forEach(function (valueName) {
-    const valueIndex = _.findIndex(state.savedFields.values, { name: valueName })
-    if (typeof valueIndex !== 'undefined') {
-      // Removes from local saved values
-      state.savedFields.values.splice(valueIndex, 1)
-    }
-    // Removes from instance saved values
-    delete state.themeInstance.settings.values[valueName]
-  })
 }
 
 export function setComponentContext(context) {
@@ -61,6 +42,10 @@ export function setWebFonts(fonts) {
 
 export function setCustomFonts(fonts) {
   state.fonts.custom = fonts
+}
+
+export function setComponentId(id) {
+  state.componentId = id
 }
 
 export function setComponentMode(value) {
