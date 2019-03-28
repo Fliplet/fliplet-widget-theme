@@ -37,7 +37,7 @@ export default {
     return {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
-      valueToShow: this.computeValueToShow(),
+      valueToShow: undefined,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
@@ -67,36 +67,18 @@ export default {
     }
   },
   methods: {
+    setValues() {
+      this.valueToShow = this.value
+    },
     computeValueToShow() {
       return getDefaultFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
       this.value = value
     },
-    getFontValue() {
-      let value = ''
-      let webFont = undefined
-      let customFont = undefined
-
-      webFont = _.find(this.data.webFonts, { name: this.savedValue })
-      if (!webFont) {
-        customFont = _.find(this.data.customFonts, { name: this.savedValue })
-      }
-
-      if (this.savedValue && (webFont || customFont)) {
-        value = this.savedValue
-      } else if (!this.savedValue) {
-        value = getDefaultFieldValue(this.data.fieldConfig)
-      }
-
-      return value
-    },
     onValueChange(value) {
       this.valueToShow = value
       this.value = value
-    },
-    showListOfFonts() {
-      this.value = this.webFonts[0].name
     },
     openFontUploader() {
       if (Fliplet.Env.get('development')) {
@@ -150,6 +132,9 @@ export default {
 
       saveFieldData(data)
     }
+  },
+  created() {
+    this.setValues()
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)

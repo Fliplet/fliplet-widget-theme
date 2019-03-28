@@ -28,7 +28,7 @@ export default {
     return {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
-      valueToShow: this.computeValueToShow(),
+      valueToShow: undefined,
       label: this.data.fieldConfig.label,
       properties: this.parseProperties(this.data.fieldConfig.properties),
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -53,6 +53,9 @@ export default {
     }
   },
   methods: {
+    setValues() {
+      this.valueToShow = this.value
+    },
     computeValueToShow() {
       return this.parseValueToShow(getDefaultFieldValue(this.data.fieldConfig))
     },
@@ -121,6 +124,9 @@ export default {
 
       saveFieldData(data)
     }
+  },
+  created() {
+    this.setValues()
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)

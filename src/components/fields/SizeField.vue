@@ -33,7 +33,7 @@ export default {
       state,
       property: undefined,
       value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
-      valueToShow: this.computeValueToShow(),
+      valueToShow: undefined,
       label: this.data.fieldConfig.label,
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -69,6 +69,9 @@ export default {
     }
   },
   methods: {
+    setValues() {
+      this.valueToShow = this.value
+    },
     computeValueToShow() {
       return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
     },
@@ -284,6 +287,9 @@ export default {
         ? this.data.fieldConfig.showField
         : true
     }
+  },
+  created() {
+    this.setValues()
   },
   mounted() {
     // Set property
