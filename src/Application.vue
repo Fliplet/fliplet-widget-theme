@@ -52,7 +52,8 @@ export default {
       webFonts: undefined,
       customFonts: undefined,
       savedFields: {
-        values: []
+        values: [],
+        widgetInstances: []
       },
       tabs: deviceTypes,
       activeTab: 0,
@@ -119,6 +120,8 @@ export default {
           return
         }
         
+        // @TODO - remove console.log
+        console.log('THEME INSTANCE', theme.instances[0])
         this.themeInstance = theme.instances[0]
         setThemeInstance(this.themeInstance)
         this.activeTheme = theme
@@ -127,8 +130,6 @@ export default {
         setWebFonts(this.webFonts)
         this.customFonts = _.filter(this.fonts, (font) => { return font.url })
         setCustomFonts(this.customFonts)
-
-        console.log('Widget Data', this.widgetData)
 
         if (this.widgetData) {
           let tab
@@ -189,12 +190,11 @@ export default {
       Fliplet.Studio.emit('reload-page-preview');
     },
     onFieldSave(data) {
-      // @TODO - Test
       let fieldIndex
 
       if (state.componentMode) {
         fieldIndex = _.findIndex(this.savedFields.widgetInstances, (field) => {
-          return field && field.values && field.values.hasOwnProperty(data.name)
+          return field && field.id === state.componentId
         })
       } else {
         fieldIndex = _.findIndex(this.savedFields.values, (field) => {
@@ -213,7 +213,7 @@ export default {
           const dataObj = {
             id: state.componentId,
             component: componentsMap[this.widgetData.widgetPackage],
-            values: undefined
+            values: {}
           }
           dataObj.values[data.name] = data.value
 
@@ -238,16 +238,14 @@ export default {
       })
     },
     prepareToSave(forceRefresh) {
-      // @TODO - Test
       const dataObj = {}
 
-      if (state.componentMode) {
-        dataObj.widgetInstances = state.savedFields.widgetInstances
-      } else {
-        // Map data
-        dataObj.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
-        dataObj.values = _.assignIn({}, state.themeInstance.settings.values, dataObj.values)
-      }
+      // Map data
+      dataObj.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
+      dataObj.values = _.merge(state.themeInstance.settings.values, dataObj.values)
+
+      dataObj.widgetInstances = state.savedFields.widgetInstances
+      dataObj.widgetInstances = _.merge(state.themeInstance.settings.widgetInstances, dataObj.widgetInstances)
 
       this.save(forceRefresh, dataObj)
     },

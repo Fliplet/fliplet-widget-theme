@@ -109,6 +109,16 @@ export default {
             && state.themeInstance.settings.values
             && state.themeInstance.settings.values[fieldName]
           const savedLocalValue = _.find(state.savedFields.values, { name: fieldName })
+
+          let savedWidgetValue
+          let savedLocalWidgetValue
+          if (state.componentMode && state.themeInstance.settings) {
+            const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+            const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+            savedWidgetValue = widgetFound ? widgetFound.values[fieldName] : undefined
+            savedLocalWidgetValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
+          }
+
           const defaultValue = state.componentContext === 'Mobile'
             ? field.default
             : field.breakpoints[state.componentContext.toLowerCase()].default
@@ -117,10 +127,27 @@ export default {
           const isDefaultInheriting = this.checkIfIsInheriting(defaultValue)
           const isSavedValueInheriting = this.checkIfIsInheriting(savedValue)
           const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
+          const isWidgetSavedValueInheriting = savedWidgetValue ? this.checkIfIsInheriting(savedWidgetValue) : undefined
+          const isLocalWidgetSavedValueInheriting = savedLocalWidgetValue ? this.checkIfIsInheriting(savedLocalWidgetValue) : undefined
 
           const newObj = {
-            value: savedLocalValue ? savedLocalValue.value : savedValue || getDefaultFieldValue(field),
-            inheriting: !!(isLocalSavedValueInheriting || (!savedLocalValue && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting))
+            value: state.componentMode
+              ? savedLocalWidgetValue
+                ? savedLocalWidgetValue
+                : savedWidgetValue
+                  ? savedWidgetValue
+                  : savedLocalValue
+                    ? savedLocalValue.value
+                    : savedValue|| getDefaultFieldValue(field)
+              : savedLocalValue ? savedLocalValue.value : savedValue || getDefaultFieldValue(field),
+            inheriting: state.componentMode
+              ? !!(isLocalWidgetSavedValueInheriting
+                  || (!savedLocalWidgetValue && isWidgetSavedValueInheriting)
+                  || (!savedLocalWidgetValue && !savedWidgetValue && isLocalSavedValueInheriting)
+                  || (!savedLocalWidgetValue && !savedWidgetValue && !savedLocalValue && isSavedValueInheriting)
+                  || (!savedLocalWidgetValue && !savedWidgetValue && !savedLocalValue && !savedValue && isDefaultInheriting)
+                )
+              : !!(isLocalSavedValueInheriting || (!savedLocalValue && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting))
           }
 
           _.extend(this.componentConfig.variables[index].fields[idx], newObj)

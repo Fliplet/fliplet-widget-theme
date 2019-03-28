@@ -191,18 +191,38 @@ export default {
       const variables = _.cloneDeep(toRecompute && this.variables ? this.variables : state.componentOverlay.data.component.variables)
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
+          const fieldName = state.componentContext === 'Mobile'
+            ? field.name
+            : field.breakpoints[state.componentContext.toLowerCase()].name
           const savedValue = checkSavedValue(field)
-          const savedLocalValue = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
+          const savedLocalValue = _.find(state.savedFields.values, { name: fieldName })
 
-          // To check if the field is inheriting
+          let savedLocalWidgetValue
+          if (state.componentMode && state.themeInstance.settings) {
+            const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+            savedLocalWidgetValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
+          }
+
           const defaultValue = isMobile
             ? field.default
             : field.breakpoints[state.componentContext.toLowerCase()].default
+
+          // To check if the field is inheriting
           const isDefaultInheriting = this.checkIfIsInheriting(defaultValue)
           const isSavedValueInheriting = this.checkIfIsInheriting(savedValue)
           const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
+          const isLocalWidgetSavedValueInheriting = savedLocalWidgetValue ? this.checkIfIsInheriting(savedLocalWidgetValue) : undefined
 
-          field.inheriting = !!((isLocalSavedValueInheriting || (!isLocalSavedValueInheriting && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting)) || (this.ignoreInheritance(variable) || this.ignoreInheritance(field)))
+          field.inheriting = state.componentMode
+            ? !!(
+              (isLocalWidgetSavedValueInheriting
+                || (!savedLocalWidgetValue && isLocalSavedValueInheriting)
+                || (!savedLocalWidgetValue && !savedLocalValue && isSavedValueInheriting)
+                || (!savedLocalWidgetValue && !savedLocalValue && !savedValue && isDefaultInheriting)
+              )
+              || (this.ignoreInheritance(variable) || this.ignoreInheritance(field))
+            )
+            : !!((isLocalSavedValueInheriting || (!isLocalSavedValueInheriting && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting)) || (this.ignoreInheritance(variable) || this.ignoreInheritance(field)))
         })
       })
 

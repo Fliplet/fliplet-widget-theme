@@ -15,7 +15,8 @@ export const state = {
   dataToSave: undefined,
   componentContext: 'Mobile',
   savedFields: {
-    values: []
+    values: [],
+    widgetInstances: []
   }
 }
 
@@ -45,7 +46,7 @@ export function setCustomFonts(fonts) {
 }
 
 export function setComponentId(id) {
-  state.componentId = id
+  state.componentId = parseInt(id, 10)
 }
 
 export function setComponentMode(value) {
@@ -97,25 +98,39 @@ export function getFieldName(field) {
 
 export function checkSavedValue(field) {
   const isMobile = state.componentContext === 'Mobile'
-  let foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
+  const foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
+  const foundWidgetField = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+  const foundWidgetFieldValue = foundWidgetField ? foundWidgetField.values[isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name] : undefined
 
-  if (!foundField && state.componentOverlay.data && state.componentOverlay.data.instance.settings.values) {
+  if (!foundField && !foundWidgetField && state.componentOverlay.data && state.componentOverlay.data.instance) {
     const savedValues = state.componentOverlay.data.instance.settings.values
-    return state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
+    const widgetValues = state.componentOverlay.data.instance.settings.widgetInstances
+    const savedWidget = _.find(widgetValues, { id: state.componentId })
+
+    return state.componentMode
+      ? state.componentContext !== 'Mobile'
+        ? savedWidget.values[field.name + state.componentContext]
+        : savedWidget.values[field.name]
+      : state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
   }
 
-  return foundField ? foundField.value : undefined
+  return state.componentMode
+    ? foundWidgetFieldValue
+      ? foundWidgetFieldValue
+      : foundField ? foundField.value : undefined
+    : foundField ? foundField.value : undefined
 }
 
 function checkFieldValue(value, field) {
   let foundValue
   let defaultValue
+  let tempVariableName
   // Checks if the UI tab selected is Mobile or not
   const isMobile = state.componentContext === 'Mobile'
   // Checks if the value matches a variable name
   const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
   // If the value matches to a variable get the name of the variable
-  const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+  let variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
   // Checks if the value matches the 'inherit-x' reserved key
   const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
   // If the value matches the 'inherit-x' reserved key get the inheritance key
@@ -125,9 +140,60 @@ function checkFieldValue(value, field) {
     // If the value is not a variable
     return value
   }
-  
+
   // If value is a variable name
   if (variableName) {
+    if (state.componentMode) {
+      // Try to find the value in the local saved widget values
+      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+      foundValue = foundWidgetValue ? foundWidgetValue.values[variableName] : undefined
+      if (foundValue) {
+        return checkFieldValue(foundValue, field)
+      }
+
+      // Try to find the value in the theme instance saved widget values
+      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+      foundValue = foundWidget ? foundWidget.values[variableName] : undefined
+      if (foundValue) {
+        return checkFieldValue(foundValue, field)
+      }
+
+      // If variableName is from another field
+      // we assign the field name to proceed to search for it in the saved general values
+      tempVariableName = field.name
+    }
+
+    if (tempVariableName) {
+      // Try to find the value in the local saved widget values
+      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+      foundValue = foundWidgetValue ? foundWidgetValue.values[tempVariableName] : undefined
+      if (foundValue) {
+        return checkFieldValue(foundValue, field)
+      }
+
+      // Try to find the value in the theme instance saved widget values
+      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+      foundValue = foundWidget ? foundWidget.values[tempVariableName] : undefined
+      if (foundValue) {
+        return checkFieldValue(foundValue, field)
+      }
+
+      // Try to find the value in the local saved values
+      foundValue = _.find(state.savedFields.values, { name: tempVariableName })
+      if (foundValue) {
+        return checkFieldValue(foundValue.value, field)
+      }
+
+      // Try to find the value in the theme instance saved values
+      const savedValues = state.themeInstance.settings.values
+      if (savedValues) {
+        foundValue = savedValues[tempVariableName]
+      }
+      if (foundValue) {
+        return checkFieldValue(foundValue, field)
+      }
+    }
+
     // Try to find the value in the local saved values
     foundValue = _.find(state.savedFields.values, { name: variableName })
     if (foundValue) {
@@ -146,17 +212,17 @@ function checkFieldValue(value, field) {
     // Try to find the value in the theme json configuration
     state.activeTheme.settings.configuration.some((config) => {
       return config.variables.some((variable) => {
-        return variable.fields.some((field) => {
-          if (field.name === variableName) {
-            value = field.default
+        return variable.fields.some((f) => {
+          if (f.name === variableName) {
+            value = f.default
             return true; // short circuit
           } else {
-            if (field.breakpoints.tablet.name === variableName) {
-              value = field.breakpoints.tablet.default
+            if (f.breakpoints.tablet.name === variableName) {
+              value = f.breakpoints.tablet.default
               return true; // short circuit
             }
-            if (field.breakpoints.desktop.name === variableName) {
-              value = field.breakpoints.desktop.default
+            if (f.breakpoints.desktop.name === variableName) {
+              value = f.breakpoints.desktop.default
               return true; // short circuit
             }
 
@@ -171,6 +237,26 @@ function checkFieldValue(value, field) {
 
   // If value is not an inheritance key return
   if (!inherit) { return }
+
+  if (state.componentMode) {
+    // Try to find the value in the local saved widget values
+    const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+    foundValue = foundWidgetValue ? foundWidgetValue.values[inherit === 'mobile' ? field.name : field.breakpoints[inherit].name] : undefined
+    if (foundValue) {
+      return checkFieldValue(foundValue, field)
+    }
+
+    // Try to find the value in the theme instance saved widgets
+    const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+    foundValue = foundWidget ? foundWidget.values[inherit === 'mobile' ? field.name : field.breakpoints[inherit].name] : undefined
+    if (foundValue) {
+      return checkFieldValue(foundValue, field)
+    }
+
+    if (inherit != 'mobile') {
+      return checkFieldValue(field.breakpoints[inherit].default, field)
+    }
+  }
 
   foundValue = _.find(state.savedFields.values, { name: (inherit === 'mobile' ? field.name : field.breakpoints[inherit].name) })
   if (foundValue) {
