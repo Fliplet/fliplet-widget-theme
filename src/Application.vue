@@ -119,9 +119,7 @@ export default {
           themeWithoutInstances++
           return
         }
-        
-        // @TODO - remove console.log
-        console.log('THEME INSTANCE', theme.instances[0])
+
         this.themeInstance = theme.instances[0]
         setThemeInstance(this.themeInstance)
         this.activeTheme = theme
