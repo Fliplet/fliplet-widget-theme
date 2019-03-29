@@ -107,7 +107,7 @@ export function checkSavedValue(field) {
     const widgetValues = state.componentOverlay.data.instance.settings.widgetInstances
     const savedWidget = _.find(widgetValues, { id: state.componentId })
 
-    return state.componentMode
+    return state.componentMode && savedWidget
       ? state.componentContext !== 'Mobile'
         ? savedWidget.values[field.name + state.componentContext]
         : savedWidget.values[field.name]
