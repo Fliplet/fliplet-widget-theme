@@ -245,7 +245,9 @@ export default {
       dataObj.values = _.assignIn(state.themeInstance.settings.values, dataObj.values)
 
       dataObj.widgetInstances = state.savedFields.widgetInstances
-      dataObj.widgetInstances = _.unionBy(dataObj.widgetInstances, state.themeInstance.settings.widgetInstances, 'id')
+      dataObj.widgetInstances = _.map(state.themeInstance.settings.widgetInstances, (item) => {
+        return _.merge(item, _.find(dataObj.widgetInstances, { 'id' : item.id }));
+      })
 
       this.save(forceRefresh, dataObj)
     },
