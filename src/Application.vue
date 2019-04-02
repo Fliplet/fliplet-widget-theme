@@ -238,13 +238,23 @@ export default {
     prepareToSave(forceRefresh) {
       const dataObj = {}
 
-      // Map data
+      // General settings values
       dataObj.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
       dataObj.values = _.assignIn(state.themeInstance.settings.values, dataObj.values)
 
+      // Component settings values
       dataObj.widgetInstances = state.savedFields.widgetInstances
-      dataObj.widgetInstances = _.map(state.themeInstance.settings.widgetInstances, (item) => {
-        return _.merge(item, _.find(dataObj.widgetInstances, { 'id' : item.id }));
+      dataObj.widgetInstances.forEach((wi) => {
+        const index = _.findIndex(state.themeInstance.settings.widgetInstances, { 'id' : wi.id })
+        if (index > -1) {
+          dataObj.widgetInstances = _.map(state.themeInstance.settings.widgetInstances, (item) => {
+            return _.merge(item, wi)
+          })
+        } else {
+          const savedWidgetInstances = state.themeInstance.settings.widgetInstances
+          savedWidgetInstances.push(wi)
+          dataObj.widgetInstances = savedWidgetInstances
+        }
       })
 
       this.save(forceRefresh, dataObj)
