@@ -282,15 +282,19 @@ export default {
         const field = _.find(variable.fields, { name: fieldConfig.name })
 
         if (field) {
-          variable.fields.forEach((field, index) => {
+          variable.fields.forEach((field, idx) => {
             if (logic.hide) {
-              if (logic.hide.indexOf(field.name) >= 0){
+              if (logic.hide.indexOf(field.name) >= 0) {
                 field.showField = false
+                Vue.set(variable.fields, idx, field)
+                Vue.set(this.variables, index, variable)
               }
             }
             if (logic.show) {
-              if (logic.show.indexOf(field.name) >= 0){
+              if (logic.show.indexOf(field.name) >= 0) {
                 field.showField = true
+                Vue.set(variable.fields, idx, field)
+                Vue.set(this.variables, index, variable)
               }
             }
           })
