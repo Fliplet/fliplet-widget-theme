@@ -17,12 +17,51 @@ export const state = {
   savedFields: {
     values: [],
     widgetInstances: []
-  }
+  },
+  widgetData: undefined
+}
+
+export function setWidgetData(data) {
+  state.widgetData = data
 }
 
 export function setSavedFields(data) {
   state.savedFields = _.assignIn({}, state.savedFields, data)
   bus.$emit('saved-fields-set')
+}
+
+export function prepareSettingsForTheme(id) {
+  // Find the saved values
+  const localSavedWidget = _.find(state.savedFields.widgetInstances, { id: id })
+  const localValues = localSavedWidget ? localSavedWidget.values : []
+  const instaceSavedWidget = _.find(state.themeInstance.settings.widgetInstances, { id: id })
+  const instanceValues = instaceSavedWidget ? instaceSavedWidget.values : []
+  const foundValues = _.merge(instanceValues, localValues)
+
+  const arrayOfValues = []
+  const data = {}
+
+  // Construct a new array of objects
+  for (var property in foundValues) {
+    const newObj = {
+      name: property,
+      value: foundValues[property]
+    }
+    arrayOfValues.push(newObj)
+  }
+
+  data.values = arrayOfValues
+  setSavedFields(data)
+}
+
+export function resetStylesToTheme(componentId, component) {
+  _.remove(state.savedFields.widgetInstances, { id: componentId })
+  removeComponentFromInstance(componentId)
+  updateComponentData({
+    component: component,
+    instance: state.themeInstance
+  })
+  bus.$emit('variables-computed')
 }
 
 export function setComponentContext(context) {
@@ -31,6 +70,10 @@ export function setComponentContext(context) {
 
 export function setThemeInstance(instance) {
   state.themeInstance = instance
+}
+
+export function removeComponentFromInstance(id) {
+  _.remove(state.themeInstance.settings.widgetInstances, { id: id })
 }
 
 export function setActiveTheme(theme) {
@@ -73,6 +116,10 @@ export function openComponentSettings(overlayName = '', options) {
 
   state.componentOverlay = overlay
   bus.$emit('component-overlay-opened')
+}
+
+export function updateComponentData(data) {
+  state.componentOverlay.data = data
 }
 
 export function closeComponentSettings() {

@@ -27,7 +27,8 @@
 // @TODO: Handle errors
 import { state, setComponentContext,
   setThemeInstance, setActiveTheme, setComponentMode, setComponentId,
-  setWebFonts, setCustomFonts, setSavedFields } from './store'
+  setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
+  resetStylesToTheme, getComponentSettings } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
@@ -55,6 +56,7 @@ export default {
         values: [],
         widgetInstances: []
       },
+      component: undefined,
       tabs: deviceTypes,
       activeTab: 0,
       isFromUpdate: false
@@ -91,6 +93,13 @@ export default {
       // Get widget provider data
       const widgetId = Fliplet.Widget.getDefaultId()
       this.widgetData = Fliplet.Widget.getData(widgetId) || {}
+      setWidgetData(this.widgetData)
+
+      // Show save button if is from component
+      if (this.widgetData && this.widgetData.hasOwnProperty('widgetId')) {
+        Fliplet.Studio.emit('widget-save-toggle', true)
+        Fliplet.Studio.emit('widget-cancel-label-update', { text: 'Reset to theme styles' })
+      }
 
       // Get themes and fonts simultaneously
       return Promise.all([this.getThemes(), this.getFonts()])
@@ -131,7 +140,6 @@ export default {
 
         if (this.widgetData) {
           let tab
-          let component
 
           if (typeof this.widgetData.widgetId !== 'undefined') {
             setComponentId(this.widgetData.widgetId)
@@ -139,11 +147,11 @@ export default {
 
           // Check if there's a package name to open its component settings
           if (typeof this.widgetData.widgetPackage !== 'undefined') {
-            component = _.find(this.activeTheme.settings.configuration, (config) => {
+            this.component = _.find(this.activeTheme.settings.configuration, (config) => {
               return config.packages && config.packages.indexOf(this.widgetData.widgetPackage) > -1
             })
 
-            setComponentMode(!!component)
+            setComponentMode(!!this.component)
           }
 
           // Check if there's a tab to be open
@@ -154,7 +162,7 @@ export default {
           // If it's not from an update set the active tab from widget data
           if (!this.isFromUpdate) {
             this.isLoading = false
-            this.setActiveTab(tab, component)
+            this.setActiveTab(tab, this.component)
           }
 
           return
@@ -235,8 +243,14 @@ export default {
         }
       })
     },
-    prepareToSave(forceRefresh) {
+    prepareToSave(componentId) {
+      debugger
       const dataObj = {}
+      const savedWidgetInstances = state.themeInstance.settings.widgetInstances
+
+      if (componentId) {
+        resetStylesToTheme(componentId, this.component)
+      }
 
       // General settings values
       dataObj.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
@@ -244,33 +258,37 @@ export default {
 
       // Component settings values
       dataObj.widgetInstances = state.savedFields.widgetInstances
-      dataObj.widgetInstances.forEach((wi) => {
-        const index = _.findIndex(state.themeInstance.settings.widgetInstances, { 'id' : wi.id })
-        if (index > -1) {
-          dataObj.widgetInstances = _.map(state.themeInstance.settings.widgetInstances, (item) => {
-            return _.merge(item, wi)
-          })
-        } else {
-          const savedWidgetInstances = state.themeInstance.settings.widgetInstances
-          savedWidgetInstances.push(wi)
-          dataObj.widgetInstances = savedWidgetInstances
-        }
-      })
+      if (dataObj.widgetInstances.length) {
+        dataObj.widgetInstances.forEach((wi) => {
+          const index = _.findIndex(savedWidgetInstances, { 'id' : wi.id })
+          if (index > -1) {
+            savedWidgetInstances.forEach((item, idx) => {
+              if (index === idx) {
+                _.merge(item, wi)
+              }
+            })
+            dataObj.widgetInstances = savedWidgetInstances
+          } else {
+            savedWidgetInstances.push(wi)
+            dataObj.widgetInstances = savedWidgetInstances
+          }
+        })
+      } else {
+        dataObj.widgetInstances = savedWidgetInstances
+      }
 
-      this.save(forceRefresh, dataObj)
+      this.save(dataObj, componentId)
     },
-    save(forceRefresh, data) {
+    save(data, componentId) {
       this.updateInstance(data)
         .then((response) => {
-          if (response && response.widgetInstance && !forceRefresh) {
+          if (response && response.widgetInstance) {
             var settings = response.widgetInstance.settings.assets[0];
             Fliplet.Studio.emit('page-preview-send-event', {
               type: 'reloadCssAsset',
               path: settings.path,
               url: settings.url
             });
-          } else {
-            this.reloadPage()
           }
 
           this.isFromUpdate = true
@@ -304,14 +322,39 @@ export default {
     // Initialize
     this.initialize()
 
-    // Save Request
+    // Save Request && Apply component settings to theme
     Fliplet.Widget.onSaveRequest(() => {
       if (window.filePickerProvider) {
         window.filePickerProvider.forwardSaveRequest()
         return
       }
 
-      this.prepareToSave(true)
+      // Apply settings to theme
+      Fliplet.Modal.confirm({
+        title: 'Apply styles to theme',
+        message: '<p>Your changes will be applied to the theme.<br>Are you sure you want to continue?</p>'
+      }).then((result) => {
+        if (!result) {
+          return
+        }
+
+        getComponentSettings(state.componentId)
+        this.prepareToSave()
+      })
+    })
+
+    // Cancel Request && Reset styles
+    Fliplet.Widget.onCancelRequest(() => {
+      Fliplet.Modal.confirm({
+        title: 'Reset to theme styles',
+        message: '<p>You will lose your changes and the styles will be reset to the styles used in the theme.<br>Are you sure you want to continue?</p>'
+      }).then((result) => {
+        if (!result) {
+          return
+        }
+
+        this.prepareToSave(state.componentId)
+      })
     })
   },
   destroyed() {

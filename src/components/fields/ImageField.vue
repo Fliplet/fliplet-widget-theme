@@ -89,9 +89,13 @@ export default {
         onEvent: (e, data) => {
           switch (e) {
             case 'widget-set-info':
+              Fliplet.Studio.emit('widget-save-toggle', true)
               Fliplet.Studio.emit('widget-save-label-reset')
               Fliplet.Studio.emit('widget-save-label-update', {
                 text: 'Select'
+              })
+              Fliplet.Studio.emit('widget-cancel-label-update', {
+                text: ''
               })
               Fliplet.Widget.toggleSaveButton(!!data.length)
               break
@@ -113,7 +117,15 @@ export default {
         this.value = result.data[0]
 
         window.filePickerProvider = null
+
         Fliplet.Studio.emit('widget-save-label-reset')
+        if (!state.widgetData || !state.widgetData.hasOwnProperty('widgetId')) {
+          Fliplet.Studio.emit('widget-save-toggle', false)
+        } else {
+          Fliplet.Studio.emit('widget-cancel-label-update', {
+            text: 'Reset to theme styles'
+          })
+        }
         return Promise.resolve()
       })
     },
