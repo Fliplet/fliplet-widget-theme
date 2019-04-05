@@ -28,7 +28,7 @@
 import { state, setComponentContext,
   setThemeInstance, setActiveTheme, setComponentMode, setComponentId,
   setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
-  resetStylesToTheme, getComponentSettings } from './store'
+  resetStylesToTheme, prepareSettingsForTheme } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
@@ -94,12 +94,6 @@ export default {
       const widgetId = Fliplet.Widget.getDefaultId()
       this.widgetData = Fliplet.Widget.getData(widgetId) || {}
       setWidgetData(this.widgetData)
-
-      // Show save button if is from component
-      if (this.widgetData && this.widgetData.hasOwnProperty('widgetId')) {
-        Fliplet.Studio.emit('widget-save-toggle', true)
-        Fliplet.Studio.emit('widget-cancel-label-update', { text: 'Reset to theme styles' })
-      }
 
       // Get themes and fonts simultaneously
       return Promise.all([this.getThemes(), this.getFonts()])
@@ -168,7 +162,7 @@ export default {
           return
         }
 
-        this.isLoading = false    
+        this.isLoading = false
       })
 
       if (themeWithoutInstances == this.themes.length) {
@@ -196,6 +190,7 @@ export default {
       Fliplet.Studio.emit('reload-page-preview');
     },
     onFieldSave(data) {
+      console.log(data)
       let fieldIndex
 
       if (state.componentMode) {
@@ -244,7 +239,6 @@ export default {
       })
     },
     prepareToSave(componentId) {
-      debugger
       const dataObj = {}
       const savedWidgetInstances = state.themeInstance.settings.widgetInstances
 
@@ -309,26 +303,8 @@ export default {
           this.customFonts = _.filter(this.fonts, (font) => { return font.url })
           setCustomFonts(this.customFonts)
         })
-    }
-  },
-  created() {
-    // Listeners
-    bus.$on('field-saved', this.onFieldSave)
-    bus.$on('initialize-widget', this.initialize)
-    bus.$on('reload-custom-fonts', this.reloadCustomFonts)
-    bus.$on('set-active-tab', this.setActiveTab)
-    bus.$on('context-changed', this.changeContext)
-
-    // Initialize
-    this.initialize()
-
-    // Save Request && Apply component settings to theme
-    Fliplet.Widget.onSaveRequest(() => {
-      if (window.filePickerProvider) {
-        window.filePickerProvider.forwardSaveRequest()
-        return
-      }
-
+    },
+    applySettingsTheme() {
       // Apply settings to theme
       Fliplet.Modal.confirm({
         title: 'Apply styles to theme',
@@ -338,13 +314,11 @@ export default {
           return
         }
 
-        getComponentSettings(state.componentId)
+        prepareSettingsForTheme(state.componentId)
         this.prepareToSave()
       })
-    })
-
-    // Cancel Request && Reset styles
-    Fliplet.Widget.onCancelRequest(() => {
+    },
+    resetSettingsTheme() {
       Fliplet.Modal.confirm({
         title: 'Reset to theme styles',
         message: '<p>You will lose your changes and the styles will be reset to the styles used in the theme.<br>Are you sure you want to continue?</p>'
@@ -355,6 +329,27 @@ export default {
 
         this.prepareToSave(state.componentId)
       })
+    }
+  },
+  created() {
+    // Listeners
+    bus.$on('field-saved', this.onFieldSave)
+    bus.$on('initialize-widget', this.initialize)
+    bus.$on('reload-custom-fonts', this.reloadCustomFonts)
+    bus.$on('set-active-tab', this.setActiveTab)
+    bus.$on('context-changed', this.changeContext)
+    bus.$on('apply-to-theme', this.applySettingsTheme)
+    bus.$on('reset-to-theme', this.resetSettingsTheme)
+
+    // Initialize
+    this.initialize()
+
+    // Save Request from Image Picker
+    Fliplet.Widget.onSaveRequest(() => {
+      if (window.filePickerProvider) {
+        window.filePickerProvider.forwardSaveRequest()
+        return
+      }
     })
   },
   destroyed() {
@@ -363,6 +358,8 @@ export default {
     bus.$off('reload-custom-fonts', this.reloadCustomFonts)
     bus.$off('set-active-tab', this.setActiveTab)
     bus.$off('context-changed', this.changeContext)
+    bus.$off('apply-to-theme', this.applySettingsTheme)
+    bus.$off('reset-to-theme', this.resetSettingsTheme)
   }
 }
 </script>

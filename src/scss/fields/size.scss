@@ -2,6 +2,11 @@
   position: relative;
   overflow: visible;
 
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
   .interactive-holder {
     position: relative;
     display: flex;
@@ -14,6 +19,12 @@
       &.expanded {
         width: 50px;
         overflow: hidden;
+      }
+
+      &.hidden {
+        + .select-box {
+          margin-left: 0;
+        }
       }
     }
 

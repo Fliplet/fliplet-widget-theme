@@ -40,6 +40,10 @@
             </div>
           </div>
         </div>
+        <div v-if="state.componentMode" class="buttons-holder">
+          <div class="btn btn-primary" @click.prevent="applySettings">Apply styles to theme</div>
+          <div class="btn btn-default" @click.prevent="resetSettings">Reset to theme styles</div>
+        </div>
       </div>
     </div>
   </transition>
@@ -58,6 +62,7 @@ import FontField from '../fields/FontField'
 import BackgroundField from '../fields/BackgroundField'
 import ImageField from '../fields/ImageField'
 import AlignField from '../fields/AlignField'
+import MarginAlignField from '../fields/MarginAlignField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -91,7 +96,8 @@ export default {
     FontField,
     BackgroundField,
     ImageField,
-    AlignField
+    AlignField,
+    MarginAlignField
   },
   computed: {
     transition() {
@@ -304,6 +310,28 @@ export default {
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })
+    },
+    runMarginFieldLogic(fields, value) {
+      this.variables.forEach((variable, index) => {
+        variable.fields.forEach((field, idx) => {
+          if (fields.indexOf(field.name) > -1) {
+            const field = variable.fields[idx]
+            field.disableField = value == 'custom' ? false : true
+            Vue.set(variable.fields, idx, field)
+            Vue.set(this.variables, index, variable)
+          }
+        })
+      })
+
+      this.$nextTick(() => {
+        bus.$emit('variables-computed')
+      })
+    },
+    applySettings() {
+      bus.$emit('apply-to-theme')
+    },
+    resetSettings() {
+      bus.$emit('reset-to-theme')
     }
   },
   mounted() {
@@ -312,6 +340,7 @@ export default {
       this.reComputeVariables(true)
     })
     bus.$on('check-field-visibility', this.runFieldLogic)
+    bus.$on('check-margin-field-visibility', this.runMarginFieldLogic)
   },
   destroyed() {
     bus.$off('component-overlay-opened', this.setVariables)
@@ -319,6 +348,7 @@ export default {
       this.reComputeVariables(true)
     })
     bus.$off('check-field-visibility', this.runFieldLogic)
+    bus.$off('check-margin-field-visibility', this.runMarginFieldLogic)
   } 
 }
 </script>

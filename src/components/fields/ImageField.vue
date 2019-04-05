@@ -94,9 +94,6 @@ export default {
               Fliplet.Studio.emit('widget-save-label-update', {
                 text: 'Select'
               })
-              Fliplet.Studio.emit('widget-cancel-label-update', {
-                text: ''
-              })
               Fliplet.Widget.toggleSaveButton(!!data.length)
               break
           }
@@ -119,13 +116,7 @@ export default {
         window.filePickerProvider = null
 
         Fliplet.Studio.emit('widget-save-label-reset')
-        if (!state.widgetData || !state.widgetData.hasOwnProperty('widgetId')) {
-          Fliplet.Studio.emit('widget-save-toggle', false)
-        } else {
-          Fliplet.Studio.emit('widget-cancel-label-update', {
-            text: 'Reset to theme styles'
-          })
-        }
+        Fliplet.Studio.emit('widget-save-toggle', false)
         return Promise.resolve()
       })
     },

@@ -147,9 +147,11 @@ export function checkSavedValue(field) {
   const isMobile = state.componentContext === 'Mobile'
   const foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
   const foundWidgetField = _.find(state.savedFields.widgetInstances, { id: state.componentId })
-  const foundWidgetFieldValue = foundWidgetField ? foundWidgetField.values[isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name] : undefined
+  const foundWidgetFieldValue = foundWidgetField
+    ? foundWidgetField.values[isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name]
+    : undefined
 
-  if (!foundField && !foundWidgetField && state.componentOverlay.data && state.componentOverlay.data.instance) {
+  if (!foundField && !foundWidgetFieldValue && state.componentOverlay.data && state.componentOverlay.data.instance) {
     const savedValues = state.componentOverlay.data.instance.settings.values
     const widgetValues = state.componentOverlay.data.instance.settings.widgetInstances
     const savedWidget = _.find(widgetValues, { id: state.componentId })
@@ -345,6 +347,38 @@ export function checkLogic(fieldConfig, value) {
         bus.$emit('check-field-visibility', fieldConfig, fieldConfig.logic[prop])
         continue
       }
+    }
+  }
+}
+
+export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
+  if (fieldConfig.hasOwnProperty('logic')) {
+    const fieldsArray = []
+    const notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+
+    if (value == 'custom') {
+      fieldConfig.logic[value].forEach((fieldName) => {
+        fieldsArray.push(fieldName)
+      })
+      bus.$emit('check-margin-field-visibility', fieldsArray, value)
+    } else {
+      for (const prop in fieldConfig.logic) {
+        // skip loop if the property is from prototype
+        if (prop === value) {
+          for (const key in fieldConfig.logic[prop]) {
+            const newObj = {
+              name: key + (notMobile ? state.componentContext : ''),
+              value: fieldConfig.logic[prop][key]
+            }
+            fieldsArray.push(key)
+            if (!fromLoadNotMobile) {
+              bus.$emit('field-saved', newObj)
+            }
+          }
+          continue
+        }
+      }
+      bus.$emit('check-margin-field-visibility', fieldsArray, value)
     }
   }
 }

@@ -3,9 +3,10 @@
     <div class="wrapper">
       <div class="align-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + orientationSufix + uuid" :name="'align-' + orientation" :value="prop" v-model="value">
-          <label :for="'radio-' + prop + orientationSufix + uuid">
-            <span :class="'check-icon check-align-' + prop + orientationSufix"></span>
+          <input type="radio" :id="'radio-' + prop + uuid" :name="margin-align" :value="prop" v-model="value">
+          <label :for="'radio-' + prop + uuid">
+            <span v-if="prop == 'custom'" class="check-icon">Custom</span>
+            <span v-else :class="'check-icon check-align-' + prop"></span>
           </label>
         </div>
       </div>
@@ -16,7 +17,7 @@
 
 <script>
 import { state, getDefaultFieldValue, getFieldName,
-  saveFieldData, checkLogic, getInheritance } from '../../store'
+  checkMarginLogic, saveFieldData, getInheritance } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
@@ -27,7 +28,6 @@ export default {
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
-      orientation: this.data.fieldConfig.orientation,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
@@ -44,26 +44,12 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
-        checkLogic(this.data.fieldConfig, newVal)
+        checkMarginLogic(this.data.fieldConfig, newVal)
         this.prepareToSave()
         return
       }
 
       this.fromReset = false
-    }
-  },
-  computed: {
-    orientationSufix() {
-      let sufix = ''
-      if (this.orientation === 'horizontal') {
-        sufix = '-h'
-        return sufix
-      }
-      if (this.orientation === 'vertical') {
-        sufix = '-v'
-        return sufix
-      }
-      return sufix
     }
   },
   methods: {
@@ -92,7 +78,7 @@ export default {
 
       if (this.fromReset) {
         this.value = this.computeValueToShow()
-        checkLogic(this.data.fieldConfig, this.value)
+        checkMarginLogic(this.data.fieldConfig, this.value)
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
@@ -102,7 +88,7 @@ export default {
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
-    checkLogic(this.data.fieldConfig, this.value)
+    checkMarginLogic(this.data.fieldConfig, this.value, true)
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps)

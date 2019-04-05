@@ -1,8 +1,8 @@
 <template>
-  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
+  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'disabled': disableField }">
     <div class="interactive-holder">
-      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive }" @click.prevent="manualEdit">{{ valueToShow }}</span>
-      <div v-if="property && properties && valueToShow !== 'auto'" class="dropdown select-box">
+      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
+      <div v-if="property && properties" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
           <span class="caret"></span>
@@ -14,7 +14,7 @@
         </ul>
       </div>
       <div v-if="label" class="field-label">{{ label }}</div>
-      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
+      <inherit-dot v-if="!isInheriting && !disableField" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
     <div class="input-holder" v-show="inputIsActive">
       <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
@@ -48,6 +48,9 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true,
+      disableField: typeof this.data.fieldConfig.disableField !== 'undefined'
+        ? this.data.fieldConfig.disableField
+        : false,
       fromReset: false
     }
   },
@@ -94,18 +97,26 @@ export default {
       return inherit || variableName ? true : false
     },
     getProperty(value) {
-      const fieldName = state.componentContext === 'Mobile'
+      if (value == 'auto') {
+        return value
+      }
+
+      const property = state.componentContext === 'Mobile'
         ? this.data.fieldConfig.property
         : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].property
-      const match = value.match(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'))
+      const match = value.toString().match(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'))
 
       if (match && match.length) {
         return match[0]
       }
 
-      return fieldName
+      return property
     },
     parseValue(value) {
+      if (value == 'auto') {
+        return value
+      }
+
       const parsedValue = value.replace(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'), '')
       const parsedFloatVal = parseFloat(parsedValue, 10)
 
@@ -113,6 +124,17 @@ export default {
     },
     onValueChange(value) {
       this.property = value
+
+      if (this.property == 'auto') {
+        this.value = this.property
+        return
+      }
+
+      if (this.value == 'auto') {
+        this.value = 0
+        return
+      }
+
       this.prepareToSave()
     },
     prepareToSave() {
@@ -283,9 +305,13 @@ export default {
         this.value = this.computeValueToShow()
       }
 
+      this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
+      this.disableField = typeof this.data.fieldConfig.disableField !== 'undefined'
+        ? this.data.fieldConfig.disableField
+        : false
     }
   },
   created() {
