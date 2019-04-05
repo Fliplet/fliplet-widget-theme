@@ -145,9 +145,6 @@ header {
     margin-left: 15px;
     color: rgba(51, 51, 51, 0.5); }
     #theme-application .label-holder .inheritance-warn {
-      position: relative;
-      top: auto;
-      right: auto;
       display: inline-block; }
   #theme-application .inherit-settings-holder {
     margin-bottom: 10px; }
@@ -164,10 +161,6 @@ header {
     color: rgba(51, 51, 51, 0.5); }
 
 .inheritance-warn {
-  position: absolute;
-  top: -4px;
-  right: -10px;
-  z-index: 1;
   width: 10px;
   height: 10px;
   background-color: #FF9800;
@@ -176,7 +169,14 @@ header {
   cursor: pointer; }
   .inheritance-warn.closer {
     right: -4px; }
-  .inheritance-warn .inheritance-dropdown {
+
+.inheritance-holder {
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  width: 10px;
+  height: 10px; }
+  .inheritance-holder .inheritance-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
@@ -193,20 +193,20 @@ header {
     box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.15);
     background-color: #ffffff;
     cursor: default; }
-    .inheritance-warn .inheritance-dropdown.to-right {
+    .inheritance-holder .inheritance-dropdown.to-right {
       left: auto;
       right: 0; }
-    .inheritance-warn .inheritance-dropdown.to-top {
+    .inheritance-holder .inheritance-dropdown.to-top {
       top: auto;
       bottom: 100%; }
-    .inheritance-warn .inheritance-dropdown .inherit-action {
+    .inheritance-holder .inheritance-dropdown .inherit-action {
       color: #00abd1;
       margin-top: 20px;
       margin-left: -20px;
       margin-right: -20px;
       padding: 4px 20px;
       cursor: pointer; }
-      .inheritance-warn .inheritance-dropdown .inherit-action:hover {
+      .inheritance-holder .inheritance-dropdown .inherit-action:hover {
         background-color: #efebed; }
 
 @font-face {

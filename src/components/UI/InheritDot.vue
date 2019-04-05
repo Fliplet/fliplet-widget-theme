@@ -1,6 +1,7 @@
 <template>
-  <div class="inheritance-warn" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" v-click-outside="closeDropDown">
-    <div v-show="showDropdown" ref="dropdown" class="inheritance-dropdown">
+  <div class="inheritance-holder">
+    <div class="inheritance-warn" ref="dot" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" ></div>
+    <div v-show="showDropdown" ref="dropdown" class="inheritance-dropdown" v-click-outside="closeDropDown">
       <div>The value will be inherited from {{ inheritingFrom }}.</div>
       <div class="inherit-action" @click="$emit('trigger-inherit', value)">Inherit</div>
     </div>
@@ -11,7 +12,8 @@
 export default {
   data() {
     return {
-      showDropdown: false
+      showDropdown: false,
+      preventClose: false
     }
   },
   props: {
@@ -58,9 +60,11 @@ export default {
   methods: {
     calculatePosition() {
       const $dropdown = $(this.$refs.dropdown)
+      const $dot = $(this.$refs.dot)
       const dropdownOffset = $dropdown.offset()
+      const dotOffset = $dot.offset()
 
-      const fromLeft = dropdownOffset.left
+      const fromLeft = dotOffset.left
       const dropdownWidth = $dropdown.outerWidth()
       const totalWidthWithDropdown = fromLeft + dropdownWidth
 
@@ -72,6 +76,7 @@ export default {
     },
     toggleDropdown() {
       this.showDropdown = !this.showDropdown
+      this.preventClose = true
 
       if (this.showDropdown) {
         this.$nextTick(() => {
@@ -80,7 +85,11 @@ export default {
       }
     },
     closeDropDown() {
-      this.showDropdown = false
+      this.showDropdown = this.preventClose ? true : false
+
+      this.$nextTick(() => {
+        this.preventClose = false
+      })
     }
   }
 }

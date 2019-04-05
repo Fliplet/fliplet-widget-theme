@@ -375,10 +375,10 @@ export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
               bus.$emit('field-saved', newObj)
             }
           }
+          bus.$emit('check-margin-field-visibility', fieldsArray, value)
           continue
         }
       }
-      bus.$emit('check-margin-field-visibility', fieldsArray, value)
     }
   }
 }

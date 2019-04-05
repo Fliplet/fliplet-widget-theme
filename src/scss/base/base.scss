@@ -197,9 +197,6 @@ header {
     color: rgba($text-color, 0.5);
 
     .inheritance-warn {
-      position: relative;
-      top: auto;
-      right: auto;
       display: inline-block;
     }
   }
@@ -231,10 +228,6 @@ header {
 }
 
 .inheritance-warn {
-  position: absolute;
-  top: -4px;
-  right: -10px;
-  z-index: 1;
   width: 10px;
   height: 10px;
   background-color: $warning-color;
@@ -245,6 +238,14 @@ header {
   &.closer {
     right: -4px;
   }
+}
+
+.inheritance-holder {
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  width: 10px;
+  height: 10px;
 
   .inheritance-dropdown {
     position: absolute;
