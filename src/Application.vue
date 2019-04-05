@@ -71,6 +71,7 @@ export default {
   },
   methods: {
     setActiveTab(tab, component) {
+      // Sets the activedevice tab
       tab = tab || this.tabs[0]
       const tabIndex = _.findIndex(this.tabs, { type: tab.type })
       this.activeTab = tabIndex
@@ -132,6 +133,7 @@ export default {
         this.customFonts = _.filter(this.fonts, (font) => { return font.url })
         setCustomFonts(this.customFonts)
 
+        // Checks to understand if the provider was called from a component
         if (this.widgetData) {
           let tab
 
@@ -165,6 +167,7 @@ export default {
         this.isLoading = false
       })
 
+      // Automatically create a theme instance if one doesn't exist
       if (themeWithoutInstances == this.themes.length) {
         const flipletTheme = _.find(this.themes, { name: 'Fliplet theme' })
         this.createDefaultInstance(flipletTheme.id)
@@ -190,9 +193,10 @@ export default {
       Fliplet.Studio.emit('reload-page-preview');
     },
     onFieldSave(data) {
-      console.log(data)
+      // Processes data when a field is changed
       let fieldIndex
 
+      // Checks if provider is in "component mode" (Component mode is on when provider is initialized from a component)
       if (state.componentMode) {
         fieldIndex = _.findIndex(this.savedFields.widgetInstances, (field) => {
           return field && field.id === state.componentId
@@ -239,6 +243,7 @@ export default {
       })
     },
     prepareToSave(componentId) {
+      // Prepares the data in the right format and structure to be saved
       const dataObj = {}
       const savedWidgetInstances = state.themeInstance.settings.widgetInstances
 
@@ -274,9 +279,11 @@ export default {
       this.save(dataObj, componentId)
     },
     save(data, componentId) {
+      // Updates the theme saved settings
       this.updateInstance(data)
         .then((response) => {
           if (response && response.widgetInstance) {
+            // Reloads CSS files without reloading
             var settings = response.widgetInstance.settings.assets[0];
             Fliplet.Studio.emit('page-preview-send-event', {
               type: 'reloadCssAsset',
@@ -295,6 +302,7 @@ export default {
         })
     },
     reloadCustomFonts() {
+      // Function to reload the custom fonts (Fonts added by the user)
       this.getFonts()
         .then((response) => {
           this.fonts = response
@@ -319,6 +327,7 @@ export default {
       })
     },
     resetSettingsTheme() {
+      // Reset settings to theme settings
       Fliplet.Modal.confirm({
         title: 'Reset to theme styles',
         message: '<p>You will lose your changes and the styles will be reset to the styles used in the theme.<br>Are you sure you want to continue?</p>'
@@ -353,6 +362,7 @@ export default {
     })
   },
   destroyed() {
+    // Remove listeners
     bus.$off('field-saved', this.onFieldSave)
     bus.$off('initialize-widget', this.initialize)
     bus.$off('reload-custom-fonts', this.reloadCustomFonts)
