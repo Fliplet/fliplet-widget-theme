@@ -1,5 +1,4 @@
 import bus from '../libs/bus'
-
 const debouncedSave = _.debounce(emitSavedData, 500)
 
 export const state = {
@@ -21,6 +20,7 @@ export const state = {
   widgetData: undefined
 }
 
+// Public functions
 export function setWidgetData(data) {
   state.widgetData = data
 }
@@ -126,10 +126,6 @@ export function closeComponentSettings() {
   state.componentOverlay = {}
 }
 
-function emitSavedData() {
-  bus.$emit('field-saved', state.dataToSave)
-}
-
 export function saveFieldData(data) {
   state.dataToSave = _.pick(data, ['name', 'value'])
   debouncedSave()
@@ -168,6 +164,85 @@ export function checkSavedValue(field) {
       ? foundWidgetFieldValue
       : foundField ? foundField.value : undefined
     : foundField ? foundField.value : undefined
+}
+
+export function getDefaultFieldValue(field) {
+  // Variables to use later down
+  let defaultValue
+  let savedValue
+  // Checks if the UI tab selected is Mobile or not
+  const isMobile = state.componentContext === 'Mobile'
+
+  // Gets the value based on which tab the user is (Mobile, Tablet or Desktop)
+  defaultValue = isMobile
+    ? field.default
+    : field.breakpoints[state.componentContext.toLowerCase()].default
+
+  savedValue = field.value || checkSavedValue(field)
+
+  return checkFieldValue(savedValue || defaultValue, field)
+}
+
+export function checkLogic(fieldConfig, value) {
+  if (fieldConfig.hasOwnProperty('logic')) {
+    for (const prop in fieldConfig.logic) {
+      // skip loop if the property is from prototype
+      if (prop === value) {
+        bus.$emit('check-field-visibility', fieldConfig, fieldConfig.logic[prop])
+        continue
+      }
+    }
+  }
+}
+
+export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
+  if (fieldConfig.hasOwnProperty('logic')) {
+    const fieldsArray = []
+    const notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+
+    if (value == 'custom') {
+      fieldConfig.logic[value].forEach((fieldName) => {
+        fieldsArray.push(fieldName)
+      })
+      bus.$emit('check-margin-field-visibility', fieldsArray, value)
+    } else {
+      for (const prop in fieldConfig.logic) {
+        // skip loop if the property is from prototype
+        if (prop === value) {
+          for (const key in fieldConfig.logic[prop]) {
+            const newObj = {
+              name: key + (notMobile ? state.componentContext : ''),
+              value: fieldConfig.logic[prop][key]
+            }
+            fieldsArray.push(key)
+            if (!fromLoadNotMobile) {
+              bus.$emit('field-saved', newObj)
+            }
+          }
+          bus.$emit('check-margin-field-visibility', fieldsArray, value)
+          continue
+        }
+      }
+    }
+  }
+}
+
+export function getInheritance() {
+  switch(state.componentContext) {
+    case 'Desktop':
+      return 'tablet'
+      break;
+    case 'Tablet':
+      return 'mobile'
+      break;
+    default:
+      ''
+  }
+}
+
+// Private functions
+function emitSavedData() {
+  bus.$emit('field-saved', state.dataToSave)
 }
 
 function checkFieldValue(value, field) {
@@ -320,78 +395,4 @@ function checkFieldValue(value, field) {
   }
 
   return checkFieldValue((inherit === 'mobile' ? field.default : field.breakpoints[inherit].default), field)
-}
-
-export function getDefaultFieldValue(field) {
-  // Variables to use later down
-  let defaultValue
-  let savedValue
-  // Checks if the UI tab selected is Mobile or not
-  const isMobile = state.componentContext === 'Mobile'
-
-  // Gets the value based on which tab the user is (Mobile, Tablet or Desktop)
-  defaultValue = isMobile
-    ? field.default
-    : field.breakpoints[state.componentContext.toLowerCase()].default
-
-  savedValue = field.value || checkSavedValue(field)
-
-  return checkFieldValue(savedValue || defaultValue, field)
-}
-
-export function checkLogic(fieldConfig, value) {
-  if (fieldConfig.hasOwnProperty('logic')) {
-    for (const prop in fieldConfig.logic) {
-      // skip loop if the property is from prototype
-      if (prop === value) {
-        bus.$emit('check-field-visibility', fieldConfig, fieldConfig.logic[prop])
-        continue
-      }
-    }
-  }
-}
-
-export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
-  if (fieldConfig.hasOwnProperty('logic')) {
-    const fieldsArray = []
-    const notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
-
-    if (value == 'custom') {
-      fieldConfig.logic[value].forEach((fieldName) => {
-        fieldsArray.push(fieldName)
-      })
-      bus.$emit('check-margin-field-visibility', fieldsArray, value)
-    } else {
-      for (const prop in fieldConfig.logic) {
-        // skip loop if the property is from prototype
-        if (prop === value) {
-          for (const key in fieldConfig.logic[prop]) {
-            const newObj = {
-              name: key + (notMobile ? state.componentContext : ''),
-              value: fieldConfig.logic[prop][key]
-            }
-            fieldsArray.push(key)
-            if (!fromLoadNotMobile) {
-              bus.$emit('field-saved', newObj)
-            }
-          }
-          bus.$emit('check-margin-field-visibility', fieldsArray, value)
-          continue
-        }
-      }
-    }
-  }
-}
-
-export function getInheritance() {
-  switch(state.componentContext) {
-    case 'Desktop':
-      return 'tablet'
-      break;
-    case 'Tablet':
-      return 'mobile'
-      break;
-    default:
-      ''
-  }
 }
