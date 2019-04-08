@@ -159,6 +159,24 @@ header {
   #theme-application .field-label {
     margin-left: 10px;
     color: rgba(51, 51, 51, 0.5); }
+  #theme-application .error-holder {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    background: rgba(51, 51, 51, 0.8);
+    color: #ffffff;
+    padding: 15px; }
+    #theme-application .error-holder p {
+      flex: 1;
+      margin: 0 1.4rem 0 0; }
+    #theme-application .error-holder .dismiss-error {
+      font-size: 0.8em;
+      margin-top: -3px;
+      cursor: pointer; }
 
 .inheritance-warn {
   width: 10px;
@@ -625,6 +643,16 @@ header {
 .slide-in-enter,
 .slide-in-leave-to {
   transform: translateX(100%); }
+
+.slide-up-enter-active {
+  transition: all .15s ease-out; }
+
+.slide-up-leave-active {
+  transition: all .15s ease-out; }
+
+.slide-up-enter,
+.slide-up-leave-to {
+  transform: translateY(100%); }
 
 .quick-settings-holder {
   margin: 30px -15px; }

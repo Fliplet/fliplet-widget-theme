@@ -225,6 +225,30 @@ header {
     margin-left: 10px;
     color: rgba($text-color, 0.5);
   }
+
+  .error-holder {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    background: rgba($text-color, 0.8);
+    color: #ffffff;
+    padding: 15px;
+
+    p {
+      flex: 1;
+      margin: 0 1.4rem 0 0;
+    }
+
+    .dismiss-error {
+      font-size: 0.8em;
+      margin-top: -3px;
+      cursor: pointer;
+    }
+  }
 }
 
 .inheritance-warn {

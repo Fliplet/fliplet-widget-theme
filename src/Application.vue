@@ -19,12 +19,17 @@
           <component :is="componentType(tab.type)"></component>
         </div>
       </div>
+      <transition name="slide-up">
+        <div v-if="error" class="error-holder">
+          <p>{{ error }}</p>
+          <div class="dismiss-error" @click.prevent="dismissErrorToast"><i class="fa fa-times-thin fa-lg fa-2x"></i></div>
+        </div>
+      </transition>
     </template>
   </div>
 </template>
 
 <script>
-// @TODO: Handle errors
 import { state, setComponentContext,
   setThemeInstance, setActiveTheme, setComponentMode, setComponentId,
   setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
@@ -59,7 +64,8 @@ export default {
       component: undefined,
       tabs: deviceTypes,
       activeTab: 0,
-      isFromUpdate: false
+      isFromUpdate: false,
+      error: undefined
     }
   },
   components: {
@@ -107,6 +113,7 @@ export default {
         .catch((err) => {
           const error = Fliplet.parseError(err)
           console.error(error)
+          this.error = error
         })
     },
     getThemes() {
@@ -176,6 +183,7 @@ export default {
           .catch((err) => {
             const error = Fliplet.parseError(err)
             console.error(error)
+            this.error = error
           })
       }
     },
@@ -299,6 +307,7 @@ export default {
         .catch((err) => {
           const error = Fliplet.parseError(err)
           console.error(error)
+          this.error = error
         })
     },
     reloadCustomFonts() {
@@ -338,6 +347,9 @@ export default {
 
         this.prepareToSave(state.componentId)
       })
+    },
+    dismissErrorToast() {
+      this.error = undefined
     }
   },
   created() {
@@ -360,6 +372,10 @@ export default {
         return
       }
     })
+
+    setTimeout(() => {
+      this.error = 'Hello world!'
+    }, 5000)
   },
   destroyed() {
     // Remove listeners

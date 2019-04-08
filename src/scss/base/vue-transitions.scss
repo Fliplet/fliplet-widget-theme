@@ -8,3 +8,14 @@
 .slide-in-leave-to {
   transform: translateX(100%);
 }
+
+.slide-up-enter-active {
+  transition: all .15s ease-out;
+}
+.slide-up-leave-active {
+  transition: all .15s ease-out;
+}
+.slide-up-enter,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
