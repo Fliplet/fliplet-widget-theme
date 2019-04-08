@@ -348,6 +348,9 @@ export default {
         this.prepareToSave(state.componentId)
       })
     },
+    setError(error) {
+      this.error = error
+    },
     dismissErrorToast() {
       this.error = undefined
     }
@@ -361,6 +364,7 @@ export default {
     bus.$on('context-changed', this.changeContext)
     bus.$on('apply-to-theme', this.applySettingsTheme)
     bus.$on('reset-to-theme', this.resetSettingsTheme)
+    bus.$on('on-error', this.setError)
 
     // Initialize
     this.initialize()
@@ -386,6 +390,7 @@ export default {
     bus.$off('context-changed', this.changeContext)
     bus.$off('apply-to-theme', this.applySettingsTheme)
     bus.$off('reset-to-theme', this.resetSettingsTheme)
+    bus.$off('on-error', this.setError)
   }
 }
 </script>

@@ -56,7 +56,6 @@ import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'
 import SelectField from '../fields/SelectField'
-import TextField from '../fields/TextField'
 import ColorField from '../fields/ColorField'
 import FontField from '../fields/FontField'
 import BackgroundField from '../fields/BackgroundField'
@@ -91,7 +90,6 @@ export default {
     FontStyleField,
     BorderStyleField,
     SelectField,
-    TextField,
     ColorField,
     FontField,
     BackgroundField,
@@ -115,6 +113,7 @@ export default {
       closeComponentSettings()
     },
     forceRerender() {
+      // Change components :key to force them to render again
       this.groupedComponentKey += 1
       this.componentKey += 1
       this.setVariables()
@@ -130,6 +129,8 @@ export default {
       return _.findIndex(deviceTypes, { name: state.componentContext })
     },
     checkForFontStyle(fields) {
+      // This function makes all the font style fields (Bold, Italic, Underline, etc) together
+      // This makes it look like it's just one field of multiple options
       const clonedFields = _.cloneDeep(fields)
       // Get the index of the first 'font-style' field
       const firsIndex = _.findIndex(clonedFields, { type: 'font-style' })
@@ -140,7 +141,7 @@ export default {
       if (firsIndex > -1) {
         // Remove the fields from the 'fields' array
         _.remove(clonedFields, { type: 'font-style' })
-        // The add them as an array field back in in the index saved above
+        // Add them as an array field back in in the index saved above
         clonedFields.splice(firsIndex, 0, fontTypeArray)
       }
 
@@ -157,6 +158,7 @@ export default {
       return false
     },
     showVariable(variable) {
+      // Function to hide the entire field's group if they aren't supposed to be shown on any of the device types
       const toHide = variable.hide
       const context = state.componentContext.toLowerCase()
 
@@ -167,6 +169,7 @@ export default {
       return true
     },
     showField(field) {
+      // Function to hide fields if they aren't supposed to be shown on any of the device types
       const toHide = field.hide
       const context = state.componentContext.toLowerCase()
 
@@ -189,6 +192,7 @@ export default {
       this.inheritingFrom = getInheritance()
     },
     computeVariables(toRecompute) {
+      // Variables processing
       if (!state.componentOverlay.data) {
         return []
       }
@@ -284,6 +288,7 @@ export default {
       return data
     },
     runFieldLogic(fieldConfig, logic) {
+      // Some fields have some logic to show and hide other fields based on the value selected
       this.variables.forEach((variable, index) => {
         const field = _.find(variable.fields, { name: fieldConfig.name })
 
@@ -312,6 +317,7 @@ export default {
       })
     },
     runMarginFieldLogic(fields, value) {
+      // Some margin fields have some logic to disable and enable other fields based on the value selected
       this.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           if (fields.indexOf(field.name) > -1) {

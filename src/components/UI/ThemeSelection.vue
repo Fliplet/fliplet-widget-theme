@@ -22,7 +22,6 @@
 </template>
 
 <script>
-// @TODO: Handle errors
 import { state } from '../../store'
 import bus from '../../libs/bus'
 
@@ -49,6 +48,7 @@ export default {
           .catch((err) => {
             const error = Fliplet.parseError(err)
             console.error(error)
+            bus.$emit('on-error', error)
           })
       }
     },

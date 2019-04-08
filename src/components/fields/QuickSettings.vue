@@ -16,7 +16,7 @@
       <template v-for="(variable, idx) in variables">
         <div class="settings-field-holder">
           <template v-for="(field, index) in variable.fields">
-            <component :is="componentType(field.type)" :data="fieldData(field)" :saved-value="savedValue(idx, index)"></component>
+            <component :is="componentType(field.type)" :data="fieldData(field)" :saved-value="getSavedValue(idx, index)"></component>
             <div class="label-holder">{{ variable.description }}</div>
           </template>
         </div>
@@ -70,7 +70,7 @@ export default {
 
       return data
     },
-    savedValue(variableIndex, fieldIndex) {
+    getSavedValue(variableIndex, fieldIndex) {
       const field = this.variables[variableIndex].fields[fieldIndex]
       const isMobile = state.componentContext === 'Mobile'
       const localSavedValue = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
@@ -99,7 +99,8 @@ export default {
 
       return inherit || variableName ? true : false
     },
-    computeVariables() {      
+    computeVariables() {  
+      // Processing variables    
       this.componentConfig.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const fieldName = state.componentContext === 'Mobile'

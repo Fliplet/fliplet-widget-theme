@@ -59,6 +59,7 @@ export default {
   },
   methods: {
     calculatePosition() {
+      // Claculates the position to determine where the popup should be placed
       const $dropdown = $(this.$refs.dropdown)
       const $dot = $(this.$refs.dot)
       const dropdownOffset = $dropdown.offset()
