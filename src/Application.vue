@@ -258,7 +258,7 @@ export default {
     prepareToSave(componentId) {
       // Prepares the data in the right format and structure to be saved
       const dataObj = {}
-      const savedWidgetInstances = state.themeInstance.settings.widgetInstances
+      const savedWidgetInstances = state.themeInstance.settings.widgetInstances || []
 
       if (componentId) {
         resetStylesToTheme(componentId, this.component)
