@@ -336,6 +336,7 @@ export default {
     },
     fieldsSaved() {
       this.reComputeVariables(true)
+      this.isChanged = true
     },
     applySettings() {
       bus.$emit('apply-to-theme')
