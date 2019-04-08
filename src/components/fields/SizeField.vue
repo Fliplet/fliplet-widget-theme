@@ -14,7 +14,7 @@
         </ul>
       </div>
       <div v-if="label" class="field-label">{{ label }}</div>
-      <inherit-dot v-if="!isInheriting && !disableField" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
     <div class="input-holder" v-show="inputIsActive">
       <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
