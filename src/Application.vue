@@ -96,10 +96,15 @@ export default {
     componentType(type) {
       return `${type}-tab`
     },
-    initialize() {
-      // Get widget provider data
-      const widgetId = Fliplet.Widget.getDefaultId()
-      this.widgetData = Fliplet.Widget.getData(widgetId) || {}
+    initialize(widgetData) {
+      this.widgetData = widgetData
+
+      if (!widgetData) {
+        // Get widget provider data
+        const widgetId = Fliplet.Widget.getDefaultId()
+        this.widgetData = Fliplet.Widget.getData(widgetId) || {}
+      }
+
       setWidgetData(this.widgetData)
 
       // Get themes and fonts simultaneously
@@ -366,9 +371,6 @@ export default {
     bus.$on('reset-to-theme', this.resetSettingsTheme)
     bus.$on('on-error', this.setError)
 
-    // Initialize
-    this.initialize()
-
     // Save Request from Image Picker
     Fliplet.Widget.onSaveRequest(() => {
       if (window.filePickerProvider) {
@@ -377,9 +379,14 @@ export default {
       }
     })
 
-    setTimeout(() => {
-      this.error = 'Hello world!'
-    }, 5000)
+    Fliplet.Studio.onMessage((eventData) => {
+      if (eventData && eventData.data && eventData.data.type === 'widget-theme') {
+        bus.$emit('initialize-widget', eventData.data.widgetData)
+      }
+    })
+
+    // Initialize
+    this.initialize()
   },
   destroyed() {
     // Remove listeners
