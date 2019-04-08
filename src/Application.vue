@@ -144,8 +144,8 @@ export default {
         if (this.widgetData) {
           let tab
 
-          if (typeof this.widgetData.widgetId !== 'undefined') {
-            setComponentId(this.widgetData.widgetId)
+          if (typeof this.widgetData.widgetInstanceId !== 'undefined') {
+            setComponentId(this.widgetData.widgetInstanceId)
           }
 
           // Check if there's a package name to open its component settings
