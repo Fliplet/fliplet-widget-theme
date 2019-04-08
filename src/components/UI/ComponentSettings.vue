@@ -41,8 +41,8 @@
           </div>
         </div>
         <div v-if="state.componentMode" class="buttons-holder">
-          <div class="btn btn-primary" @click.prevent="applySettings">Apply styles to theme</div>
-          <div class="btn btn-default" @click.prevent="resetSettings">Reset to theme styles</div>
+          <div v-if="isChanged" class="btn btn-primary" @click.prevent="applySettings">Apply styles to theme</div>
+          <div v-if="isChanged" class="btn btn-default" @click.prevent="resetSettings">Reset to theme styles</div>
         </div>
       </div>
     </div>
@@ -82,7 +82,8 @@ export default {
       tabs: deviceTypes,
       activeTab: this.getActiveTab(),
       componentKey: 0,
-      groupedComponentKey: 0
+      groupedComponentKey: 0,
+      isChanged: false
     }
   },
   components: {
@@ -333,28 +334,39 @@ export default {
         bus.$emit('variables-computed')
       })
     },
+    fieldsSaved() {
+      this.reComputeVariables(true)
+    },
     applySettings() {
       bus.$emit('apply-to-theme')
     },
     resetSettings() {
       bus.$emit('reset-to-theme')
+    },
+    hideApplyReset() {
+      this.isChanged = false
     }
   },
   mounted() {
     bus.$on('component-overlay-opened', this.setVariables)
-    bus.$on('saved-fields-set', () => {
-      this.reComputeVariables(true)
-    })
+    bus.$on('saved-fields-set', this.fieldsSaved)
     bus.$on('check-field-visibility', this.runFieldLogic)
     bus.$on('check-margin-field-visibility', this.runMarginFieldLogic)
+    bus.$on('component-settings-changed', this.hideApplyReset)
+
+    const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+    const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+
+    if (instanceWidgetSettings || savedWidgetSettings) {
+      this.isChanged = true
+    }
   },
   destroyed() {
     bus.$off('component-overlay-opened', this.setVariables)
-    bus.$off('saved-fields-set', () => {
-      this.reComputeVariables(true)
-    })
+    bus.$off('saved-fields-set', this.fieldsSaved)
     bus.$off('check-field-visibility', this.runFieldLogic)
     bus.$off('check-margin-field-visibility', this.runMarginFieldLogic)
+    bus.$off('component-settings-changed', this.hideApplyReset)
   } 
 }
 </script>

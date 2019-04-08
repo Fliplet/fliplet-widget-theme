@@ -351,6 +351,7 @@ export default {
         }
 
         this.prepareToSave(state.componentId)
+        bus.$emit('component-settings-changed')
       })
     },
     setError(error) {
