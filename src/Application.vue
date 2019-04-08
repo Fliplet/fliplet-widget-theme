@@ -380,7 +380,7 @@ export default {
     })
 
     Fliplet.Studio.onMessage((eventData) => {
-      if (eventData && eventData.data && eventData.data.type === 'widget-theme') {
+      if (eventData && eventData.data && eventData.data.type === 'theme-set-current-widget-instance') {
         bus.$emit('initialize-widget', eventData.data.widgetData)
       }
     })
