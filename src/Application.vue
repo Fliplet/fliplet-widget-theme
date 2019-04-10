@@ -24,6 +24,11 @@
           <p>{{ error }}</p>
           <div class="dismiss-error" @click.prevent="dismissErrorToast"><i class="fa fa-times-thin fa-lg fa-2x"></i></div>
         </div>
+        <div v-if="state.isSaving" class="saving-holder">
+          <div class="save-status">
+            <i class="fa fa-fw fa-lg fa-refresh fa-spin"></i> Saving...
+          </div>
+        </div>
       </transition>
     </template>
   </div>
@@ -33,7 +38,8 @@
 import { state, setComponentContext,
   setThemeInstance, setActiveTheme, setComponentMode, setComponentId,
   setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
-  resetStylesToTheme, prepareSettingsForTheme } from './store'
+  resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
+  toggleSavingStatus } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
@@ -65,7 +71,9 @@ export default {
       tabs: deviceTypes,
       activeTab: 0,
       isFromUpdate: false,
-      error: undefined
+      error: undefined,
+      dataToSave: undefined,
+      debouncedSave: _.debounce(this.save, 500)
     }
   },
   components: {
@@ -205,41 +213,44 @@ export default {
     reloadPage() {
       Fliplet.Studio.emit('reload-page-preview');
     },
-    onFieldSave(data) {
+    onFieldSave(dataToSave) {
       // Processes data when a field is changed
+      dataToSave = dataToSave || []
       let fieldIndex
 
-      // Checks if provider is in "component mode" (Component mode is on when provider is initialized from a component)
-      if (state.componentMode) {
-        fieldIndex = _.findIndex(this.savedFields.widgetInstances, (field) => {
-          return field && field.id === state.componentId
-        })
-      } else {
-        fieldIndex = _.findIndex(this.savedFields.values, (field) => {
-          return field && field.name === data.name
-        })
-      }
-
-      if (fieldIndex >= 0) {
+      dataToSave.forEach((data) => {
+        // Checks if provider is in "component mode" (Component mode is on when provider is initialized from a component)
         if (state.componentMode) {
-          this.savedFields.widgetInstances[fieldIndex].values[data.name] = data.value
+          fieldIndex = _.findIndex(this.savedFields.widgetInstances, (field) => {
+            return field && field.id === state.componentId
+          })
         } else {
-          this.savedFields.values[fieldIndex].value = data.value
+          fieldIndex = _.findIndex(this.savedFields.values, (field) => {
+            return field && field.name === data.name
+          })
         }
-      } else {
-        if (state.componentMode) {
-          const dataObj = {
-            id: state.componentId,
-            component: componentsMap[this.widgetData.widgetPackage],
-            values: {}
+
+        if (fieldIndex >= 0) {
+          if (state.componentMode) {
+            this.savedFields.widgetInstances[fieldIndex].values[data.name] = data.value
+          } else {
+            this.savedFields.values[fieldIndex].value = data.value
           }
-          dataObj.values[data.name] = data.value
-
-          this.savedFields.widgetInstances.push(dataObj)
         } else {
-          this.savedFields.values.push(data)
+          if (state.componentMode) {
+            const dataObj = {
+              id: state.componentId,
+              component: componentsMap[this.widgetData.widgetPackage],
+              values: {}
+            }
+            dataObj.values[data.name] = data.value
+
+            this.savedFields.widgetInstances.push(dataObj)
+          } else {
+            this.savedFields.values.push(data)
+          }
         }
-      }
+      })
 
       setSavedFields(this.savedFields)
       this.prepareToSave()
@@ -289,12 +300,17 @@ export default {
         dataObj.widgetInstances = savedWidgetInstances
       }
 
-      this.save(dataObj, componentId)
+      this.dataToSave = dataObj
+      this.debouncedSave()
     },
-    save(data, componentId) {
+    save() {
       // Updates the theme saved settings
-      this.updateInstance(data)
+      toggleSavingStatus(true)
+      this.updateInstance(this.dataToSave)
         .then((response) => {
+          clearDataToSave()
+          toggleSavingStatus(false)
+
           if (response && response.widgetInstance) {
             // Reloads CSS files without reloading
             var settings = response.widgetInstance.settings.assets[0];

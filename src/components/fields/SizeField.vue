@@ -1,7 +1,7 @@
 <template>
   <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'disabled': disableField }">
     <div class="interactive-holder">
-      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
+      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
@@ -25,6 +25,7 @@
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance } from '../../store'
+import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 
 export default {
@@ -53,6 +54,9 @@ export default {
         : false,
       fromReset: false
     }
+  },
+  components: {
+    InheritDot
   },
   props: {
     data: Object,
@@ -97,7 +101,7 @@ export default {
       return inherit || variableName ? true : false
     },
     getProperty(value) {
-      if (value == 'auto') {
+      if (value == 'auto' || value == 'none' ) {
         return value
       }
 
@@ -113,7 +117,7 @@ export default {
       return property
     },
     parseValue(value) {
-      if (value == 'auto') {
+      if (value == 'auto' || value == 'none' ) {
         return value
       }
 
@@ -125,12 +129,12 @@ export default {
     onValueChange(value) {
       this.property = value
 
-      if (this.property == 'auto') {
+      if (this.property == 'auto' || this.property == 'none') {
         this.value = this.property
         return
       }
 
-      if (this.value == 'auto') {
+      if (this.value == 'auto' || this.value == 'none') {
         this.value = 0
         return
       }
@@ -141,7 +145,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting || this.value == 'auto' ? this.value : this.value + (this.property !== 'x' && this.property !== 'none' ? this.property : '')
+        value: isInheriting || this.value == 'auto' || this.value == 'none' ? this.value : this.value + (this.property !== 'x' ? this.property : '')
       }
       saveFieldData(data)
     },

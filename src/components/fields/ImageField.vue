@@ -17,6 +17,7 @@
 <script>
 import { state, getDefaultFieldValue, getFieldName,
   saveFieldData, checkLogic, getInheritance } from '../../store'
+import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 
 export default {
@@ -34,6 +35,9 @@ export default {
         ? this.data.fieldConfig.showField
         : true
     }
+  },
+  components: {
+    InheritDot
   },
   props: {
     data: Object,
