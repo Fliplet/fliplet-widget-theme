@@ -24,6 +24,7 @@
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance } from '../../store'
+import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 
 export default {
@@ -43,6 +44,9 @@ export default {
       fromReset: false,
       uuid: Fliplet.guid()
     }
+  },
+  components: {
+    InheritDot
   },
   props: {
     data: Object,
