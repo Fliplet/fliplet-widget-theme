@@ -1,5 +1,4 @@
 import bus from '../libs/bus'
-const debouncedSave = _.debounce(emitSavedData, 500)
 
 export const state = {
   themeInstance: undefined,
@@ -11,6 +10,7 @@ export const state = {
   componentMode: false,
   componentId: undefined,
   componentOverlay: {},
+  isSaving: false,
   dataToSave: [],
   componentContext: 'Mobile',
   savedFields: {
@@ -128,7 +128,20 @@ export function closeComponentSettings() {
 
 export function saveFieldData(data) {
   state.dataToSave.push(_.pick(data, ['name', 'value']))
-  debouncedSave()
+  emitSavedData()
+}
+
+export function toggleSavingStatus(toggle) {
+  if (typeof toggle !== 'undefined') {
+    state.isSaving = toggle
+    return
+  }
+  
+  state.isSaving = !state.isSaving
+}
+
+export function clearDataToSave(data) {
+  state.dataToSave.splice(0, state.dataToSave.length)
 }
 
 export function getFieldName(field) {
@@ -242,9 +255,7 @@ export function getInheritance() {
 
 // Private functions
 function emitSavedData() {
-  state.dataToSave.forEach((data) => {
-    bus.$emit('field-saved', data)
-  })
+  bus.$emit('field-saved', state.dataToSave)
 }
 
 function checkFieldValue(value, field) {
