@@ -46,6 +46,11 @@ header {
   .control-label label {
     margin: 0; }
 
+#theme-widget-holder {
+  font-size: 13px;
+  height: 100%;
+  padding: 0 15px; }
+
 #theme-application {
   font-size: 13px;
   padding: 1rem 15px 54px;
@@ -1068,7 +1073,8 @@ header {
       opacity: 1; }
 
 .select-field-holder {
-  position: relative; }
+  position: relative;
+  display: flex; }
   .select-field-holder .wrapper {
     position: relative;
     display: flex !important;

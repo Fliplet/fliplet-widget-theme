@@ -1,1 +1,6 @@
-<main id="theme-widget-holder"></main>
+<main id="theme-widget-holder">
+  <div v-if="isLoading" class="spinner-holder animated">
+    <div class="spinner-overlay">Loading...</div>
+    <p>Loading your settings...</p>
+  </div>
+</main>

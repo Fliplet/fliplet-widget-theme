@@ -11,7 +11,7 @@ export const state = {
   componentMode: false,
   componentId: undefined,
   componentOverlay: {},
-  dataToSave: undefined,
+  dataToSave: [],
   componentContext: 'Mobile',
   savedFields: {
     values: [],
@@ -127,7 +127,7 @@ export function closeComponentSettings() {
 }
 
 export function saveFieldData(data) {
-  state.dataToSave = _.pick(data, ['name', 'value'])
+  state.dataToSave.push(_.pick(data, ['name', 'value']))
   debouncedSave()
 }
 
@@ -242,7 +242,9 @@ export function getInheritance() {
 
 // Private functions
 function emitSavedData() {
-  bus.$emit('field-saved', state.dataToSave)
+  state.dataToSave.forEach((data) => {
+    bus.$emit('field-saved', data)
+  })
 }
 
 function checkFieldValue(value, field) {

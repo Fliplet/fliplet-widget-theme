@@ -13,6 +13,7 @@
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance } from '../../store'
+import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 import { ColorPicker } from 'codemirror-colorpicker'
 
@@ -33,6 +34,9 @@ export default {
         ? this.data.fieldConfig.showField
         : true
     }
+  },
+  components: {
+    InheritDot
   },
   props: {
     data: Object,
