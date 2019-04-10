@@ -9,7 +9,7 @@
         <div class="inherit-settings-holder">
           <div v-if="showNotInheritingInfo" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
           <template v-else>
-            <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
+            <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab">View</a>
           </template>
         </div>
       </template>
@@ -51,8 +51,8 @@ export default {
     FontField
   },
   methods: {
-    goToDeviceTab(inheritingFrom) {
-      const tab = _.find(deviceTypes, { type: inheritingFrom })
+    goToDeviceTab() {
+      const tab = _.find(deviceTypes, { type: this.inheritingFrom })
       bus.$emit('set-active-tab', tab)
     },
     componentType(fieldType) {

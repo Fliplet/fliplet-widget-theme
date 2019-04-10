@@ -117,7 +117,6 @@ export default {
       // Change components :key to force them to render again
       this.groupedComponentKey += 1
       this.componentKey += 1
-      this.setVariables()
     },
     setActiveTab(tab) {
       tab = tab || this.tabs[0]
@@ -125,6 +124,7 @@ export default {
       this.activeTab = tabIndex
       setComponentContext(tab.name, true)
       this.forceRerender()
+      this.setVariables()
     },
     getActiveTab() {
       return _.findIndex(deviceTypes, { name: state.componentContext })
@@ -185,6 +185,9 @@ export default {
       this.setActiveTab(tab)
     },
     setVariables() {
+      if (this.variables) {
+        this.forceRerender()
+      }
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
       this.variables = this.computeVariables()
       this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context

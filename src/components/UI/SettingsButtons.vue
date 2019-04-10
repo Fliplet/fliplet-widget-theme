@@ -19,6 +19,10 @@ export default {
   },
   methods: {
     componentSettings(component) {
+      if (component.hasOwnProperty('variables') && component.name !== this.componentConfig.name) {
+        return
+      }
+
       component = component && component.hasOwnProperty('variables') ? component : this.componentConfig
       openComponentSettings(component.name, {
         component: component,
