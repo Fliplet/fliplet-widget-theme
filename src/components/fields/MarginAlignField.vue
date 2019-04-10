@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="align-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
+  <div v-if="showField" class="align-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="wrapper">
       <div class="align-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
@@ -17,7 +17,7 @@
 
 <script>
 import { state, getDefaultFieldValue, getFieldName,
-  checkMarginLogic, saveFieldData, getInheritance } from '../../store'
+  checkMarginLogic, saveFieldData, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 
@@ -31,6 +31,7 @@ export default {
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
+      isChanged: checkIsFieldChanged(this.data.fieldConfig),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true,
@@ -79,6 +80,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
 
       if (this.fromReset) {
         this.value = this.computeValueToShow()

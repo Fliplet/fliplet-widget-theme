@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'disabled': disableField }">
+  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'disabled': disableField, 'field-changed': isChanged }">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
@@ -24,7 +24,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, getInheritance } from '../../store'
+  getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 
@@ -45,6 +45,7 @@ export default {
       enterPressedToClose: false,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
+      isChanged: checkIsFieldChanged(this.data.fieldConfig),
       allowNegative: !!this.data.fieldConfig.allowNegative,
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
@@ -303,6 +304,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
       this.valueToShow = this.computeValueToShow()
 
       if (this.fromReset) {

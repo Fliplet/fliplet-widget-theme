@@ -70,7 +70,6 @@ export default {
       component: undefined,
       tabs: deviceTypes,
       activeTab: 0,
-      isFromUpdate: false,
       error: undefined,
       dataToSave: undefined,
       debouncedSave: _.debounce(this.save, 500)
@@ -175,11 +174,9 @@ export default {
             tab = this.tabs[this.widgetData.activeTab]
           }
 
-          // If it's not from an update set the active tab from widget data
-          if (!this.isFromUpdate) {
-            this.isLoading = false
-            this.setActiveTab(tab, this.component)
-          }
+          // Set the active tab from widget data
+          this.isLoading = false
+          this.setActiveTab(tab, this.component)
 
           return
         }
@@ -321,7 +318,6 @@ export default {
             });
           }
 
-          this.isFromUpdate = true
           return 
         })
         .then(this.initialize)

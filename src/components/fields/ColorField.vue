@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
+  <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="wrapper">
       <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
         <div id="color-picker-container" class="color-holder" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
@@ -12,7 +12,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, getInheritance } from '../../store'
+  getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 import { ColorPicker } from 'codemirror-colorpicker'
@@ -30,6 +30,7 @@ export default {
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
+      isChanged: checkIsFieldChanged(this.data.fieldConfig),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
@@ -84,6 +85,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
       this.valueToShow = this.computeValueToShow()
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField

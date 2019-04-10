@@ -152,6 +152,58 @@ export function getFieldName(field) {
   return fieldName
 }
 
+export function checkIsFieldChanged(field) {
+  let widgetIndex
+  let fieldIndex
+
+  if (state.componentMode) {
+    widgetIndex = _.findIndex(state.savedFields.widgetInstances, (widget) => {
+      if (widget) {
+        let foundValue = false
+        for (const key in widget.values) {
+          if (key == field.name) {
+            foundValue = true
+            continue
+          }
+        }
+        return foundValue
+      }
+
+      state.themeInstance.settings.values
+    })
+
+    if (!widgetIndex || widgetIndex < 0) {
+      widgetIndex = _.findIndex(state.themeInstance.settings.widgetInstances, (widget) => {
+        if (widget) {
+          let foundValue = false
+          for (const key in widget.values) {
+            if (key == field.name) {
+              foundValue = true
+              continue
+            }
+          }
+          return foundValue
+        }
+      })
+    }
+  } else {
+    fieldIndex = _.findIndex(state.savedFields.values, (value) => {
+      return value && value.name === field.name
+    })
+
+    if (!fieldIndex || fieldIndex < 0) {
+      for (const key in state.themeInstance.settings.values) {
+        if (key == field.name) {
+          fieldIndex = 1
+          continue
+        }
+      }
+    }
+  }
+
+  return widgetIndex > -1 || fieldIndex > -1
+}
+
 export function checkSavedValue(field) {
   const isMobile = state.componentContext === 'Mobile'
   const foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })

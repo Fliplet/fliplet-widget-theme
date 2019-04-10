@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="border-style-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow }">
+  <div v-if="showField" class="border-style-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="wrapper">
       <div class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -28,7 +28,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, getInheritance } from '../../store'
+  getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 
@@ -44,6 +44,7 @@ export default {
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: getInheritance(),
+      isChanged: checkIsFieldChanged(this.data.fieldConfig),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
@@ -90,6 +91,7 @@ export default {
     },
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
       this.valueToShow = this.computeValueToShow()
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
