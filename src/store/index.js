@@ -7,9 +7,9 @@ export const state = {
     web: [],
     custom: []
   },
-  componentMode: false,
-  componentId: undefined,
-  componentOverlay: {},
+  widgetMode: false,
+  widgetId: undefined,
+  appearanceGroupOverlay: {},
   isSaving: false,
   dataToSave: [],
   componentContext: 'Mobile',
@@ -54,9 +54,9 @@ export function prepareSettingsForTheme(id) {
   setSavedFields(data)
 }
 
-export function resetStylesToTheme(componentId, component) {
-  _.remove(state.savedFields.widgetInstances, { id: componentId })
-  removeComponentFromInstance(componentId)
+export function resetStylesToTheme(widgetId, component) {
+  _.remove(state.savedFields.widgetInstances, { id: widgetId })
+  removeComponentFromInstance(widgetId)
   updateComponentData({
     component: component,
     instance: state.themeInstance
@@ -88,19 +88,15 @@ export function setCustomFonts(fonts) {
   state.fonts.custom = fonts
 }
 
-export function setComponentId(id) {
-  state.componentId = parseInt(id, 10)
+export function setWidgetId(id) {
+  state.widgetId = parseInt(id, 10)
 }
 
-export function setComponentMode(value) {
-  state.componentMode = value
+export function setWidgetMode(value) {
+  state.widgetMode = value
 }
 
-export function toggleComponentMode() {
-  state.componentMode = !state.componentMode
-}
-
-export function openComponentSettings(overlayName = '', options) {
+export function openAppearanceGroupSettings(overlayName = '', options) {
   options = options || {}
 
   if (overlayName === '') {
@@ -114,16 +110,16 @@ export function openComponentSettings(overlayName = '', options) {
     data: options
   }
 
-  state.componentOverlay = overlay
-  bus.$emit('component-overlay-opened')
+  state.appearanceGroupOverlay = overlay
+  bus.$emit('group-overlay-opened')
 }
 
 export function updateComponentData(data) {
-  state.componentOverlay.data = data
+  state.appearanceGroupOverlay.data = data
 }
 
 export function closeComponentSettings() {
-  state.componentOverlay = {}
+  state.appearanceGroupOverlay = {}
 }
 
 export function saveFieldData(data) {
@@ -156,7 +152,7 @@ export function checkIsFieldChanged(field) {
   let widgetIndex
   let fieldIndex
 
-  if (state.componentMode) {
+  if (state.widgetMode) {
     widgetIndex = _.findIndex(state.savedFields.widgetInstances, (widget) => {
       if (widget) {
         let foundValue = false
@@ -207,24 +203,24 @@ export function checkIsFieldChanged(field) {
 export function checkSavedValue(field) {
   const isMobile = state.componentContext === 'Mobile'
   const foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
-  const foundWidgetField = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+  const foundWidgetField = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
   const foundWidgetFieldValue = foundWidgetField
     ? foundWidgetField.values[isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name]
     : undefined
 
-  if (!foundField && !foundWidgetFieldValue && state.componentOverlay.data && state.componentOverlay.data.instance) {
-    const savedValues = state.componentOverlay.data.instance.settings.values
-    const widgetValues = state.componentOverlay.data.instance.settings.widgetInstances
-    const savedWidget = _.find(widgetValues, { id: state.componentId })
+  if (!foundField && !foundWidgetFieldValue && state.appearanceGroupOverlay.data && state.appearanceGroupOverlay.data.instance) {
+    const savedValues = state.appearanceGroupOverlay.data.instance.settings.values
+    const widgetValues = state.appearanceGroupOverlay.data.instance.settings.widgetInstances
+    const savedWidget = _.find(widgetValues, { id: state.widgetId })
 
-    return state.componentMode && savedWidget
+    return state.widgetMode && savedWidget
       ? state.componentContext !== 'Mobile'
         ? savedWidget.values[field.name + state.componentContext]
         : savedWidget.values[field.name]
       : state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
   }
 
-  return state.componentMode
+  return state.widgetMode
     ? foundWidgetFieldValue
       ? foundWidgetFieldValue
       : foundField ? foundField.value : undefined
@@ -281,7 +277,7 @@ export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
             }
             fieldsArray.push(key)
             if (!fromLoadNotMobile) {
-              bus.$emit('field-saved', newObj)
+              bus.$emit('field-saved', [newObj])
             }
           }
           bus.$emit('check-margin-field-visibility', fieldsArray, value)
@@ -332,16 +328,16 @@ function checkFieldValue(value, field) {
 
   // If value is a variable name
   if (variableName) {
-    if (state.componentMode) {
+    if (state.widgetMode) {
       // Try to find the value in the local saved widget values
-      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
       foundValue = foundWidgetValue ? foundWidgetValue.values[variableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
       }
 
       // Try to find the value in the theme instance saved widget values
-      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
       foundValue = foundWidget ? foundWidget.values[variableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
@@ -354,14 +350,14 @@ function checkFieldValue(value, field) {
 
     if (tempVariableName) {
       // Try to find the value in the local saved widget values
-      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
       foundValue = foundWidgetValue ? foundWidgetValue.values[tempVariableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
       }
 
       // Try to find the value in the theme instance saved widget values
-      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
       foundValue = foundWidget ? foundWidget.values[tempVariableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
@@ -427,16 +423,16 @@ function checkFieldValue(value, field) {
   // If value is not an inheritance key return
   if (!inherit) { return }
 
-  if (state.componentMode) {
+  if (state.widgetMode) {
     // Try to find the value in the local saved widget values
-    const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+    const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
     foundValue = foundWidgetValue ? foundWidgetValue.values[inherit === 'mobile' ? field.name : field.breakpoints[inherit].name] : undefined
     if (foundValue) {
       return checkFieldValue(foundValue, field)
     }
 
     // Try to find the value in the theme instance saved widgets
-    const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
+    const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
     foundValue = foundWidget ? foundWidget.values[inherit === 'mobile' ? field.name : field.breakpoints[inherit].name] : undefined
     if (foundValue) {
       return checkFieldValue(foundValue, field)
