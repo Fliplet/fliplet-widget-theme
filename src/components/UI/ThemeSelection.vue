@@ -63,7 +63,7 @@ export default {
         method: 'POST',
         url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
         data: {
-          widgetId: themeId === 'none' ? undefined : themeId,
+          widgetId: themeId,
           reuse: true
         }
       })
