@@ -10,7 +10,7 @@
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
         <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
-          <a :href="'#tab-' + tab.type" data-toggle="tab" @click="setActiveTab(tab)"><i :class="tab.icon"></i></a>
+          <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
         </li>
       </ul>
       <!-- Tab panes -->
@@ -36,7 +36,7 @@
 
 <script>
 import { state, setComponentContext,
-  setThemeInstance, setActiveTheme, setComponentMode, setComponentId,
+  setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId,
   setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
   toggleSavingStatus } from './store'
@@ -46,33 +46,28 @@ import MobileTab from './components/MobileTab'
 import TabletTab from './components/TabletTab'
 import DesktopTab from './components/DesktopTab'
 import deviceTypes from './libs/device-types'
-import componentsMap from './libs/components-map'
+import widgetsMap from './libs/widgets-map'
 import bus from './libs/bus'
 import { dropdown } from './libs/dropdown'
-dropdown()
+
+const FLIPLET_THEME = 'Fliplet theme'
 
 export default {
   data() {
     return {
       state,
-      widgetData: undefined,
       isLoading: true,
-      themes: undefined,
       fonts: undefined,
-      themeInstance: undefined,
-      activeTheme: undefined,
-      webFonts: undefined,
-      customFonts: undefined,
       savedFields: {
         values: [],
         widgetInstances: []
       },
-      component: undefined,
+      appearanceGroup: undefined,
       tabs: deviceTypes,
       activeTab: 0,
       error: undefined,
-      dataToSave: undefined,
-      debouncedSave: _.debounce(this.save, 500)
+      dataToSave: {},
+      debouncedSave: _.debounce(this.save, 500, { leading: true })
     }
   },
   components: {
@@ -83,50 +78,31 @@ export default {
     DesktopTab
   },
   methods: {
-    setActiveTab(tab, component) {
-      // Sets the activedevice tab
+    setActiveTab(tab) {
+      // Sets the active device tab
       tab = tab || this.tabs[0]
       const tabIndex = _.findIndex(this.tabs, { type: tab.type })
       this.activeTab = tabIndex
+    },
+    handleContextSwitch(tab, component) {
+      this.setActiveTab(tab)
       setComponentContext(tab.name)
-
-      if (component) {
-        this.$nextTick(() => {
-          bus.$emit('open-component-overlay', component)
-        })
+    },
+    handleAppearanceGroup(group) {
+      if (typeof group === 'undefined') {
+        return
       }
+
+      this.$nextTick(() => {
+        bus.$emit('open-group-overlay', group)
+      })
     },
     changeContext() {
       const tab = _.find(this.tabs, { name: state.componentContext })
-      this.setActiveTab(tab)
+      this.handleContextSwitch(tab)
     },
     componentType(type) {
       return `${type}-tab`
-    },
-    initialize(widgetData) {
-      this.widgetData = widgetData
-
-      if (!widgetData) {
-        // Get widget provider data
-        const widgetId = Fliplet.Widget.getDefaultId()
-        this.widgetData = Fliplet.Widget.getData(widgetId) || {}
-      }
-
-      setWidgetData(this.widgetData)
-
-      // Get themes and fonts simultaneously
-      return Promise.all([this.getThemes(), this.getFonts()])
-        .then((response) => {
-          this.themes = response[0]
-          this.fonts = response[1]
-
-          this.getThemeInstance()
-        })
-        .catch((err) => {
-          const error = Fliplet.parseError(err)
-          console.error(error)
-          this.error = error
-        })
     },
     getThemes() {
       return Fliplet.Themes.get()
@@ -134,49 +110,68 @@ export default {
     getFonts() {
       return Fliplet.App.Fonts.get()
     },
-    getThemeInstance() {
+    storeFonts() {
+      const webFonts = _.reject(this.fonts, (font) => { return font.url })
+      setWebFonts(webFonts)
+      const customFonts = _.filter(this.fonts, (font) => { return font.url })
+      setCustomFonts(customFonts)
+    },
+    initialize(widgetData) {
+      if (typeof widgetData === 'undefined') {
+        // Get widget provider data
+        const widgetId = Fliplet.Widget.getDefaultId()
+        widgetData = Fliplet.Widget.getData(widgetId) || {}
+      }
+
+      setWidgetData(widgetData)
+
+      // Get themes and fonts simultaneously
+      return Promise.all([this.getThemes(), this.getFonts()])
+        .then((response) => {
+          this.fonts = response[1]
+          this.storeFonts()
+          this.getThemeInstance(response[0])
+        })
+        .catch((err) => {
+          this.error = Fliplet.parseError(err)
+          console.error(err)
+        })
+    },
+    getThemeInstance(themes) {
       let themeWithoutInstances = 0
 
-      this.themes.forEach((theme) => {
+      themes.forEach((theme) => {
         if (!theme.instances.length) {
           themeWithoutInstances++
           return
         }
 
-        this.themeInstance = theme.instances[0]
-        setThemeInstance(this.themeInstance)
-        this.activeTheme = theme
-        setActiveTheme(this.activeTheme)
-        this.webFonts = _.reject(this.fonts, (font) => { return font.url })
-        setWebFonts(this.webFonts)
-        this.customFonts = _.filter(this.fonts, (font) => { return font.url })
-        setCustomFonts(this.customFonts)
+        setThemeInstance(theme.instances[0])
+        setActiveTheme(theme)
 
         // Checks to understand if the provider was called from a component
-        if (this.widgetData) {
+        if (state.widgetData && typeof state.widgetData.widgetInstanceId !== 'undefined') {
           let tab
-
-          if (typeof this.widgetData.widgetInstanceId !== 'undefined') {
-            setComponentId(this.widgetData.widgetInstanceId)
-          }
+          setWidgetId(state.widgetData.widgetInstanceId)
 
           // Check if there's a package name to open its component settings
-          if (typeof this.widgetData.widgetPackage !== 'undefined') {
-            this.component = _.find(this.activeTheme.settings.configuration, (config) => {
-              return config.packages && config.packages.indexOf(this.widgetData.widgetPackage) > -1
+          if (typeof state.widgetData.widgetPackage !== 'undefined') {
+            this.appearanceGroup = _.find(state.activeTheme.settings.configuration, (config) => {
+              return config.packages && config.packages.indexOf(state.widgetData.widgetPackage) > -1
             })
 
-            setComponentMode(!!this.component)
+            setWidgetMode(!!this.appearanceGroup)
           }
 
           // Check if there's a tab to be open
-          if (typeof this.widgetData.activeTab !== 'undefined') {
-            tab = this.tabs[this.widgetData.activeTab]
+          if (typeof state.widgetData.activeTab !== 'undefined') {
+            tab = this.tabs[state.widgetData.activeTab]
           }
 
           // Set the active tab from widget data
           this.isLoading = false
-          this.setActiveTab(tab, this.component)
+          this.handleContextSwitch(tab)
+          this.handleAppearanceGroup(this.appearanceGroup)
 
           return
         }
@@ -185,15 +180,14 @@ export default {
       })
 
       // Automatically create a theme instance if one doesn't exist
-      if (themeWithoutInstances == this.themes.length) {
-        const flipletTheme = _.find(this.themes, { name: 'Fliplet theme' })
+      if (themeWithoutInstances == themes.length) {
+        const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
         this.createDefaultInstance(flipletTheme.id)
           .then(this.initialize)
-          .then(this.reloadPage)
+          .then(this.reloadPagePreview)
           .catch((err) => {
-            const error = Fliplet.parseError(err)
-            console.error(error)
-            this.error = error
+            this.error = Fliplet.parseError(err)
+            console.error(err)
           })
       }
     },
@@ -202,47 +196,40 @@ export default {
         method: 'POST',
         url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
         data: {
-          widgetId: !themeId ? undefined : themeId,
+          widgetId: themeId,
           reuse: true
         }
       })
     },
-    reloadPage() {
+    reloadPagePreview() {
       Fliplet.Studio.emit('reload-page-preview');
     },
     onFieldSave(dataToSave) {
       // Processes data when a field is changed
       dataToSave = dataToSave || []
-      let fieldIndex
-
       dataToSave.forEach((data) => {
-        // Checks if provider is in "component mode" (Component mode is on when provider is initialized from a component)
-        if (state.componentMode) {
-          fieldIndex = _.findIndex(this.savedFields.widgetInstances, (field) => {
-            return field && field.id === state.componentId
-          })
-        } else {
-          fieldIndex = _.findIndex(this.savedFields.values, (field) => {
-            return field && field.name === data.name
-          })
-        }
-
-        if (fieldIndex >= 0) {
-          if (state.componentMode) {
-            this.savedFields.widgetInstances[fieldIndex].values[data.name] = data.value
+        // Checks if provider is in "widget mode"
+        // (Widget mode is on when provider is initialized from a widget instance)
+        if (state.widgetMode) {
+          let widget = _.find(this.savedFields.widgetInstances, { id: state.widgetId })
+          // If it is, check if settings of the same widget were previously saved
+          if (widget) {
+            widget.values[data.name] = data.value
           } else {
-            this.savedFields.values[fieldIndex].value = data.value
-          }
-        } else {
-          if (state.componentMode) {
-            const dataObj = {
-              id: state.componentId,
-              component: componentsMap[this.widgetData.widgetPackage],
+            widget = {
+              id: state.widgetId,
+              component: widgetsMap[state.widgetData.widgetPackage],
               values: {}
             }
-            dataObj.values[data.name] = data.value
-
-            this.savedFields.widgetInstances.push(dataObj)
+            widget.values[data.name] = data.value
+            this.savedFields.widgetInstances.push(widget)
+          }
+        } else {
+          // If it isn't, it means you are saving general theme settings
+          const field = _.find(this.savedFields.values, { name: data.name })
+          // Check if the same field was previously saved
+          if (field) {
+            field.value = data.value
           } else {
             this.savedFields.values.push(data)
           }
@@ -252,53 +239,53 @@ export default {
       setSavedFields(this.savedFields)
       this.prepareToSave()
     },
+    prepareToSave(fromStyleReset) {
+      // Prepares the data in the right format and structure to be saved
+      const themeSavedWidgetInstances = state.themeInstance.settings.widgetInstances || []
+
+      // Checks if comes from a reset to theme styles
+      if (fromStyleReset) {
+        resetStylesToTheme(state.widgetId, this.appearanceGroup)
+      }
+
+      // General settings values
+      this.dataToSave.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
+      this.dataToSave.values = _.assignIn({}, state.themeInstance.settings.values, this.dataToSave.values)
+
+      // Widget settings values
+      this.dataToSave.widgetInstances = state.savedFields.widgetInstances
+
+      if (this.dataToSave.widgetInstances.length) {
+        this.dataToSave.widgetInstances.forEach((wi) => {
+          const widget = _.find(themeSavedWidgetInstances, { id: wi.id })
+          if (widget) {
+            themeSavedWidgetInstances.forEach((item, idx) => {
+              if (widget.id === item.id) {
+                _.merge(item, wi)
+              }
+            })
+            this.dataToSave.widgetInstances = themeSavedWidgetInstances
+          } else {
+            themeSavedWidgetInstances.push(wi)
+            this.dataToSave.widgetInstances = themeSavedWidgetInstances
+          }
+        })
+      } else {
+        this.dataToSave.widgetInstances = themeSavedWidgetInstances
+      }
+
+      this.debouncedSave()
+    },
     updateInstance(dataObj) {
       return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
-        url: 'v1/widget-instances/' + this.themeInstance.id,
+        url: 'v1/widget-instances/' + state.themeInstance.id,
         method: 'PUT',
         data: {
-          package: this.activeTheme.package,
+          package: state.activeTheme.package,
           values: dataObj.values || {},
           widgetInstances: dataObj.widgetInstances || []
         }
       })
-    },
-    prepareToSave(componentId) {
-      // Prepares the data in the right format and structure to be saved
-      const dataObj = {}
-      const savedWidgetInstances = state.themeInstance.settings.widgetInstances || []
-
-      if (componentId) {
-        resetStylesToTheme(componentId, this.component)
-      }
-
-      // General settings values
-      dataObj.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value')
-      dataObj.values = _.assignIn(state.themeInstance.settings.values, dataObj.values)
-
-      // Component settings values
-      dataObj.widgetInstances = state.savedFields.widgetInstances
-      if (dataObj.widgetInstances.length) {
-        dataObj.widgetInstances.forEach((wi) => {
-          const index = _.findIndex(savedWidgetInstances, { 'id' : wi.id })
-          if (index > -1) {
-            savedWidgetInstances.forEach((item, idx) => {
-              if (index === idx) {
-                _.merge(item, wi)
-              }
-            })
-            dataObj.widgetInstances = savedWidgetInstances
-          } else {
-            savedWidgetInstances.push(wi)
-            dataObj.widgetInstances = savedWidgetInstances
-          }
-        })
-      } else {
-        dataObj.widgetInstances = savedWidgetInstances
-      }
-
-      this.dataToSave = dataObj
-      this.debouncedSave()
     },
     save() {
       // Updates the theme saved settings
@@ -322,9 +309,8 @@ export default {
         })
         .then(this.initialize)
         .catch((err) => {
-          const error = Fliplet.parseError(err)
-          console.error(error)
-          this.error = error
+          this.error = Fliplet.parseError(err)
+          console.error(err)
         })
     },
     reloadCustomFonts() {
@@ -332,10 +318,7 @@ export default {
       this.getFonts()
         .then((response) => {
           this.fonts = response
-          this.webFonts = _.reject(this.fonts, (font) => { return font.url })
-          setWebFonts(this.webFonts)
-          this.customFonts = _.filter(this.fonts, (font) => { return font.url })
-          setCustomFonts(this.customFonts)
+          this.storeFonts()
         })
     },
     applySettingsTheme() {
@@ -348,7 +331,7 @@ export default {
           return
         }
 
-        prepareSettingsForTheme(state.componentId)
+        prepareSettingsForTheme(state.widgetId)
         this.prepareToSave()
       })
     },
@@ -362,8 +345,8 @@ export default {
           return
         }
 
-        this.prepareToSave(state.componentId)
-        bus.$emit('component-settings-changed')
+        this.prepareToSave(true)
+        bus.$emit('group-settings-changed')
       })
     },
     setError(error) {
@@ -378,7 +361,7 @@ export default {
     bus.$on('field-saved', this.onFieldSave)
     bus.$on('initialize-widget', this.initialize)
     bus.$on('reload-custom-fonts', this.reloadCustomFonts)
-    bus.$on('set-active-tab', this.setActiveTab)
+    bus.$on('context-switch', this.handleContextSwitch)
     bus.$on('context-changed', this.changeContext)
     bus.$on('apply-to-theme', this.applySettingsTheme)
     bus.$on('reset-to-theme', this.resetSettingsTheme)
@@ -406,7 +389,7 @@ export default {
     bus.$off('field-saved', this.onFieldSave)
     bus.$off('initialize-widget', this.initialize)
     bus.$off('reload-custom-fonts', this.reloadCustomFonts)
-    bus.$off('set-active-tab', this.setActiveTab)
+    bus.$off('context-switch', this.handleContextSwitch)
     bus.$off('context-changed', this.changeContext)
     bus.$off('apply-to-theme', this.applySettingsTheme)
     bus.$off('reset-to-theme', this.resetSettingsTheme)
