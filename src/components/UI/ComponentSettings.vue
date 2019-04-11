@@ -1,15 +1,15 @@
 <template>
   <transition :name="transition">
-    <div v-if="state.componentOverlay && state.componentOverlay.isOpen" id="component-settings-overlay">
+    <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay">
       <header>
-        <span v-if="state.componentMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
-        <p>{{ state.componentOverlay.name }}</p>
-        <span v-if="!state.componentMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <span v-if="state.widgetMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <p>{{ state.appearanceGroupOverlay.name }}</p>
+        <span v-if="!state.widgetMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
         <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
-          <a :href="'#tab-' + tab.type" data-toggle="tab" @click="setActiveTab(tab)"><i :class="tab.icon"></i></a>
+          <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
         </li>
       </ul>
       <div v-if="variables && variables.length" class="settings-fields-holder">
@@ -27,7 +27,7 @@
               </div>
             </template>
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
-              <template v-for="(field, idx) in checkForFontStyle(variable.fields)">
+              <template v-for="(field, idx) in groupFontStyleFields(variable.fields)">
                 <template v-if="Array.isArray(field)">
                   <div class="field-group-wrapper">
                     <component v-for="(groupedField, i) in field" :key="groupedComponentKey" v-if="showField(groupedField)" :is="componentType(groupedField.type)" :data="fieldData(groupedField)" :saved-value="checkSavedValue(groupedField)"></component>
@@ -40,9 +40,9 @@
             </div>
           </div>
         </div>
-        <div v-if="state.componentMode" class="buttons-holder">
-          <div v-if="isChanged" class="btn btn-primary" @click.prevent="applySettings">Apply styles to theme</div>
-          <div v-if="isChanged" class="btn btn-default" @click.prevent="resetSettings">Reset to theme styles</div>
+        <div v-if="state.widgetMode && isChanged" class="buttons-holder">
+          <div class="btn btn-primary" @click.prevent="applySettings">Apply styles to theme</div>
+          <div class="btn btn-default" @click.prevent="resetSettings">Reset to theme styles</div>
         </div>
       </div>
     </div>
@@ -100,13 +100,13 @@ export default {
   },
   computed: {
     transition() {
-      return !state.componentMode ? 'slide-in' : ''
+      return !state.widgetMode ? 'slide-in' : ''
     }
   },
   methods: {
     checkSavedValue,
     closeComponent() {
-      if (state.componentMode) {
+      if (state.widgetMode) {
         bus.$emit('close-appearance')
         return
       }
@@ -119,17 +119,21 @@ export default {
       this.componentKey += 1
     },
     setActiveTab(tab) {
+      // Sets the active device tab
       tab = tab || this.tabs[0]
       const tabIndex = _.findIndex(this.tabs, { type: tab.type })
       this.activeTab = tabIndex
+    },
+    handleContextSwitch(tab) {
+      this.setActiveTab(tab)
       setComponentContext(tab.name, true)
       this.forceRerender()
-      this.setVariables()
+      this.reSetVariables()
     },
     getActiveTab() {
       return _.findIndex(deviceTypes, { name: state.componentContext })
     },
-    checkForFontStyle(fields) {
+    groupFontStyleFields(fields) {
       // This function makes all the font style fields (Bold, Italic, Underline, etc) together
       // This makes it look like it's just one field of multiple options
       const clonedFields = _.cloneDeep(fields)
@@ -182,27 +186,27 @@ export default {
     },
     goToDeviceTab(inheritingFrom) {
       const tab = _.find(deviceTypes, { type: inheritingFrom })
-      this.setActiveTab(tab)
+      this.handleContextSwitch(tab)
     },
-    setVariables() {
+    reSetVariables() {
       if (this.variables) {
         this.forceRerender()
       }
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
       this.variables = this.computeVariables()
-      this.context = state.componentOverlay.context == 'Mobile' ? '' : state.componentOverlay.context
+      this.context = state.appearanceGroupOverlay.context == 'Mobile' ? '' : state.appearanceGroupOverlay.context
       this.showNotInheritingInfo = this.checkFieldsNotInheriting()
       this.currentContext = state.componentContext.toLowerCase()
       this.inheritingFrom = getInheritance()
     },
     computeVariables(toRecompute) {
       // Variables processing
-      if (!state.componentOverlay.data) {
+      if (!state.appearanceGroupOverlay.data) {
         return []
       }
 
       const isMobile = state.componentContext === 'Mobile'
-      const variables = _.cloneDeep(toRecompute && this.variables ? this.variables : state.componentOverlay.data.component.variables)
+      const variables = _.cloneDeep(toRecompute && this.variables ? this.variables : state.appearanceGroupOverlay.data.appearanceGroup.variables)
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const fieldName = state.componentContext === 'Mobile'
@@ -212,8 +216,8 @@ export default {
           const savedLocalValue = _.find(state.savedFields.values, { name: fieldName })
 
           let savedLocalWidgetValue
-          if (state.componentMode && state.themeInstance.settings) {
-            const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+          if (state.widgetMode && state.themeInstance.settings) {
+            const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
             savedLocalWidgetValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
           }
 
@@ -227,7 +231,7 @@ export default {
           const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
           const isLocalWidgetSavedValueInheriting = savedLocalWidgetValue ? this.checkIfIsInheriting(savedLocalWidgetValue) : undefined
 
-          field.inheriting = state.componentMode
+          field.inheriting = state.widgetMode
             ? !!(
               (isLocalWidgetSavedValueInheriting
                 || (!savedLocalWidgetValue && isLocalSavedValueInheriting)
@@ -352,25 +356,25 @@ export default {
     }
   },
   mounted() {
-    bus.$on('component-overlay-opened', this.setVariables)
+    bus.$on('group-overlay-opened', this.reSetVariables)
     bus.$on('saved-fields-set', this.fieldsSaved)
     bus.$on('check-field-visibility', this.runFieldLogic)
     bus.$on('check-margin-field-visibility', this.runMarginFieldLogic)
-    bus.$on('component-settings-changed', this.hideApplyReset)
+    bus.$on('group-settings-changed', this.hideApplyReset)
 
-    const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
-    const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+    const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
+    const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
 
     if (instanceWidgetSettings || savedWidgetSettings) {
       this.isChanged = true
     }
   },
   destroyed() {
-    bus.$off('component-overlay-opened', this.setVariables)
+    bus.$off('group-overlay-opened', this.reSetVariables)
     bus.$off('saved-fields-set', this.fieldsSaved)
     bus.$off('check-field-visibility', this.runFieldLogic)
     bus.$off('check-margin-field-visibility', this.runMarginFieldLogic)
-    bus.$off('component-settings-changed', this.hideApplyReset)
+    bus.$off('group-settings-changed', this.hideApplyReset)
   } 
 }
 </script>

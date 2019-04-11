@@ -1,11 +1,11 @@
 <template>
-  <div v-if="!componentConfig.hide" class="components-buttons" @click.prevent="componentSettings">
-    {{ componentConfig.name }} <i class="fa fa-angle-right"></i>
+  <div v-if="!groupConfig.hide" class="components-buttons" @click.prevent="appearanceGroupSettings">
+    {{ groupConfig.name }} <i class="fa fa-angle-right"></i>
   </div>
 </template>
 
 <script>
-import { state, openComponentSettings } from '../../store'
+import { state, openAppearanceGroupSettings } from '../../store'
 import bus from '../../libs/bus'
 
 export default {
@@ -15,26 +15,26 @@ export default {
     }
   },
   props: {
-    componentConfig: Object
+    groupConfig: Object
   },
   methods: {
-    componentSettings(component) {
-      if (component.hasOwnProperty('variables') && component.name !== this.componentConfig.name) {
+    appearanceGroupSettings(group) {
+      if (group.hasOwnProperty('variables') && group.name !== this.groupConfig.name) {
         return
       }
 
-      component = component && component.hasOwnProperty('variables') ? component : this.componentConfig
-      openComponentSettings(component.name, {
-        component: component,
+      group = group && group.hasOwnProperty('variables') ? group : this.groupConfig
+      openAppearanceGroupSettings(group.name, {
+        appearanceGroup: group,
         instance: state.themeInstance
       })
     }
   },
   mounted() {
-    bus.$on('open-component-overlay', this.componentSettings)
+    bus.$on('open-group-overlay', this.appearanceGroupSettings)
   },
   destroyed() {
-    bus.$off('open-component-overlay', this.componentSettings)
+    bus.$off('open-group-overlay', this.appearanceGroupSettings)
   }
 }
 </script>
