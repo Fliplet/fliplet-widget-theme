@@ -54,8 +54,7 @@ export default {
     InheritDot
   },
   props: {
-    data: Object,
-    savedValue: String
+    data: Object
   },
   watch: {
     value(newVal, oldVal) {

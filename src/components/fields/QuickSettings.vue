@@ -16,7 +16,7 @@
       <template v-for="(variable, idx) in variables">
         <div class="settings-field-holder">
           <template v-for="(field, index) in variable.fields">
-            <component :is="componentType(field.type)" :data="fieldData(field)" :saved-value="getSavedValue(idx, index)"></component>
+            <component :is="fieldType(field.type)" :data="fieldData(field)"></component>
             <div class="label-holder">{{ variable.description }}</div>
           </template>
         </div>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getInheritance } from '../../store'
+import { state, getDefaultFieldValue, getInheritance, checkSavedValue } from '../../store'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
@@ -55,7 +55,7 @@ export default {
       const tab = _.find(deviceTypes, { type: this.inheritingFrom })
       bus.$emit('context-switch', tab)
     },
-    componentType(fieldType) {
+    fieldType(fieldType) {
       return `${fieldType}-field`
     },
     fieldData(field) {
@@ -70,13 +70,6 @@ export default {
 
       return data
     },
-    getSavedValue(variableIndex, fieldIndex) {
-      const field = this.variables[variableIndex].fields[fieldIndex]
-      const isMobile = state.componentContext === 'Mobile'
-      const localSavedValue = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
-
-      return localSavedValue ? localSavedValue.value : field.value
-    },
     checkFieldsNotInheriting() {
       return this.groupConfig.variables.some((variable) => {
         const fields = _.filter(variable.fields, { inheriting: false })
@@ -87,7 +80,10 @@ export default {
         return
       })
     },
-    checkIfIsInheriting(value) {
+    checkIfIsInheritingByDefault(value) {
+      if (!value) {
+        return false
+      }
       // Checks if the value matches a variable name
       const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
       // If the value matches to a variable get the name of the variable
@@ -103,52 +99,20 @@ export default {
       // Processing variables    
       this.groupConfig.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
-          const fieldName = state.componentContext === 'Mobile'
-            ? field.name
-            : field.breakpoints[state.componentContext.toLowerCase()].name
-          const savedValue = state.themeInstance.settings
-            && state.themeInstance.settings.values
-            && state.themeInstance.settings.values[fieldName]
-          const savedLocalValue = _.find(state.savedFields.values, { name: fieldName })
-
-          let savedWidgetValue
-          let savedLocalWidgetValue
-          if (state.widgetMode && state.themeInstance.settings) {
-            const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
-            const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
-            savedWidgetValue = widgetFound ? widgetFound.values[fieldName] : undefined
-            savedLocalWidgetValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
-          }
-
-          const defaultValue = state.componentContext === 'Mobile'
-            ? field.default
-            : field.breakpoints[state.componentContext.toLowerCase()].default
+          const values = checkSavedValue(field, true)
 
           // To check if the field is inheriting
-          const isDefaultInheriting = this.checkIfIsInheriting(defaultValue)
-          const isSavedValueInheriting = this.checkIfIsInheriting(savedValue)
-          const isLocalSavedValueInheriting = savedLocalValue ? this.checkIfIsInheriting(savedLocalValue.value) : undefined
-          const isWidgetSavedValueInheriting = savedWidgetValue ? this.checkIfIsInheriting(savedWidgetValue) : undefined
-          const isLocalWidgetSavedValueInheriting = savedLocalWidgetValue ? this.checkIfIsInheriting(savedLocalWidgetValue) : undefined
+          const isDefaultInheriting = this.checkIfIsInheritingByDefault(values.defaultValue)
+          const isSavedValueInheriting = this.checkIfIsInheritingByDefault(values.generalSavedValue)
+          const isLocalSavedValueInheriting = this.checkIfIsInheritingByDefault(values.generalLocalSavedValue)
 
           const newObj = {
-            value: state.widgetMode
-              ? savedLocalWidgetValue
-                ? savedLocalWidgetValue
-                : savedWidgetValue
-                  ? savedWidgetValue
-                  : savedLocalValue
-                    ? savedLocalValue.value
-                    : savedValue|| getDefaultFieldValue(field)
-              : savedLocalValue ? savedLocalValue.value : savedValue || getDefaultFieldValue(field),
-            inheriting: state.widgetMode
-              ? !!(isLocalWidgetSavedValueInheriting
-                  || (!savedLocalWidgetValue && isWidgetSavedValueInheriting)
-                  || (!savedLocalWidgetValue && !savedWidgetValue && isLocalSavedValueInheriting)
-                  || (!savedLocalWidgetValue && !savedWidgetValue && !savedLocalValue && isSavedValueInheriting)
-                  || (!savedLocalWidgetValue && !savedWidgetValue && !savedLocalValue && !savedValue && isDefaultInheriting)
-                )
-              : !!(isLocalSavedValueInheriting || (!savedLocalValue && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting))
+            value: values.fieldValue,
+            inheriting: !!(
+              isLocalSavedValueInheriting
+              || (!values.generalLocalSavedValue && isSavedValueInheriting)
+              || (!values.generalLocalSavedValue && !values.generalSavedValue && isDefaultInheriting)
+            )
           }
 
           _.extend(this.groupConfig.variables[index].fields[idx], newObj)
