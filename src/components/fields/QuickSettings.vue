@@ -1,7 +1,7 @@
 <template>
   <div class="quick-settings-holder clearfix">
     <div class="col-xs-12 control-label quick-settings-title">
-      <label>{{ componentConfig.name }}</label>
+      <label>{{ groupConfig.name }}</label>
     </div>
 
     <div class="col-xs-12">
@@ -44,7 +44,7 @@ export default {
     }
   },
   props: {
-    componentConfig: Object
+    groupConfig: Object
   },
   components: {
     ColorField,
@@ -53,7 +53,7 @@ export default {
   methods: {
     goToDeviceTab() {
       const tab = _.find(deviceTypes, { type: this.inheritingFrom })
-      bus.$emit('set-active-tab', tab)
+      bus.$emit('context-switch', tab)
     },
     componentType(fieldType) {
       return `${fieldType}-field`
@@ -78,7 +78,7 @@ export default {
       return localSavedValue ? localSavedValue.value : field.value
     },
     checkFieldsNotInheriting() {
-      return this.componentConfig.variables.some((variable) => {
+      return this.groupConfig.variables.some((variable) => {
         const fields = _.filter(variable.fields, { inheriting: false })
         if (fields.length) {
           return true
@@ -101,7 +101,7 @@ export default {
     },
     computeVariables() {  
       // Processing variables    
-      this.componentConfig.variables.forEach((variable, index) => {
+      this.groupConfig.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const fieldName = state.componentContext === 'Mobile'
             ? field.name
@@ -113,9 +113,9 @@ export default {
 
           let savedWidgetValue
           let savedLocalWidgetValue
-          if (state.componentMode && state.themeInstance.settings) {
-            const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.componentId })
-            const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.componentId })
+          if (state.widgetMode && state.themeInstance.settings) {
+            const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
+            const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
             savedWidgetValue = widgetFound ? widgetFound.values[fieldName] : undefined
             savedLocalWidgetValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
           }
@@ -132,7 +132,7 @@ export default {
           const isLocalWidgetSavedValueInheriting = savedLocalWidgetValue ? this.checkIfIsInheriting(savedLocalWidgetValue) : undefined
 
           const newObj = {
-            value: state.componentMode
+            value: state.widgetMode
               ? savedLocalWidgetValue
                 ? savedLocalWidgetValue
                 : savedWidgetValue
@@ -141,7 +141,7 @@ export default {
                     ? savedLocalValue.value
                     : savedValue|| getDefaultFieldValue(field)
               : savedLocalValue ? savedLocalValue.value : savedValue || getDefaultFieldValue(field),
-            inheriting: state.componentMode
+            inheriting: state.widgetMode
               ? !!(isLocalWidgetSavedValueInheriting
                   || (!savedLocalWidgetValue && isWidgetSavedValueInheriting)
                   || (!savedLocalWidgetValue && !savedWidgetValue && isLocalSavedValueInheriting)
@@ -151,11 +151,11 @@ export default {
               : !!(isLocalSavedValueInheriting || (!savedLocalValue && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting))
           }
 
-          _.extend(this.componentConfig.variables[index].fields[idx], newObj)
+          _.extend(this.groupConfig.variables[index].fields[idx], newObj)
         })
       })
 
-      return this.componentConfig.variables
+      return this.groupConfig.variables
     },
     reComputeVariables() {
       this.variables = this.computeVariables()
