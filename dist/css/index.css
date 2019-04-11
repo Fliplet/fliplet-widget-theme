@@ -753,11 +753,11 @@ header {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      padding: 0; }
+      padding: 0 3px; }
     #component-settings-overlay .settings-fields-holder .multi-field > * {
       display: flex;
       width: auto;
-      margin: 0 15px 8px 15px; }
+      margin: 0 12px 8px 12px; }
     #component-settings-overlay .settings-fields-holder .full-width {
       min-width: calc(100% - 30px); }
     #component-settings-overlay .settings-fields-holder .half-width {
