@@ -29,4 +29,4 @@ function addDropdownListener() {
   });
 }
 
-exports.dropdown = addDropdownListener;
+exports.dropdown = addDropdownListener();
