@@ -200,31 +200,47 @@ export function checkIsFieldChanged(field) {
   return widgetIndex > -1 || fieldIndex > -1
 }
 
-export function checkSavedValue(field) {
-  const isMobile = state.componentContext === 'Mobile'
-  const foundField = _.find(state.savedFields.values, { name: (isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name) })
-  const foundWidgetField = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
-  const foundWidgetFieldValue = foundWidgetField
-    ? foundWidgetField.values[isMobile ? field.name : field.breakpoints[state.componentContext.toLowerCase()].name]
-    : undefined
+export function checkSavedValue(field, returnAll) {
+  const fieldName = state.componentContext === 'Mobile'
+    ? field.name
+    : field.breakpoints[state.componentContext.toLowerCase()].name
 
-  if (!foundField && !foundWidgetFieldValue && state.appearanceGroupOverlay.data && state.appearanceGroupOverlay.data.instance) {
-    const savedValues = state.appearanceGroupOverlay.data.instance.settings.values
-    const widgetValues = state.appearanceGroupOverlay.data.instance.settings.widgetInstances
-    const savedWidget = _.find(widgetValues, { id: state.widgetId })
+  const generalSavedValue = state.themeInstance.settings
+    && state.themeInstance.settings.values
+    && state.themeInstance.settings.values[fieldName]
+  const savedLocalField = _.find(state.savedFields.values, { name: fieldName })
 
-    return state.widgetMode && savedWidget
-      ? state.componentContext !== 'Mobile'
-        ? savedWidget.values[field.name + state.componentContext]
-        : savedWidget.values[field.name]
-      : state.componentContext !== 'Mobile' ? savedValues[field.name + state.componentContext] : savedValues[field.name]
+  const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
+  const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
+  const widgetSavedValue = widgetFound ? widgetFound.values[fieldName] : undefined
+  const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
+
+  const defaultValue = state.componentContext === 'Mobile'
+    ? field.default
+    : field.breakpoints[state.componentContext.toLowerCase()].default
+
+  const value = state.widgetMode
+    ? widgetLocalSavedValue
+      ? widgetLocalSavedValue
+      : widgetSavedValue
+        ? widgetSavedValue
+        : savedLocalField
+          ? savedLocalField.value
+          : generalSavedValue || defaultValue
+    : savedLocalField ? savedLocalField.value : generalSavedValue || defaultValue
+
+  if (!returnAll) {
+    return value
   }
 
-  return state.widgetMode
-    ? foundWidgetFieldValue
-      ? foundWidgetFieldValue
-      : foundField ? foundField.value : undefined
-    : foundField ? foundField.value : undefined
+  return {
+    fieldValue: value,
+    generalSavedValue: generalSavedValue,
+    generalLocalSavedValue: savedLocalField ? savedLocalField.value : undefined,
+    widgetSavedValue: widgetSavedValue,
+    widgetLocalSavedValue: widgetLocalSavedValue,
+    defaultValue: defaultValue
+  }
 }
 
 export function getDefaultFieldValue(field) {
