@@ -2,9 +2,9 @@
   <transition :name="transition">
     <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay">
       <header>
-        <span v-if="state.widgetMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <span v-if="state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
         <p>{{ state.appearanceGroupOverlay.name }}</p>
-        <span v-if="!state.widgetMode" class="close-component-settings" @click.prevent="closeComponent"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <span v-if="!state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { state, closeComponentSettings, saveInheritanceData,
+import { state, closeAppearanceGroupSettings, saveInheritanceData,
   getInheritance, checkSavedValue, setComponentContext } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
@@ -105,13 +105,13 @@ export default {
   },
   methods: {
     checkSavedValue,
-    closeComponent() {
+    closeGroup() {
       if (state.widgetMode) {
         bus.$emit('close-appearance')
         return
       }
       bus.$emit('context-changed')
-      closeComponentSettings()
+      closeAppearanceGroupSettings()
     },
     forceRerender() {
       // Change components :key to force them to render again
@@ -240,7 +240,12 @@ export default {
               )
               || (this.ignoreInheritance(variable) || this.ignoreInheritance(field))
             )
-            : !!((isLocalSavedValueInheriting || (!isLocalSavedValueInheriting && isSavedValueInheriting) || (!savedLocalValue && !savedValue && isDefaultInheriting)) || (this.ignoreInheritance(variable) || this.ignoreInheritance(field)))
+            : !!(
+              (isLocalSavedValueInheriting
+                || (!isLocalSavedValueInheriting && isSavedValueInheriting)
+                || (!savedLocalValue && !savedValue && isDefaultInheriting)
+              )
+              || (this.ignoreInheritance(variable) || this.ignoreInheritance(field)))
         })
       })
 

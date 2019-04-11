@@ -54,11 +54,11 @@ export function prepareSettingsForTheme(id) {
   setSavedFields(data)
 }
 
-export function resetStylesToTheme(widgetId, component) {
+export function resetStylesToTheme(widgetId, appearanceGroup) {
   _.remove(state.savedFields.widgetInstances, { id: widgetId })
-  removeComponentFromInstance(widgetId)
-  updateComponentData({
-    component: component,
+  removeWidgetFromInstance(widgetId)
+  updateWidgetData({
+    appearanceGroup: appearanceGroup,
     instance: state.themeInstance
   })
   bus.$emit('variables-computed')
@@ -72,7 +72,7 @@ export function setThemeInstance(instance) {
   state.themeInstance = instance
 }
 
-export function removeComponentFromInstance(id) {
+export function removeWidgetFromInstance(id) {
   _.remove(state.themeInstance.settings.widgetInstances, { id: id })
 }
 
@@ -114,11 +114,11 @@ export function openAppearanceGroupSettings(overlayName = '', options) {
   bus.$emit('group-overlay-opened')
 }
 
-export function updateComponentData(data) {
+export function updateWidgetData(data) {
   state.appearanceGroupOverlay.data = data
 }
 
-export function closeComponentSettings() {
+export function closeAppearanceGroupSettings() {
   state.appearanceGroupOverlay = {}
 }
 
