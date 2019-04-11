@@ -16,7 +16,7 @@
       <!-- Tab panes -->
       <div class="tab-content">
         <div v-for="(tab, index) in tabs" v-if="activeTab === index" :class="{ active: activeTab === index }" :ref="index" class="tab-pane" :id="'tab-' + tab.type">
-          <component :is="componentType(tab.type)"></component>
+          <component :is="tabType(tab.type)"></component>
         </div>
       </div>
       <transition name="slide-up">
@@ -84,7 +84,7 @@ export default {
       const tabIndex = _.findIndex(this.tabs, { type: tab.type })
       this.activeTab = tabIndex
     },
-    handleContextSwitch(tab, component) {
+    handleContextSwitch(tab) {
       this.setActiveTab(tab)
       setComponentContext(tab.name)
     },
@@ -101,7 +101,7 @@ export default {
       const tab = _.find(this.tabs, { name: state.componentContext })
       this.handleContextSwitch(tab)
     },
-    componentType(type) {
+    tabType(type) {
       return `${type}-tab`
     },
     getThemes() {
