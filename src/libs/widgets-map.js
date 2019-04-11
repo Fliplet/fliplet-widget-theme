@@ -1,4 +1,4 @@
-const componentsMap = {
+const widgetsMap = {
   'com.fliplet.menu.bottom-bar': 'menuBottom',
   'com.fliplet.menu.expandable': 'menuCircle',
   'com.fliplet.menu.default': 'menuOverlay',
@@ -45,4 +45,4 @@ const componentsMap = {
   'com.fliplet.slider': 'slider'
 }
 
-export default componentsMap
+export default widgetsMap
