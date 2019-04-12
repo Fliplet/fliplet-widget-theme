@@ -1,4 +1,4 @@
-.quick-settings-holder {
+.quick-settings {
   margin: 30px -15px;
 
   .control-label {
@@ -11,11 +11,11 @@
     }
   }
 
-  .settings-field-holder {
+  .quick-settings-field {
     display: flex;
     align-items: center;
 
-    & + .settings-field-holder {
+    & + .quick-settings-field {
       margin-top: 5px;
     }
   }

@@ -22,7 +22,7 @@
       <transition name="slide-up">
         <div v-if="error" class="error-holder">
           <p>{{ error }}</p>
-          <div class="dismiss-error" @click.prevent="dismissErrorToast"><i class="fa fa-times-thin fa-lg fa-2x"></i></div>
+          <div class="dismiss-error" @click.prevent="dismissErrorToast"><i class="fa fa-times-thin fa-2x"></i></div>
         </div>
         <div v-if="state.isSaving" class="saving-holder">
           <div class="save-status">
@@ -39,7 +39,7 @@ import { state, setComponentContext,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId,
   setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
-  toggleSavingStatus } from './store'
+  toggleSavingStatus, openAppearanceGroupSettings } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import MobileTab from './components/MobileTab'
@@ -94,7 +94,10 @@ export default {
       }
 
       this.$nextTick(() => {
-        bus.$emit('open-group-overlay', group)
+        openAppearanceGroupSettings(group.name, {
+          appearanceGroup: group,
+          instance: state.themeInstance
+        })
       })
     },
     changeContext() {
@@ -116,12 +119,9 @@ export default {
       const customFonts = _.filter(this.fonts, (font) => { return font.url })
       setCustomFonts(customFonts)
     },
-    initialize(widgetData) {
-      if (typeof widgetData === 'undefined') {
-        // Get widget provider data
-        const widgetId = Fliplet.Widget.getDefaultId()
-        widgetData = Fliplet.Widget.getData(widgetId) || {}
-      }
+    initialize(widgetInstanceData) {
+      const widgetId = Fliplet.Widget.getDefaultId()
+      const widgetData = widgetInstanceData || Fliplet.Widget.getData(widgetId) || {}
 
       setWidgetData(widgetData)
 
@@ -150,7 +150,7 @@ export default {
         setActiveTheme(theme)
 
         // Checks to understand if the provider was called from a component
-        if (state.widgetData && typeof state.widgetData.widgetInstanceId !== 'undefined') {
+        if (state.widgetData && state.widgetData.widgetInstanceId) {
           let tab
           setWidgetId(state.widgetData.widgetInstanceId)
 
@@ -296,6 +296,7 @@ export default {
           toggleSavingStatus(false)
 
           if (response && response.widgetInstance) {
+            setThemeInstance(response.widgetInstance)
             // Reloads CSS files without reloading
             var settings = response.widgetInstance.settings.assets[0];
             Fliplet.Studio.emit('page-preview-send-event', {
@@ -307,7 +308,6 @@ export default {
 
           return 
         })
-        .then(this.initialize)
         .catch((err) => {
           this.error = Fliplet.parseError(err)
           console.error(err)

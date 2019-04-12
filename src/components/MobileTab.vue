@@ -1,8 +1,8 @@
 <template>
   <div class="mobile-tab-content">
-    <QuickSettings :group-config="getQuickSettings()"></QuickSettings>
+    <QuickSettings v-if="!state.widgetMode" :group-config="getQuickSettings()"></QuickSettings>
     <div class="components-buttons-holder">
-      <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="!configuration.quickSettings" :group-config="configuration"></SettingsButtons>
+      <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="!configuration.quickSettings && !state.widgetMode" :group-config="configuration"></SettingsButtons>
     </div>
     <ComponentSettings></ComponentSettings>
   </div>

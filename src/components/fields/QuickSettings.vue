@@ -1,12 +1,12 @@
 <template>
-  <div class="quick-settings-holder clearfix">
+  <div class="quick-settings clearfix">
     <div class="col-xs-12 control-label quick-settings-title">
       <label>{{ groupConfig.name }}</label>
     </div>
 
     <div class="col-xs-12">
       <template v-if="notMobile">
-        <div class="inherit-settings-holder">
+        <div class="inherit-settings">
           <div v-if="showNotInheritingInfo" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
           <template v-else>
             <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab">View</a>
@@ -14,7 +14,7 @@
         </div>
       </template>
       <template v-for="(variable, idx) in variables">
-        <div class="settings-field-holder">
+        <div class="quick-settings-field">
           <template v-for="(field, index) in variable.fields">
             <component :is="fieldType(field.type)" :data="fieldData(field)"></component>
             <div class="label-holder">{{ variable.description }}</div>
@@ -40,7 +40,7 @@ export default {
       inheritingFrom: getInheritance(),
       currentContext: state.componentContext.toLowerCase(),
       variables: this.computeVariables(),
-      showNotInheritingInfo: this.checkFieldsNotInheriting()
+      showNotInheritingInfo: this.areNotInheriting()
     }
   },
   props: {
@@ -70,7 +70,7 @@ export default {
 
       return data
     },
-    checkFieldsNotInheriting() {
+    areNotInheriting() {
       return this.groupConfig.variables.some((variable) => {
         const fields = _.filter(variable.fields, { inheriting: false })
         if (fields.length) {
@@ -80,7 +80,7 @@ export default {
         return
       })
     },
-    checkIfIsInheritingByDefault(value) {
+    isInheriting(value) {
       if (!value) {
         return false
       }
@@ -102,9 +102,9 @@ export default {
           const values = checkSavedValue(field, true)
 
           // To check if the field is inheriting
-          const isDefaultInheriting = this.checkIfIsInheritingByDefault(values.defaultValue)
-          const isSavedValueInheriting = this.checkIfIsInheritingByDefault(values.generalSavedValue)
-          const isLocalSavedValueInheriting = this.checkIfIsInheritingByDefault(values.generalLocalSavedValue)
+          const isDefaultInheriting = this.isInheriting(values.defaultValue)
+          const isSavedValueInheriting = this.isInheriting(values.generalSavedValue)
+          const isLocalSavedValueInheriting = this.isInheriting(values.generalLocalSavedValue)
 
           const newObj = {
             value: values.fieldValue,
@@ -121,19 +121,19 @@ export default {
 
       return this.groupConfig.variables
     },
-    reComputeVariables() {
+    reSetVariables() {
       this.variables = this.computeVariables()
-      this.showNotInheritingInfo = this.checkFieldsNotInheriting()
+      this.showNotInheritingInfo = this.areNotInheriting()
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })
     }
   },
   mounted() {
-    bus.$on('saved-fields-set', this.reComputeVariables)
+    bus.$on('saved-fields-set', this.reSetVariables)
   },
   destroyed() {
-    bus.$off('saved-fields-set', this.reComputeVariables)
+    bus.$off('saved-fields-set', this.reSetVariables)
   }
 }
 </script>

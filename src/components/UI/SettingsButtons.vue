@@ -19,22 +19,11 @@ export default {
   },
   methods: {
     appearanceGroupSettings(group) {
-      if (group.hasOwnProperty('variables') && group.name !== this.groupConfig.name) {
-        return
-      }
-
-      group = group && group.hasOwnProperty('variables') ? group : this.groupConfig
-      openAppearanceGroupSettings(group.name, {
-        appearanceGroup: group,
+      openAppearanceGroupSettings(this.groupConfig.name, {
+        appearanceGroup: this.groupConfig,
         instance: state.themeInstance
       })
     }
-  },
-  mounted() {
-    bus.$on('open-group-overlay', this.appearanceGroupSettings)
-  },
-  destroyed() {
-    bus.$off('open-group-overlay', this.appearanceGroupSettings)
   }
 }
 </script>

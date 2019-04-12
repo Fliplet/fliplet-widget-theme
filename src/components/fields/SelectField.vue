@@ -60,7 +60,7 @@ export default {
     setValues() {
       this.valueToShow = this.value
     },
-    computeValueToShow() {
+    getValueToShow() {
       return this.parseValueToShow(getDefaultFieldValue(this.data.fieldConfig))
     },
     inheritValue(value) {
@@ -116,7 +116,7 @@ export default {
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
-      this.valueToShow = this.computeValueToShow()
+      this.valueToShow = this.getValueToShow()
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true

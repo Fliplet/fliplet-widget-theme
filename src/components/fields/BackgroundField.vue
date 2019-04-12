@@ -53,7 +53,7 @@ export default {
     }
   },
   methods: {
-    computeValueToShow() {
+    getValue() {
       return getDefaultFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
@@ -78,7 +78,7 @@ export default {
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
 
       if (this.fromReset) {
-        this.value = this.computeValueToShow()
+        this.value = this.getValue()
         checkLogic(this.data.fieldConfig, this.value)
       }
 

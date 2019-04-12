@@ -21,15 +21,30 @@ export const state = {
 }
 
 // Public functions
+
+/**
+* Saved the widget data into store
+* @param {Object} Widget data object
+*   General styles: Contains "activeTab", "id", "version", "package" properties
+*   Widget styles: Contains the same as above, plus "widgetInstanceId", "widgetPackage"
+*/
 export function setWidgetData(data) {
   state.widgetData = data
 }
 
+/**
+* Saves new changed fields into store
+* @param {Object} Object containing the two arrays
+*/
 export function setSavedFields(data) {
   state.savedFields = _.assignIn({}, state.savedFields, data)
   bus.$emit('saved-fields-set')
 }
 
+/**
+* Prepares data from widget styles to be added to the general styles
+* @param {Number} Widget id
+*/
 export function prepareSettingsForTheme(id) {
   // Find the saved values
   const localSavedWidget = _.find(state.savedFields.widgetInstances, { id: id })
@@ -54,6 +69,11 @@ export function prepareSettingsForTheme(id) {
   setSavedFields(data)
 }
 
+/**
+* Resets all the styles the user changed on a widget back to the general theme defaults
+* @param {Number} Widget id
+* @param {Object} The appearance group of fields
+*/
 export function resetStylesToTheme(widgetId, appearanceGroup) {
   _.remove(state.savedFields.widgetInstances, { id: widgetId })
   removeWidgetFromInstance(widgetId)
@@ -64,38 +84,67 @@ export function resetStylesToTheme(widgetId, appearanceGroup) {
   bus.$emit('variables-computed')
 }
 
+/**
+* Saves the tab context into the store
+* @param {String} The name of the tab context can contain the words: "Mobile", "Tablet", "Desktop"
+*/
 export function setComponentContext(context) {
   state.componentContext = context
 }
 
+/**
+* Saves the theme instance into the store
+* @param {Object} Object of the theme instance
+*/
 export function setThemeInstance(instance) {
   state.themeInstance = instance
 }
 
-export function removeWidgetFromInstance(id) {
-  _.remove(state.themeInstance.settings.widgetInstances, { id: id })
-}
-
+/**
+* Saves the theme into the store
+* @param {Object} Object of the theme
+*/
 export function setActiveTheme(theme) {
   state.activeTheme = theme
 }
 
+/**
+* Saves the the web safe fonts into the store
+* @param {Array} Array of font names
+*/
 export function setWebFonts(fonts) {
   state.fonts.web = fonts
 }
 
+/**
+* Saves the custom fonts (user uploaded fonts) into the store
+* @param {Array} Array of font names
+*/
 export function setCustomFonts(fonts) {
   state.fonts.custom = fonts
 }
 
+/**
+* Saves the widget id into the store
+* @param {String} Number as string of the widget id
+*/
 export function setWidgetId(id) {
   state.widgetId = parseInt(id, 10)
 }
 
+/**
+* Sets a state to flag if the UI is from a specific widget
+* @param {Boolean}
+*/
 export function setWidgetMode(value) {
   state.widgetMode = value
 }
 
+/**
+* Opens the appearance group settings overlay
+* @param {String} Name of the group settings
+* @param {Object} Object with the group settings and the theme instance
+*/
 export function openAppearanceGroupSettings(overlayName = '', options) {
   options = options || {}
 
@@ -114,19 +163,27 @@ export function openAppearanceGroupSettings(overlayName = '', options) {
   bus.$emit('group-overlay-opened')
 }
 
-export function updateWidgetData(data) {
-  state.appearanceGroupOverlay.data = data
-}
-
+/**
+* Closes the appearance group settings overlay
+*/
 export function closeAppearanceGroupSettings() {
   state.appearanceGroupOverlay = {}
 }
 
+/**
+* Pushes the new data of a single field into an array of data to save
+* @param {Object} Name and Value of the field the user changed
+*/
 export function saveFieldData(data) {
   state.dataToSave.push(_.pick(data, ['name', 'value']))
   emitSavedData()
 }
 
+/**
+* Sets flag for saving spinner
+* @param {Boolean}
+* @return null
+*/
 export function toggleSavingStatus(toggle) {
   if (typeof toggle !== 'undefined') {
     state.isSaving = toggle
@@ -136,10 +193,18 @@ export function toggleSavingStatus(toggle) {
   state.isSaving = !state.isSaving
 }
 
-export function clearDataToSave(data) {
+/**
+* Clears the array of data to save
+*/
+export function clearDataToSave() {
   state.dataToSave.splice(0, state.dataToSave.length)
 }
 
+/**
+* Gets the field CSS variable based on the tab context the user is
+* @param {Object} Object of the field JSON configuration
+* @return {String} CSS variable name
+*/
 export function getFieldName(field) {
   const fieldName = state.componentContext === 'Mobile'
     ? field.name
@@ -148,6 +213,11 @@ export function getFieldName(field) {
   return fieldName
 }
 
+/**
+* Gets the field CSS variable based on the tab context the user is
+* @param {Object} Object of the field JSON configuration
+* @return {Boolean}
+*/
 export function checkIsFieldChanged(field) {
   let widgetIndex
   let fieldIndex
@@ -200,6 +270,13 @@ export function checkIsFieldChanged(field) {
   return widgetIndex > -1 || fieldIndex > -1
 }
 
+/**
+* Gets the value saved for the specific field
+* @param {Object} Object of the field JSON configuration
+* @param {Boolean} Boolean to determine if it should return more values
+* @return {String} The value saved
+* @return {Object} Object with all the saved values including the default value
+*/
 export function checkSavedValue(field, returnAll) {
   const fieldName = state.componentContext === 'Mobile'
     ? field.name
@@ -243,6 +320,11 @@ export function checkSavedValue(field, returnAll) {
   }
 }
 
+/**
+* Gets the default value for the specific field
+* @param {Object} Object of the field JSON configuration
+* @return {String} The default value of the field
+*/
 export function getDefaultFieldValue(field) {
   // Variables to use later down
   let defaultValue
@@ -260,6 +342,12 @@ export function getDefaultFieldValue(field) {
   return checkFieldValue(savedValue || defaultValue, field)
 }
 
+/**
+* Gets the logic object of the field
+* @param {Object} Object of the field JSON configuration
+* @param {String} String of the value choosen by the user
+* @return {Object} Return by "bus.$emit" the object containing the logic based on the value selected
+*/
 export function checkLogic(fieldConfig, value) {
   if (fieldConfig.hasOwnProperty('logic')) {
     for (const prop in fieldConfig.logic) {
@@ -272,7 +360,14 @@ export function checkLogic(fieldConfig, value) {
   }
 }
 
-export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
+/**
+* Gets the logic object of the margin alignment field
+* @param {Object} Object of the field JSON configuration
+* @param {String} String of the value choosen by the user
+* @param {Boolean} Flag to determine if function is called from loading
+* @return {Object} Return by "bus.$emit" the object containing the logic based on the value selected
+*/
+export function checkMarginLogic(fieldConfig, value, fromLoad) {
   if (fieldConfig.hasOwnProperty('logic')) {
     const fieldsArray = []
     const notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
@@ -292,7 +387,7 @@ export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
               value: fieldConfig.logic[prop][key]
             }
             fieldsArray.push(key)
-            if (!fromLoadNotMobile) {
+            if (!fromLoad) {
               bus.$emit('field-saved', [newObj])
             }
           }
@@ -304,6 +399,10 @@ export function checkMarginLogic(fieldConfig, value, fromLoadNotMobile) {
   }
 }
 
+/**
+* Gets the inheritance context
+* @return {String} Name of context it is inheriting from
+*/
 export function getInheritance() {
   switch(state.componentContext) {
     case 'Desktop':
@@ -322,6 +421,20 @@ function emitSavedData() {
   bus.$emit('field-saved', state.dataToSave)
 }
 
+function removeWidgetFromInstance(id) {
+  _.remove(state.themeInstance.settings.widgetInstances, { id: id })
+}
+
+function updateWidgetData(data) {
+  state.appearanceGroupOverlay.data = data
+}
+
+/**
+* Checks the field value to determine if it should inherit and gets the final value
+* @param {String} The initial field
+* @param {Object} Object of the field JSON configuration
+* @return {String} Final field value
+*/
 function checkFieldValue(value, field) {
   let foundValue
   let defaultValue

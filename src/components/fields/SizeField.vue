@@ -26,6 +26,7 @@
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import sizeProperties from '../../libs/size-field-properties'
 import bus from '../../libs/bus'
 
 export default {
@@ -33,10 +34,10 @@ export default {
     return {
       state,
       property: undefined,
+      properties: sizeProperties[this.data.fieldConfig.properties],
       value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
-      properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       inputIsActive: false,
@@ -79,7 +80,7 @@ export default {
     setValues() {
       this.valueToShow = this.value
     },
-    computeValueToShow() {
+    getValueToShow() {
       return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
     },
     inheritValue(value) {
@@ -105,23 +106,20 @@ export default {
         return value
       }
 
-      const property = state.componentContext === 'Mobile'
-        ? this.data.fieldConfig.property
-        : this.data.fieldConfig.breakpoints[state.componentContext.toLowerCase()].property
-      const match = value.toString().match(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'))
+      const match = value.toString().match(new RegExp(this.properties.join('$|') + '$'))
 
       if (match && match.length) {
         return match[0]
       }
 
-      return property
+      return 'px'
     },
     parseValue(value) {
       if (value == 'auto' || value == 'none' ) {
         return value
       }
 
-      const parsedValue = value.replace(new RegExp(this.data.fieldConfig.properties.join('$|') + '$'), '')
+      const parsedValue = value.replace(new RegExp(sizeProperties[this.data.fieldConfig.properties].join('$|') + '$'), '')
       const parsedFloatVal = parseFloat(parsedValue, 10)
 
       return isNaN(parsedFloatVal) ? parsedValue : parsedFloatVal
@@ -304,10 +302,10 @@ export default {
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
-      this.valueToShow = this.computeValueToShow()
+      this.valueToShow = this.getValueToShow()
 
       if (this.fromReset) {
-        this.value = this.computeValueToShow()
+        this.value = this.getValueToShow()
       }
 
       this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))

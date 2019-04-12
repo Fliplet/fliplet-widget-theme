@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div class="align-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + uuid" :name="margin-align" :value="prop" v-model="value">
+          <input type="radio" :id="'radio-' + prop + uuid" name="margin-align" :value="prop" v-model="value">
           <label :for="'radio-' + prop + uuid">
             <span v-if="prop == 'custom'" class="check-icon">Custom</span>
             <span v-else :class="'check-icon check-align-' + prop"></span>
@@ -57,7 +57,7 @@ export default {
     }
   },
   methods: {
-    computeValueToShow() {
+    getValueToShow() {
       return getDefaultFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
@@ -82,7 +82,7 @@ export default {
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
 
       if (this.fromReset) {
-        this.value = this.computeValueToShow()
+        this.value = this.getValueToShow()
         checkMarginLogic(this.data.fieldConfig, this.value)
       }
 

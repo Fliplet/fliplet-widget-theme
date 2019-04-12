@@ -151,15 +151,15 @@ header {
     color: rgba(51, 51, 51, 0.5); }
     #theme-application .label-holder .inheritance-warn {
       display: inline-block; }
-  #theme-application .inherit-settings-holder {
+  #theme-application .inherit-settings {
     margin-bottom: 10px; }
-    #theme-application .inherit-settings-holder.active {
+    #theme-application .inherit-settings.active {
       margin-bottom: 0; }
-    #theme-application .inherit-settings-holder .inheritance-warn {
+    #theme-application .inherit-settings .inheritance-warn {
       cursor: default; }
-    #theme-application .inherit-settings-holder .label-holder {
+    #theme-application .inherit-settings .label-holder {
       margin-left: 0; }
-    #theme-application .inherit-settings-holder a {
+    #theme-application .inherit-settings a {
       margin-left: 10px; }
   #theme-application .field-label {
     margin-left: 10px;
@@ -676,16 +676,16 @@ header {
 .slide-up-leave-to {
   transform: translateY(100%); }
 
-.quick-settings-holder {
+.quick-settings {
   margin: 30px -15px; }
-  .quick-settings-holder .control-label.quick-settings-title {
+  .quick-settings .control-label.quick-settings-title {
     text-transform: uppercase; }
-  .quick-settings-holder .control-label label {
+  .quick-settings .control-label label {
     font-weight: 600; }
-  .quick-settings-holder .settings-field-holder {
+  .quick-settings .quick-settings-field {
     display: flex;
     align-items: center; }
-    .quick-settings-holder .settings-field-holder + .settings-field-holder {
+    .quick-settings .quick-settings-field + .quick-settings-field {
       margin-top: 5px; }
 
 .form-holder {
@@ -739,51 +739,52 @@ header {
       margin-left: 10px; }
   #component-settings-overlay .breakpoint-tabs {
     margin-top: 40px; }
-  #component-settings-overlay .settings-fields-holder {
+  #component-settings-overlay .settings-fields {
     margin: 0 -15px;
     height: calc(100% - 92px);
     overflow: auto;
     padding: 30px 0 0; }
-    #component-settings-overlay .settings-fields-holder .control-label {
+    #component-settings-overlay .settings-fields .control-label {
       text-transform: uppercase;
       font-weight: 600; }
-    #component-settings-overlay .settings-fields-holder .form-group {
+    #component-settings-overlay .settings-fields .form-group {
       margin-bottom: 25px; }
-    #component-settings-overlay .settings-fields-holder .multi-field {
+    #component-settings-overlay .settings-fields .multi-field {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
       padding: 0 3px; }
-    #component-settings-overlay .settings-fields-holder .multi-field > * {
+    #component-settings-overlay .settings-fields .multi-field > * {
       display: flex;
       width: auto;
       margin: 0 12px 8px 12px; }
-    #component-settings-overlay .settings-fields-holder .full-width {
+    #component-settings-overlay .settings-fields .full-width {
+      display: flex;
       min-width: calc(100% - 30px); }
-    #component-settings-overlay .settings-fields-holder .half-width {
+    #component-settings-overlay .settings-fields .half-width {
       min-width: calc(50% - 30px); }
-    #component-settings-overlay .settings-fields-holder .buttons-holder {
+    #component-settings-overlay .settings-fields .buttons-holder {
       display: flex;
       align-items: center;
       padding: 0 15px;
       margin: 40px 0 25px; }
-      #component-settings-overlay .settings-fields-holder .buttons-holder .btn + .btn {
+      #component-settings-overlay .settings-fields .buttons-holder .btn + .btn {
         margin: 0; }
-      #component-settings-overlay .settings-fields-holder .buttons-holder .btn-primary {
+      #component-settings-overlay .settings-fields .buttons-holder .btn-primary {
         background: transparent;
         border: 1px solid rgba(51, 51, 51, 0.5);
         border-radius: 45px;
         line-height: 2.4;
         color: rgba(51, 51, 51, 0.5); }
-        #component-settings-overlay .settings-fields-holder .buttons-holder .btn-primary:hover {
+        #component-settings-overlay .settings-fields .buttons-holder .btn-primary:hover {
           color: #333333; }
-      #component-settings-overlay .settings-fields-holder .buttons-holder .btn-default {
+      #component-settings-overlay .settings-fields .buttons-holder .btn-default {
         background: transparent;
         line-height: 2.4;
         color: rgba(51, 51, 51, 0.5); }
-        #component-settings-overlay .settings-fields-holder .buttons-holder .btn-default:hover {
+        #component-settings-overlay .settings-fields .buttons-holder .btn-default:hover {
           color: #333333; }
-        #component-settings-overlay .settings-fields-holder .buttons-holder .btn-default:active {
+        #component-settings-overlay .settings-fields .buttons-holder .btn-default:active {
           box-shadow: none; }
 
 .dropdown.select-box .dropdown-toggle {

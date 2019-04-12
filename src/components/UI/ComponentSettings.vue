@@ -2,9 +2,9 @@
   <transition :name="transition">
     <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay">
       <header>
-        <span v-if="state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <span v-if="state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
         <p>{{ state.appearanceGroupOverlay.name }}</p>
-        <span v-if="!state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-lg fa-2x"></i></span>
+        <span v-if="!state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
@@ -12,14 +12,14 @@
           <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
         </li>
       </ul>
-      <div v-if="variables && variables.length" class="settings-fields-holder">
+      <div v-if="variables && variables.length" class="settings-fields">
         <div v-for="(variable, index) in variables" v-if="showVariable(variable)" :key="index">
           <div class="form-group clearfix">
             <div class="col-xs-12 control-label">
               <label>{{ variable.description }}</label>
             </div>
             <template v-if="notMobile && !ignoreInheritance(variable)">
-              <div class="inherit-settings-holder col-xs-12">
+              <div class="inherit-settings col-xs-12">
                 <div v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
                 <template v-else>
                   <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
@@ -29,7 +29,7 @@
             <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
               <template v-for="(field, idx) in groupFontStyleFields(variable.fields)">
                 <template v-if="Array.isArray(field)">
-                  <div class="field-group-wrapper">
+                  <div class="field-group">
                     <component v-for="(groupedField, i) in field" :key="groupedComponentKey" v-if="showField(groupedField)" :is="fieldType(groupedField.type)" :data="fieldData(groupedField)"></component>
                   </div>
                 </template>
@@ -187,14 +187,14 @@ export default {
       const tab = _.find(deviceTypes, { type: inheritingFrom })
       this.handleContextSwitch(tab)
     },
-    reSetVariables() {
+    reSetVariables(toRecompute) {
       if (this.variables) {
         this.forceRerender()
       }
       this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
-      this.variables = this.computeVariables()
+      this.variables = this.computeVariables(toRecompute)
       this.context = state.appearanceGroupOverlay.context == 'Mobile' ? '' : state.appearanceGroupOverlay.context
-      this.showNotInheritingInfo = this.checkFieldsNotInheriting()
+      this.showNotInheritingInfo = this.areNotInheriting()
       this.currentContext = state.componentContext.toLowerCase()
       this.inheritingFrom = getInheritance()
     },
@@ -212,11 +212,11 @@ export default {
           const values = checkSavedValue(field, true)
 
           // To check if the field is inheriting
-          const isDefaultInheriting = this.checkIfIsInheritingByDefault(values.defaultValue)
-          const isSavedValueInheriting = this.checkIfIsInheritingByDefault(values.generalSavedValue)
-          const isLocalSavedValueInheriting = this.checkIfIsInheritingByDefault(values.generalLocalSavedValue)
-          const isWidgetSavedValueInheriting = this.checkIfIsInheritingByDefault(values.widgetSavedValue)
-          const isLocalWidgetSavedValueInheriting = this.checkIfIsInheritingByDefault(values.widgetLocalSavedValue)
+          const isDefaultInheriting = this.isInheriting(values.defaultValue)
+          const isSavedValueInheriting = this.isInheriting(values.generalSavedValue)
+          const isLocalSavedValueInheriting = this.isInheriting(values.generalLocalSavedValue)
+          const isWidgetSavedValueInheriting = this.isInheriting(values.widgetSavedValue)
+          const isLocalWidgetSavedValueInheriting = this.isInheriting(values.widgetLocalSavedValue)
 
            const newObj = {
             value: values.fieldValue,
@@ -225,8 +225,8 @@ export default {
                   (isLocalWidgetSavedValueInheriting
                     || (!values.widgetLocalSavedValue && isWidgetSavedValueInheriting)
                     || (!values.widgetLocalSavedValue && !values.widgetSavedValue && isLocalSavedValueInheriting)
-                    || (!values.widgetLocalSavedValue && values.widgetSavedValue && !values.generalLocalSavedValue && isSavedValueInheriting)
-                    || (!values.widgetLocalSavedValue && values.widgetSavedValue && !values.generalLocalSavedValue && !values.generalSavedValue && isDefaultInheriting)
+                    || (!values.widgetLocalSavedValue && !values.widgetSavedValue && !values.generalLocalSavedValue && isSavedValueInheriting)
+                    || (!values.widgetLocalSavedValue && !values.widgetSavedValue && !values.generalLocalSavedValue && !values.generalSavedValue && isDefaultInheriting)
                   )
                   || (this.ignoreInheritance(variable) || this.ignoreInheritance(field))
                 )
@@ -246,14 +246,12 @@ export default {
       return variables
     },
     reComputeVariables(toRecompute) {
-      this.variables = this.computeVariables(toRecompute)
-      this.showNotInheritingInfo = this.checkFieldsNotInheriting()
-      this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+      this.reSetVariables(toRecompute)
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })
     },
-    checkFieldsNotInheriting() {
+    areNotInheriting() {
       const newArr = []
       this.variables.forEach((variable) => {
         const fields = _.filter(variable.fields, { inheriting: false })
@@ -267,7 +265,7 @@ export default {
 
       return newArr
     },
-    checkIfIsInheritingByDefault(value) {
+    isInheriting(value) {
       if (!value) {
         return false
       }
@@ -304,19 +302,15 @@ export default {
 
         if (field) {
           variable.fields.forEach((field, idx) => {
-            if (logic.hide) {
-              if (logic.hide.indexOf(field.name) >= 0) {
-                field.showField = false
-                Vue.set(variable.fields, idx, field)
-                Vue.set(this.variables, index, variable)
-              }
+            if (logic.hide && logic.hide.indexOf(field.name) >= 0) {
+              field.showField = false
+              Vue.set(variable.fields, idx, field)
+              Vue.set(this.variables, index, variable)
             }
-            if (logic.show) {
-              if (logic.show.indexOf(field.name) >= 0) {
-                field.showField = true
-                Vue.set(variable.fields, idx, field)
-                Vue.set(this.variables, index, variable)
-              }
+            if (logic.show && logic.show.indexOf(field.name) >= 0) {
+              field.showField = true
+              Vue.set(variable.fields, idx, field)
+              Vue.set(this.variables, index, variable)
             }
           })
         }
