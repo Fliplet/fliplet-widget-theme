@@ -25,6 +25,7 @@
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import fontProperties from '../../libs/font-style-properties'
 import bus from '../../libs/bus'
 
 export default {
@@ -32,7 +33,7 @@ export default {
     return {
       state,
       value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
-      properties: this.data.fieldConfig.properties,
+      properties: fontProperties[this.data.fieldConfig.properties],
       subType: this.data.fieldConfig.subType,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,

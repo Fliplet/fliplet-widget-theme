@@ -30,6 +30,7 @@
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import borderProperties from '../../libs/border-properties'
 import bus from '../../libs/bus'
 
 export default {
@@ -39,7 +40,7 @@ export default {
       value: getDefaultFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
-      properties: this.data.fieldConfig.properties,
+      properties: borderProperties,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),

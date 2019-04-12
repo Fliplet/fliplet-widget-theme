@@ -16,6 +16,7 @@
 import { state, getDefaultFieldValue, getFieldName,
   saveFieldData, checkLogic, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import bgProperties from '../../libs/background-properties'
 import bus from '../../libs/bus'
 
 export default {
@@ -23,7 +24,7 @@ export default {
     return {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
-      properties: this.data.fieldConfig.properties,
+      properties: bgProperties[this.data.fieldConfig.properties],
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),

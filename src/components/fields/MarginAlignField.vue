@@ -19,6 +19,7 @@
 import { state, getDefaultFieldValue, getFieldName,
   checkMarginLogic, saveFieldData, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import marginAlignProperties from '../../libs/margin-align-properties'
 import bus from '../../libs/bus'
 
 export default {
@@ -26,7 +27,7 @@ export default {
     return {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
-      properties: this.data.fieldConfig.properties,
+      properties: marginAlignProperties,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
