@@ -15,7 +15,7 @@
       "lodash",
       "bootstrap",
       "font-awesome",
-      "fliplet-font",
+      "fliplet-icons",
       "hammer.js"
     ],
     "assets": [
