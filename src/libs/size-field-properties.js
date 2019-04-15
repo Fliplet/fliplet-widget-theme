@@ -6,4 +6,24 @@ const sizeProperties = {
   'full': ['px', 'em', 'rem', '%', 'vw', 'vh', 'auto']
 }
 
-export default sizeProperties
+const subtypes = {
+  'all-props': 'full',
+  'font': 'withoutAuto',
+  'width': 'withAuto',
+  'max-width': 'withNone',
+  'height': 'withAuto',
+  'max-height': 'withNone',
+  'padding': 'withoutAuto',
+  'margin': 'withAuto',
+  'position': 'withAuto',
+  'border': 'withoutAuto',
+  'shadow': 'withoutAuto',
+  'line-height': 'lineHeight'
+}
+
+const propertiesMap = {
+  properties: sizeProperties,
+  types: subtypes
+}
+
+export default propertiesMap

@@ -26,7 +26,7 @@
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
-import sizeProperties from '../../libs/size-field-properties'
+import propertiesMap from '../../libs/size-field-properties'
 import bus from '../../libs/bus'
 
 export default {
@@ -34,7 +34,7 @@ export default {
     return {
       state,
       property: undefined,
-      properties: sizeProperties[this.data.fieldConfig.properties],
+      properties: this.getProperties(),
       value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
@@ -83,6 +83,14 @@ export default {
     getValueToShow() {
       return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
     },
+    getProperties() {
+      const type = this.data.fieldConfig.subtype !== 'undefined' && this.data.fieldConfig.subtype !== ''
+          ? propertiesMap.types[this.data.fieldConfig.subtype]
+          : propertiesMap.types['font']
+      const properties = propertiesMap.properties[type]
+
+      return properties
+    },
     inheritValue(value) {
       this.value = value
       this.$nextTick(() => {
@@ -119,7 +127,7 @@ export default {
         return value
       }
 
-      const parsedValue = value.replace(new RegExp(sizeProperties[this.data.fieldConfig.properties].join('$|') + '$'), '')
+      const parsedValue = value.replace(new RegExp(this.getProperties().join('$|') + '$'), '')
       const parsedFloatVal = parseFloat(parsedValue, 10)
 
       return isNaN(parsedFloatVal) ? parsedValue : parsedFloatVal
