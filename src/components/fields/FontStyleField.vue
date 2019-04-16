@@ -5,7 +5,7 @@
         <div class="checkbox-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
           <input type="checkbox" :id="'checkbox-' + prop + uuid" :value="prop" v-model="value">
           <label :for="'checkbox-' + prop + uuid">
-            <span class="check-icon">
+            <span class="check-icon" :class="{ 'light-button': prop === 'lighter' }">
               <template v-if="prop !== 'lighter'">
                 <i :class="'fa fa-' + prop"></i>
               </template>
