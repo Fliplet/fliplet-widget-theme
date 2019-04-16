@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'disabled': disableField, 'field-changed': isChanged }">
+  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
@@ -24,7 +24,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
+  getFieldName, getInheritance, checkIsFieldChanged, checkSizeLogic } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
 import bus from '../../libs/bus'
@@ -51,10 +51,11 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true,
-      disableField: typeof this.data.fieldConfig.disableField !== 'undefined'
-        ? this.data.fieldConfig.disableField
+      isAligned: typeof this.data.fieldConfig.isAligned !== 'undefined'
+        ? this.data.fieldConfig.isAligned
         : false,
-      fromReset: false
+      fromReset: false,
+      debouncedSave: _.debounce(this.prepareToSave, 800)
     }
   },
   components: {
@@ -68,8 +69,8 @@ export default {
       const isInheriting = this.checkIfIsInheriting(newVal)
       this.valueToShow = isInheriting ? oldVal : newVal
 
-      if (newVal !== oldVal && !this.fromReset) {
-        this.prepareToSave()
+      if (newVal != oldVal && !this.fromReset) {
+        this.debouncedSave()
         return
       }
 
@@ -153,6 +154,12 @@ export default {
         name: getFieldName(this.data.fieldConfig),
         value: isInheriting || this.value == 'auto' || this.value == 'none' ? this.value : this.value + (this.property !== 'x' ? this.property : '')
       }
+
+      if (this.isAligned) {
+        this.isAligned = false
+        checkSizeLogic(this.data.fieldConfig)
+      }
+        
       saveFieldData(data)
     },
     editToggle() {
@@ -320,8 +327,8 @@ export default {
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
-      this.disableField = typeof this.data.fieldConfig.disableField !== 'undefined'
-        ? this.data.fieldConfig.disableField
+      this.isAligned = typeof this.data.fieldConfig.isAligned !== 'undefined'
+        ? this.data.fieldConfig.isAligned
         : false
     }
   },

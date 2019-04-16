@@ -62,6 +62,8 @@ import BackgroundField from '../fields/BackgroundField'
 import ImageField from '../fields/ImageField'
 import AlignField from '../fields/AlignField'
 import MarginAlignField from '../fields/MarginAlignField'
+import PositionField from '../fields/PositionField'
+import DisplayField from '../fields/DisplayField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -96,7 +98,9 @@ export default {
     BackgroundField,
     ImageField,
     AlignField,
-    MarginAlignField
+    MarginAlignField,
+    PositionField,
+    DisplayField
   },
   computed: {
     transition() {
@@ -326,7 +330,7 @@ export default {
         variable.fields.forEach((field, idx) => {
           if (fields.indexOf(field.name) > -1) {
             const field = variable.fields[idx]
-            field.disableField = value == 'custom' ? false : true
+            field.isAligned = value == 'custom' ? false : true
             Vue.set(variable.fields, idx, field)
             Vue.set(this.variables, index, variable)
           }
@@ -355,7 +359,7 @@ export default {
     bus.$on('group-overlay-opened', this.reSetVariables)
     bus.$on('saved-fields-set', this.fieldsSaved)
     bus.$on('check-field-visibility', this.runFieldLogic)
-    bus.$on('check-margin-field-visibility', this.runMarginFieldLogic)
+    bus.$on('check-margin-field', this.runMarginFieldLogic)
     bus.$on('group-settings-changed', this.hideApplyReset)
 
     const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
@@ -369,7 +373,7 @@ export default {
     bus.$off('group-overlay-opened', this.reSetVariables)
     bus.$off('saved-fields-set', this.fieldsSaved)
     bus.$off('check-field-visibility', this.runFieldLogic)
-    bus.$off('check-margin-field-visibility', this.runMarginFieldLogic)
+    bus.$off('check-margin-field', this.runMarginFieldLogic)
     bus.$off('group-settings-changed', this.hideApplyReset)
   } 
 }

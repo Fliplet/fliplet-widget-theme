@@ -376,7 +376,7 @@ export function checkMarginLogic(fieldConfig, value, fromLoad) {
       fieldConfig.logic[value].forEach((fieldName) => {
         fieldsArray.push(fieldName)
       })
-      bus.$emit('check-margin-field-visibility', fieldsArray, value)
+      bus.$emit('check-margin-field', fieldsArray, value)
     } else {
       for (const prop in fieldConfig.logic) {
         // skip loop if the property is from prototype
@@ -391,11 +391,25 @@ export function checkMarginLogic(fieldConfig, value, fromLoad) {
               bus.$emit('field-saved', [newObj])
             }
           }
-          bus.$emit('check-margin-field-visibility', fieldsArray, value)
+          bus.$emit('check-margin-field', fieldsArray, value)
           continue
         }
       }
     }
+  }
+}
+
+/**
+* Sets the margin-align field to "custom"
+* @param {Object} Object of the field JSON configuration
+*/
+export function checkSizeLogic(fieldConfig) {
+  if (fieldConfig.hasOwnProperty('logic')) {
+    const newObj = {
+      name: fieldConfig.logic,
+      value: 'custom'
+    }
+    bus.$emit('field-saved', [newObj])
   }
 }
 
