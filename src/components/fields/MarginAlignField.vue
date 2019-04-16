@@ -2,14 +2,22 @@
   <div v-if="showField" class="align-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="wrapper">
       <div class="align-field-container">
-        <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + uuid" name="margin-align" :value="prop" v-model="value">
-          <label :for="'radio-' + prop + uuid">
-            <span v-if="prop == 'custom'" class="check-icon">Custom</span>
-            <span v-else :class="'check-icon check-align-' + prop"></span>
-          </label>
-        </div>
+        <template v-for="(prop, idx) in properties">
+          <div v-if="prop != 'custom'" class="radio-holder inline-boxed">
+            <input type="radio" :id="'radio-' + prop + uuid" :name="'margin-align-' + uuid" :value="prop" v-model="value">
+            <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
+              <span :class="'check-icon check-align-' + prop"></span>
+            </label>
+          </div>
+          <div v-else class="radio-holder-custom">
+            <input type="radio" :id="'radio-' + prop + uuid" name="margin-align" :value="prop" v-model="value">
+            <label :for="'radio-' + prop + uuid">
+              <span class="check-icon">Custom</span>
+            </label>
+          </div>
+        </template>
       </div>
+      <div v-if="label" class="field-label">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -20,6 +28,7 @@ import { state, getDefaultFieldValue, getFieldName,
   checkMarginLogic, saveFieldData, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import marginAlignProperties from '../../libs/margin-align-properties'
+import { tooltips } from '../../libs/tooltips'
 import bus from '../../libs/bus'
 
 export default {
@@ -28,6 +37,7 @@ export default {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
       properties: marginAlignProperties,
+      label: this.data.fieldConfig.label,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
@@ -58,6 +68,21 @@ export default {
     }
   },
   methods: {
+    getTooltip(prop) {
+      switch(prop) {
+        case 'left':
+          return 'Left'
+          break;
+        case 'center':
+          return 'Center'
+          break;
+        case 'right':
+          return 'Right'
+          break;
+        default:
+          return 'Left'
+      }
+    },
     getValueToShow() {
       return getDefaultFieldValue(this.data.fieldConfig)
     },
@@ -95,6 +120,8 @@ export default {
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
     checkMarginLogic(this.data.fieldConfig, this.value, true)
+    // Start Bootstrap tooltips
+    tooltips()
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps)

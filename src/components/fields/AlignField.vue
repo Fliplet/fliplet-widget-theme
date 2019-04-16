@@ -4,11 +4,12 @@
       <div class="align-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
           <input type="radio" :id="'radio-' + prop + orientationSufix + uuid" :name="'align-' + orientation" :value="prop" v-model="value">
-          <label :for="'radio-' + prop + orientationSufix + uuid">
+          <label :for="'radio-' + prop + orientationSufix + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
             <span :class="'check-icon check-align-' + prop + orientationSufix"></span>
           </label>
         </div>
       </div>
+      <div v-if="label" class="field-label">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -19,6 +20,7 @@ import { state, getDefaultFieldValue, getFieldName,
   saveFieldData, checkLogic, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import alignProperties from '../../libs/align-properties'
+import { tooltips } from '../../libs/tooltips'
 import bus from '../../libs/bus'
 
 export default {
@@ -27,6 +29,7 @@ export default {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
       properties: alignProperties[this.data.fieldConfig.properties],
+      label: this.data.fieldConfig.label,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       orientation: this.data.fieldConfig.orientation,
@@ -72,6 +75,27 @@ export default {
     }
   },
   methods: {
+    getTooltip(prop) {
+      switch(prop) {
+        case 'left':
+          return 'Left'
+          break;
+        case 'right':
+          return 'Right'
+          break;
+        case 'top':
+          return 'Top'
+          break;
+        case 'bottom':
+          return 'Bottom'
+          break;
+        case 'center':
+          return 'Center'
+          break;
+        default:
+          return 'Center'
+      }
+    },
     getValue() {
       return getDefaultFieldValue(this.data.fieldConfig)
     },
@@ -109,6 +133,8 @@ export default {
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
     checkLogic(this.data.fieldConfig, this.value)
+    // Start Bootstrap tooltips
+    tooltips()
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps)

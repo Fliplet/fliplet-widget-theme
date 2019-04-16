@@ -3,6 +3,12 @@
 
   .wrapper {
     position: relative;
+    display: flex;
+    align-items: center;
+
+    .tooltip {
+      white-space: nowrap;
+    }
   }
 
   .align-field-container {
@@ -14,6 +20,11 @@
       padding: 0 4px;
       min-width: 30px;
       width: auto;
+      height: 30px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       .check-icon {
         display: flex;
@@ -66,13 +77,61 @@
       }
     }
 
-    .radio-holder {
+    .radio-holder,
+    .radio-holder-custom {
       &.inline-boxed {
         input[type="radio"] {
           &:checked + label {
             .check-icon {
               opacity: 1;
             }
+          }
+        }
+
+        &:nth-child(3) {
+          label {
+            border-top-right-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+          }
+        }
+      }
+
+      input[type="radio"] {
+        &:checked + label {
+          .check-icon {
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    .radio-holder-custom {
+      margin-left: 5px;
+
+      label {
+        cursor: pointer;
+        background-color: transparent;
+        border: 1px solid lighten($text-color, 69%);
+        border-radius: $border-radius;
+
+        &:hover {
+          background-color: $highlight-gray-hover;
+        }
+      }
+
+      input[type="radio"] {
+        z-index: -1;
+        position: absolute;
+        margin: 0;
+        width: 30px;
+        height: 30px;
+        opacity: 0;
+        background: none;
+        display: block;
+
+        &:checked {
+          & + label {
+            background-color: $highlight-gray;
           }
         }
       }
