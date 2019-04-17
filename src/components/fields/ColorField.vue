@@ -33,7 +33,11 @@ export default {
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true,
+      dataToSave: {
+        name: undefined,
+        value: undefined
+      }
     }
   },
   components: {
@@ -42,23 +46,22 @@ export default {
   props: {
     data: Object
   },
-  watch: {
-    value(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        const data = {
-          name: getFieldName(this.data.fieldConfig),
-          value: newVal
-        }
-        saveFieldData(data)
-      }
-    }
-  },
   computed: {
     bgImg() {
       return window.__widgetData[this.widgetId].assetsUrl ? window.__widgetData[this.widgetId].assetsUrl + 'img/color-bg.gif' : ''
     }
   },
   methods: {
+    prepareToSave(color) {
+      this.value = color
+      this.valueToShow = this.value
+      this.dataToSave.name = getFieldName(this.data.fieldConfig),
+      this.dataToSave.value = color
+      this.saveColor()
+    },
+    saveColor() {
+      saveFieldData(this.dataToSave)
+    },
     setValues() {
       this.valueToShow = this.value
     },
@@ -77,7 +80,7 @@ export default {
       }, this.valueToShow, this.onColorChange, this.onColorChange)
     },
     onColorChange(color) {
-      this.value = color
+      this.prepareToSave(color)
     },
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
