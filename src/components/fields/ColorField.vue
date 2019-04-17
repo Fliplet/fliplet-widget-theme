@@ -37,7 +37,8 @@ export default {
       dataToSave: {
         name: undefined,
         value: undefined
-      }
+      },
+      debouncedSave: _.debounce(this.saveColor, 250, { leading: true })
     }
   },
   components: {
@@ -57,7 +58,7 @@ export default {
       this.valueToShow = this.value
       this.dataToSave.name = getFieldName(this.data.fieldConfig),
       this.dataToSave.value = color
-      this.saveColor()
+      this.debouncedSave()
     },
     saveColor() {
       saveFieldData(this.dataToSave)
