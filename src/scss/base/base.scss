@@ -279,6 +279,8 @@ header {
 }
 
 .inheritance-warn {
+  position: relative;
+  z-index: 1;
   width: 10px;
   height: 10px;
   background-color: $warning-color;
@@ -287,7 +289,7 @@ header {
   cursor: pointer;
 
   &.closer {
-    right: -4px;
+    left: -4px;
   }
 }
 

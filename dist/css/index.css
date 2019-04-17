@@ -201,6 +201,8 @@ header {
       padding: 5px; }
 
 .inheritance-warn {
+  position: relative;
+  z-index: 1;
   width: 10px;
   height: 10px;
   background-color: #FF9800;
@@ -208,7 +210,7 @@ header {
   border-radius: 50%;
   cursor: pointer; }
   .inheritance-warn.closer {
-    right: -4px; }
+    left: -4px; }
 
 .inheritance-holder {
   position: absolute;
