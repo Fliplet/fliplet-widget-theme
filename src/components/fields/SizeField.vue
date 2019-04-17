@@ -54,8 +54,7 @@ export default {
       isAligned: typeof this.data.fieldConfig.isAligned !== 'undefined'
         ? this.data.fieldConfig.isAligned
         : false,
-      fromReset: false,
-      debouncedSave: _.debounce(this.prepareToSave, 800)
+      fromReset: false
     }
   },
   components: {
@@ -66,14 +65,13 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      const isInheriting = this.checkIfIsInheriting(newVal)
-      this.valueToShow = isInheriting ? oldVal : newVal
-
-      if (newVal != oldVal && !this.fromReset) {
-        this.debouncedSave()
-        return
+      if (newVal == '') {
+        newVal = '0'
+        this.value = '0'
       }
 
+      const isInheriting = this.checkIfIsInheriting(newVal)
+      this.valueToShow = isInheriting ? oldVal : newVal
       this.fromReset = false
     }
   },
@@ -128,7 +126,10 @@ export default {
         return value
       }
 
-      const parsedValue = value.replace(new RegExp(this.getProperties().join('$|') + '$'), '')
+      let parsedValue = value.replace(new RegExp(this.getProperties().join('$|') + '$'), '')
+      if (parsedValue == '') {
+        parsedValue = '0'
+      }
       const parsedFloatVal = parseFloat(parsedValue, 10)
 
       return isNaN(parsedFloatVal) ? parsedValue : parsedFloatVal
@@ -138,11 +139,13 @@ export default {
 
       if (this.property == 'auto' || this.property == 'none') {
         this.value = this.property
+        this.prepareToSave()
         return
       }
 
       if (this.value == 'auto' || this.value == 'none') {
         this.value = 0
+        this.prepareToSave()
         return
       }
 
@@ -175,10 +178,12 @@ export default {
       }
     },
     onInputBlur() {
+      this.prepareToSave()
       this.editToggle()
       this.enterPressedToClose = false
     },
     onInputEnter() {
+      this.prepareToSave()
       this.editToggle()
       this.enterPressedToClose = true
     },
@@ -278,37 +283,47 @@ export default {
       }
     },
     onHammerInput(e) {
+      if (e.distance == 0 && e.isFinal) {
+        // Click
+        return
+      }
+
       const distanceX = e.distance - Math.abs(e.deltaX)
       const distanceY = e.distance - Math.abs(e.deltaY)
+      const halfDeltaX = Math.floor(e.deltaX / 1.5)
 
       // Normalize
       this.value = isNaN(this.value) ? 0 : parseInt(this.value)
       let tempValue = this.value
 
+      // If dragging right
       if (e.deltaX > 0 && distanceX < distanceY) {
-        // If dragging right
-        tempValue += e.deltaX
+        tempValue += halfDeltaX
         this.valueToShow = tempValue
-      } else if (e.deltaX < 0 && distanceX < distanceY) {
+      }
+
+      // If dragging right
+      if (e.deltaX < 0 && distanceX < distanceY) {
         // If dragging left
-        if (!this.allowNegative && this.valueToShow > 0) {
-          // If value is 0 do nothing
-          tempValue -= Math.abs(e.deltaX)
+        if (this.valueToShow > 0) {
+          tempValue -= Math.abs(halfDeltaX)
 
           if (tempValue < 0) {
             this.valueToShow = 0
           } else {
             this.valueToShow = tempValue
           }
-        } else if(this.allowNegative && this.valueToShow <= 0) {
-          // If value is 0 do nothing
-          tempValue -= Math.abs(e.deltaX)
+        }
+
+        if (this.allowNegative && this.valueToShow <= 0) {
+          tempValue -= Math.abs(halfDeltaX)
           this.valueToShow = tempValue
         }
       }
 
       if (e.isFinal) {
         this.value = this.valueToShow
+        this.prepareToSave()
       }
     },
     checkInheritance() {
