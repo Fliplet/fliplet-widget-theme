@@ -22,6 +22,7 @@
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, checkLogic, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import selectProperties from '../../libs/select-properties'
 import bus from '../../libs/bus'
 
 export default {
@@ -31,7 +32,9 @@ export default {
       value: getDefaultFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
-      properties: this.parseProperties(this.data.fieldConfig.properties),
+      properties: this.parseProperties(this.data.fieldConfig.subtype
+        ? selectProperties[this.data.fieldConfig.subtype]
+        : this.data.fieldConfig.properties),
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
@@ -67,7 +70,9 @@ export default {
       this.value = value
     },
     parseValueToShow(value) {
-      const properties = this.data.fieldConfig.properties
+      const properties = this.data.fieldConfig.subtype
+        ? selectProperties[this.data.fieldConfig.subtype]
+        : this.data.fieldConfig.properties
       // Checks if it is an object
       if (properties instanceof Object && properties.constructor === Object) {
         return properties[value]
