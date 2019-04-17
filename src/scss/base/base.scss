@@ -305,7 +305,6 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
     z-index: 1000;
     min-width: 200px;
     margin-top: 5px;
@@ -332,6 +331,7 @@ header {
       margin-left: -20px;
       margin-right: -20px;
       padding: 4px 20px;
+      text-align: center;
       cursor: pointer;
 
       &:hover {
