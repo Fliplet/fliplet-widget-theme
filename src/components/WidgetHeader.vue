@@ -1,6 +1,7 @@
 <template>
   <header>
-    <p><a href="#" class="closeSideView" @click.prevent="closeSideView"><i class="fa fa-times-thin fa-2x"></i></a> Appearance</p>
+    <p>Appearance</p>
+    <a href="#" class="closeSideView" @click.prevent="closeSideView"><i class="fa fa-times-thin fa-2x"></i></a>
   </header>
 </template>
 
