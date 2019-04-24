@@ -139,6 +139,7 @@ export default {
     },
     getThemeInstance(themes) {
       let themeWithoutInstances = 0
+      let tab
 
       themes.forEach((theme) => {
         if (!theme.instances.length) {
@@ -149,9 +150,13 @@ export default {
         setThemeInstance(theme.instances[0])
         setActiveTheme(theme)
 
+        // Check if there's a tab to be open
+        if (typeof state.widgetData.activeTab !== 'undefined') {
+          tab = this.tabs[state.widgetData.activeTab]
+        }
+
         // Checks to understand if the provider was called from a component
         if (state.widgetData && state.widgetData.widgetInstanceId) {
-          let tab
           setWidgetId(state.widgetData.widgetInstanceId)
 
           // Check if there's a package name to open its component settings
@@ -163,11 +168,6 @@ export default {
             setWidgetMode(!!this.appearanceGroup)
           }
 
-          // Check if there's a tab to be open
-          if (typeof state.widgetData.activeTab !== 'undefined') {
-            tab = this.tabs[state.widgetData.activeTab]
-          }
-
           // Set the active tab from widget data
           this.isLoading = false
           this.handleContextSwitch(tab)
@@ -176,6 +176,7 @@ export default {
           return
         }
 
+        this.handleContextSwitch(tab)
         this.isLoading = false
       })
 
