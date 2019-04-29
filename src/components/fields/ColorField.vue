@@ -71,6 +71,7 @@ export default {
     },
     inheritValue(value) {
       this.value = value
+      this.prepareToSave(this.value)
     },
     toggleColorPicker(e) {
       const target = e.target.getBoundingClientRect()

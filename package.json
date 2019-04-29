@@ -15,7 +15,7 @@
     "gulp": "^4.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-vueify2": "0.0.3",
-    "node-sass": "^4.11.0",
+    "node-sass": "^3.8.0",
     "path": "^0.12.7",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",

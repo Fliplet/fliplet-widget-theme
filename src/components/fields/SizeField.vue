@@ -54,7 +54,8 @@ export default {
       isAligned: typeof this.data.fieldConfig.isAligned !== 'undefined'
         ? this.data.fieldConfig.isAligned
         : false,
-      fromReset: false
+      fromReset: false,
+      debouncedSave: _.debounce(this.prepareToSave, 150)
     }
   },
   components: {
@@ -65,13 +66,14 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal == '') {
-        newVal = '0'
-        this.value = '0'
-      }
-
       const isInheriting = this.checkIfIsInheriting(newVal)
       this.valueToShow = isInheriting ? oldVal : newVal
+
+      if (newVal != oldVal && !this.fromReset && !this.inputIsActive) {
+        this.debouncedSave()
+        return
+      }
+
       this.fromReset = false
     }
   },
@@ -155,7 +157,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting || this.value == 'auto' || this.value == 'none' ? this.value : this.value + (this.property !== 'x' ? this.property : '')
+        value: isInheriting || this.value == 'auto' || this.value == 'none' ? this.value : this.value !== '' ? this.value : '0' + (this.property !== 'x' ? this.property : '')
       }
 
       if (this.isAligned) {
