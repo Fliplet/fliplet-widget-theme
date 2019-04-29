@@ -54,16 +54,22 @@ header {
 #theme-application {
   font-size: 13px;
   padding: 1rem 15px 54px;
-  height: 100%;
+  height: calc(100% - 136px);
   overflow: auto;
-  margin-top: 40px; }
-  #theme-application header {
+  margin-top: 176px; }
+  #theme-application.theme-selection-hidden {
+    height: calc(100% - 52px);
+    margin-top: 92px; }
+    #theme-application.theme-selection-hidden .top-area-fixed .breakpoint-tabs {
+      margin-top: -10px; }
+  #theme-application .top-area-fixed {
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
     right: 0;
-    margin: 0; }
+    margin: 0 15px;
+    background-color: #f8f6f7; }
   #theme-application .form-control {
     height: 30px;
     padding: 0 6px;

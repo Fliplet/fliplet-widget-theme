@@ -69,17 +69,29 @@ header {
 #theme-application {
   font-size: 13px;
   padding: 1rem 15px 54px;
-  height: 100%;
+  height: calc(100% - 136px);
   overflow: auto;
-  margin-top: 40px;
+  margin-top: 176px;
 
-  header {
+  &.theme-selection-hidden {
+    height: calc(100% - 52px);
+    margin-top: 92px;
+
+    .top-area-fixed {
+      .breakpoint-tabs {
+        margin-top: -10px;
+      }
+    }
+  }
+
+  .top-area-fixed {
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
     right: 0;
-    margin: 0;
+    margin: 0 15px;
+    background-color: $widget-background-color;
   }
 
   .form-control {

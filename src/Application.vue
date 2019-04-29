@@ -1,18 +1,20 @@
 <template>
-  <div id="theme-application">
+  <div id="theme-application" :class="{ 'theme-selection-hidden': !themes || (themes && themes.length <= 1) }">
     <div v-if="isLoading" class="spinner-holder animated">
       <div class="spinner-overlay">Loading...</div>
       <p>Loading your settings...</p>
     </div>
     <template v-else>
-      <WidgetHeader></WidgetHeader>
-      <ThemeSelection :themes="themes"></ThemeSelection>
-      <!-- Nav tabs -->
-      <ul class="nav nav-tabs breakpoint-tabs">
-        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
-          <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
-        </li>
-      </ul>
+      <div class="top-area-fixed">
+        <WidgetHeader></WidgetHeader>
+        <ThemeSelection v-if="themes && themes.length > 1" :themes="themes"></ThemeSelection>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs breakpoint-tabs">
+          <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
+            <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
+          </li>
+        </ul>
+      </div>
       <!-- Tab panes -->
       <div class="tab-content">
         <div v-for="(tab, index) in tabs" v-if="activeTab === index" :class="{ active: activeTab === index }" :ref="index" class="tab-pane" :id="'tab-' + tab.type">
@@ -58,6 +60,7 @@ export default {
       state,
       isLoading: true,
       fonts: undefined,
+      themes: undefined,
       savedFields: {
         values: [],
         widgetInstances: []
@@ -87,6 +90,7 @@ export default {
     handleContextSwitch(tab) {
       this.setActiveTab(tab)
       setComponentContext(tab.name)
+      Fliplet.Studio.emit('select-device-tab', tab.type === 'desktop' ? 'web' : tab.type)
     },
     handleAppearanceGroup(group) {
       if (typeof group === 'undefined') {
@@ -130,6 +134,7 @@ export default {
         .then((response) => {
           this.fonts = response[1]
           this.storeFonts()
+          this.themes = response[0]
           this.getThemeInstance(response[0])
         })
         .catch((err) => {
@@ -361,7 +366,6 @@ export default {
     // Listeners
     bus.$on('field-saved', this.onFieldSave)
     bus.$on('initialize-widget', this.initialize)
-    bus.$on('reload-custom-fonts', this.reloadCustomFonts)
     bus.$on('context-switch', this.handleContextSwitch)
     bus.$on('context-changed', this.changeContext)
     bus.$on('apply-to-theme', this.applySettingsTheme)
@@ -380,6 +384,9 @@ export default {
       if (eventData && eventData.data && eventData.data.type === 'theme-set-current-widget-instance') {
         bus.$emit('initialize-widget', eventData.data.widgetData)
       }
+      if (eventData && eventData.data && eventData.data.type === 'custom-fonts-closed') {
+        this.reloadCustomFonts()
+      }
     })
 
     // Initialize
@@ -389,7 +396,6 @@ export default {
     // Remove listeners
     bus.$off('field-saved', this.onFieldSave)
     bus.$off('initialize-widget', this.initialize)
-    bus.$off('reload-custom-fonts', this.reloadCustomFonts)
     bus.$off('context-switch', this.handleContextSwitch)
     bus.$off('context-changed', this.changeContext)
     bus.$off('apply-to-theme', this.applySettingsTheme)
