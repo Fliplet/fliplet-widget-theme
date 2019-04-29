@@ -89,33 +89,14 @@ export default {
         return
       }
 
-      const filePickerData = {
-        selectAvailable: false,
-        type: 'font'
-      }
-
-      window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
-        data: filePickerData,
-        onEvent: (e, data) => {
-          switch (e) {
-            case 'widget-set-info':
-              Fliplet.Studio.emit('widget-save-label-reset')
-              Fliplet.Studio.emit('widget-save-label-update', {
-                text: 'Close'
-              })
-              break
-          }
+      Fliplet.Studio.emit('overlay', {
+        name: 'app-settings',
+        options: {
+          size: 'large',
+          title: 'App Settings',
+          section: 'appCustomFonts',
+          appId: Fliplet.Env.get('appId')
         }
-      })
-
-      window.filePickerProvider.then((result) => {
-        Fliplet.Studio.emit('widget-save-label-update', {
-          text: 'Apply changes'
-        })
-        bus.$emit('reload-custom-fonts')
-
-        window.filePickerProvider = null
-        return Promise.resolve()
       })
     },
     checkInheritance() {
