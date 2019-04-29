@@ -130,6 +130,7 @@ export default {
     handleContextSwitch(tab) {
       this.setActiveTab(tab)
       setComponentContext(tab.name, true)
+      Fliplet.Studio.emit('select-device-tab', tab.type === 'desktop' ? 'web' : tab.type)
       this.forceRerender()
       this.reSetVariables()
     },
