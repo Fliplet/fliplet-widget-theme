@@ -16,6 +16,10 @@ import { state, saveFieldData, getDefaultFieldValue,
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 import { ColorPicker } from 'codemirror-colorpicker'
+import Cookies from 'js-cookie'
+
+const COLOR_PALETTE_COOKIE = '_custom_color_palette'
+const cookieSavedColors = Cookies.get(COLOR_PALETTE_COOKIE) ? JSON.parse(Cookies.get(COLOR_PALETTE_COOKIE)) : []
 
 export default {
   data() {
@@ -38,7 +42,24 @@ export default {
         name: undefined,
         value: undefined
       },
-      debouncedSave: _.debounce(this.saveColor, 250, { leading: true })
+      debouncedSave: _.debounce(this.saveColor, 250, { leading: true }),
+      colorSets: [
+        {
+          name: "Fliplet",
+          colors: ['#7d4b79', '#4bebff', '#ffd94b', '#f05865', '#36344c', '#474975', '#8d8ea6', '#f8f6f7']
+        },
+        { 
+          name: "Material",  
+          colors: [ 
+            '#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',  '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',  '#795548', '#9E9E9E', '#607D8B' 
+          ]
+        },
+        { 
+          name: "Custom",
+          edit: true,
+          colors: cookieSavedColors
+        }
+      ]
     }
   },
   components: {
@@ -82,6 +103,20 @@ export default {
       }, this.valueToShow, this.onColorChange, this.onColorChange)
     },
     onColorChange(color) {
+      if (color === this.valueToShow) {
+        return
+      }
+
+      // Save last used colors to Cookie
+      cookieSavedColors.unshift(color)
+      if (cookieSavedColors.length > 7) {
+        cookieSavedColors.pop()
+      }
+      const json = JSON.stringify(cookieSavedColors)
+      Cookies.set(COLOR_PALETTE_COOKIE, json, { expires: 30 })
+      this.colorSets[2].colors = cookieSavedColors
+      this.colorpicker.setUserPalette(this.colorSets)
+
       this.prepareToSave(color)
     },
     checkInheritance() {
@@ -102,21 +137,7 @@ export default {
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
     this.colorpicker = new ColorPicker({
-      colorSets: [
-        {
-          name: "Fliplet",
-          colors: ['#7d4b79', '#4bebff', '#ffd94b', '#f05865', '#36344c', '#474975', '#8d8ea6', '#f8f6f7']
-        },
-        { 
-          name : "Material",  
-          colors: [ 
-            '#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',  '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',  '#795548', '#9E9E9E', '#607D8B' 
-          ]
-        },
-        { 
-          name : "Custom", "edit" : true, "colors" : []
-        }
-      ]
+      colorSets: this.colorSets
     })
   },
   destroyed() {

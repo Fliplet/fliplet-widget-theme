@@ -31,6 +31,7 @@
     "build": "gulp build"
   },
   "dependencies": {
-    "codemirror-colorpicker": "^1.9.50"
+    "codemirror-colorpicker": "^1.9.50",
+    "js-cookie": "^2.2.0"
   }
 }
