@@ -4,7 +4,7 @@
       <div class="style-field-container">
         <div class="checkbox-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
           <input type="checkbox" :id="'checkbox-' + prop + uuid" :value="prop" v-model="value">
-          <label :for="'checkbox-' + prop + uuid">
+          <label :for="'checkbox-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
             <span class="check-icon" :class="{ 'light-button': prop === 'lighter' }">
               <template v-if="prop !== 'lighter'">
                 <i :class="'fa fa-' + prop"></i>
@@ -96,6 +96,24 @@ export default {
     }
   },
   methods: {
+    getTooltip(prop) {
+      switch(prop) {
+        case 'bold':
+          return 'Bold'
+          break;
+        case 'lighter':
+          return 'Lighter'
+          break;
+        case 'italic':
+          return 'Italic'
+          break;
+        case 'underline':
+          return 'Underline'
+          break;
+        default:
+          return ''
+      }
+    },
     getValue() {
       return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
     },

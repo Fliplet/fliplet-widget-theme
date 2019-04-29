@@ -1,8 +1,8 @@
 <template>
   <div class="inheritance-holder">
-    <div class="inheritance-warn" ref="dot" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" ></div>
+    <div class="inheritance-warn" ref="dot" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" data-toggle="tooltip" data-placement="bottom" title="Inherit"></div>
     <div v-show="showDropdown" ref="dropdown" class="inheritance-dropdown" v-click-outside="closeDropDown">
-      <div>The value will be inherited from {{ inheritingFrom }}.</div>
+      <div>Style not inherited. Do you want to inherit from the {{ inheritingFrom }} view?</div>
       <div class="inherit-action" @click="$emit('trigger-inherit', value)">Inherit</div>
     </div>
   </div>
