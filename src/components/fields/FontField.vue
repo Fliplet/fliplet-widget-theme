@@ -3,17 +3,17 @@
     <div class="wrapper">
       <div class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ valueToShow }}
+          <span :style="'font-family:' + getFontFamily(valueToShow) + ';'">{{ valueToShow }}</span>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
           <template v-if="customFonts && customFonts.length">
-            <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === valueToShow }">
-              <a href="#" @click.prevent="onValueChange(customFont.name)">{{ customFont.name }}</a>
+            <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === valueToShow }" :style="'font-family:' + customFont.name + ',sans-serif;'">
+              <a href="#" @click.prevent="onValueChange(customFont)">{{ customFont.name }}</a>
             </li>
             <li class="divider"></li>
           </template>
-          <li v-for="(webFont, index) in webFonts" :key="index" :class="{ active: webFont.name === valueToShow }">
+          <li v-for="(webFont, index) in webFonts" :key="index" :class="{ active: webFont.name === valueToShow }" :style="'font-family:' + getFontFamily(webFont.name) + ';'">
             <a href="#" @click.prevent="onValueChange(webFont.name)">{{ webFont.name }}</a>
           </li>
           <li class="divider"></li>
@@ -31,6 +31,7 @@
 import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import fontMapping from '../../libs/font-mapping'
 import bus from '../../libs/bus'
 
 export default {
@@ -71,18 +72,55 @@ export default {
     }
   },
   methods: {
+    getFontFamily(fontName) {
+      const webFont = fontMapping[fontName]
+
+      if (!webFont) {
+        return `${fontName},sans-serif`
+      }
+
+      return webFont
+    },
+    searchFontMapping(value) {
+      let result
+      for (const key in fontMapping) {
+        if (fontMapping[key] === value) {
+          result = key
+          continue
+        }
+      }
+
+      if (!result) {
+        result = value.split(',')[0].trim()
+      }
+
+      return result
+    },
     setValues() {
+      this.valueToShow = this.searchFontMapping(this.value)
+
+      if (this.valueToShow) {
+        return
+      }
+
       this.valueToShow = this.value
     },
     getValueToShow() {
-      return getDefaultFieldValue(this.data.fieldConfig)
+      const defaultValue = getDefaultFieldValue(this.data.fieldConfig)
+      return this.searchFontMapping(defaultValue)
     },
     inheritValue(value) {
       this.value = value
     },
     onValueChange(value) {
-      this.valueToShow = value
-      this.value = value
+      if (typeof value === 'string') {
+        this.valueToShow = value
+        this.value = this.getFontFamily(value)
+        return
+      }
+      
+      this.valueToShow = value.name
+      this.value = `${value.name},sans-serif`
     },
     openFontUploader() {
       if (Fliplet.Env.get('development')) {

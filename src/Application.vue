@@ -1,5 +1,6 @@
 <template>
   <div id="theme-application" :class="{ 'theme-selection-hidden': !themes || (themes && themes.length <= 1) }">
+    <link rel="stylesheet" type="text/css" :href="customFontsCssUrl" />
     <div v-if="isLoading" class="spinner-holder animated">
       <div class="spinner-overlay">Loading...</div>
       <p>Loading your settings...</p>
@@ -60,6 +61,10 @@ export default {
       state,
       isLoading: true,
       fonts: undefined,
+      customFontsCssUrl: [
+        Fliplet.Env.get('apiUrl'),
+        `v1/apps/${Fliplet.Env.get('appId')}/fonts/css`
+      ].join(''),
       themes: undefined,
       savedFields: {
         values: [],
