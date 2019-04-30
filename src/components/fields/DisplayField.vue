@@ -16,7 +16,7 @@
 
 <script>
 import { state, getDefaultFieldValue, getFieldName,
-  saveFieldData, getInheritance, checkIsFieldChanged } from '../../store'
+  saveFieldData, getInheritance, checkIsFieldChanged, checkLogic } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import positionProperties from '../../libs/display-properties'
 import { tooltips } from '../../libs/tooltips'
@@ -49,6 +49,7 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
+        checkLogic(this.data.fieldConfig, newVal)
         this.prepareToSave()
         return
       }
@@ -60,13 +61,13 @@ export default {
     getTooltip(prop) {
       switch(prop) {
         case 'block':
-          return 'Block stack'
+          return 'No row sharing'
           break;
         case 'inline-block':
-          return 'In line'
+          return 'Row sharing'
           break;
         default:
-          return 'Block stack'
+          return 'No row sharing'
       }
     },
     getValue() {
@@ -95,6 +96,7 @@ export default {
 
       if (this.fromReset) {
         this.value = this.getValue()
+        checkLogic(this.data.fieldConfig, this.value)
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
@@ -104,6 +106,7 @@ export default {
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
+    checkLogic(this.data.fieldConfig, this.value)
     // Start Bootstrap tooltips
     tooltips()
   },
