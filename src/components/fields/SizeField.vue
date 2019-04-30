@@ -85,7 +85,7 @@ export default {
       return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
     },
     getProperties() {
-      const type = this.data.fieldConfig.subtype !== 'undefined' && this.data.fieldConfig.subtype !== ''
+      const type = typeof this.data.fieldConfig.subtype !== 'undefined' && this.data.fieldConfig.subtype !== ''
           ? propertiesMap.types[this.data.fieldConfig.subtype]
           : propertiesMap.types['font']
       const properties = propertiesMap.properties[type]
