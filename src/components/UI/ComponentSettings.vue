@@ -19,7 +19,7 @@
             </div>
             <template v-if="notMobile && !ignoreInheritance(variable)">
               <div class="inherit-settings col-xs-12">
-                <div v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styels set (not inherited)</div>
+                <div v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styles set (not inherited)</div>
                 <template v-else>
                   <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
                 </template>
