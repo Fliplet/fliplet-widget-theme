@@ -2,9 +2,8 @@
   <transition :name="transition">
     <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay">
       <header>
-        <span v-if="state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
         <p>{{ state.appearanceGroupOverlay.name }}</p>
-        <span v-if="!state.widgetMode" class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
+        <span class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
