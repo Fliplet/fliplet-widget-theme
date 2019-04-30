@@ -302,22 +302,18 @@ export default {
     runFieldLogic(fieldConfig, logic) {
       // Some fields have some logic to show and hide other fields based on the value selected
       this.variables.forEach((variable, index) => {
-        const field = _.find(variable.fields, { name: fieldConfig.name })
-
-        if (field) {
-          variable.fields.forEach((field, idx) => {
-            if (logic.hide && logic.hide.indexOf(field.name) >= 0) {
-              field.showField = false
-              Vue.set(variable.fields, idx, field)
-              Vue.set(this.variables, index, variable)
-            }
-            if (logic.show && logic.show.indexOf(field.name) >= 0) {
-              field.showField = true
-              Vue.set(variable.fields, idx, field)
-              Vue.set(this.variables, index, variable)
-            }
-          })
-        }
+        variable.fields.forEach((field, idx) => {
+          if (logic.hide && logic.hide.indexOf(field.name) >= 0) {
+            field.showField = false
+            Vue.set(variable.fields, idx, field)
+            Vue.set(this.variables, index, variable)
+          }
+          if (logic.show && logic.show.indexOf(field.name) >= 0) {
+            field.showField = true
+            Vue.set(variable.fields, idx, field)
+            Vue.set(this.variables, index, variable)
+          }
+        })
       })
 
       this.$nextTick(() => {
