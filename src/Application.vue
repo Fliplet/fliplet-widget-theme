@@ -83,11 +83,11 @@ export default {
   methods: {
     setActiveTab(tab) {
       // Sets the active device tab
-      tab = tab || this.tabs[0]
       const tabIndex = _.findIndex(this.tabs, { type: tab.type })
       this.activeTab = tabIndex
     },
     handleContextSwitch(tab) {
+      tab = tab || this.tabs[0]
       this.setActiveTab(tab)
       setComponentContext(tab.name)
       Fliplet.Studio.emit('select-device-tab', tab.type === 'desktop' ? 'web' : tab.type)
