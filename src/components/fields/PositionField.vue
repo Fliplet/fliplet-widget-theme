@@ -63,7 +63,7 @@ export default {
     getTooltip(prop) {
       switch(prop) {
         case 'relative':
-          return 'Relative'
+          return 'Block stack'
           break;
         case 'absolute':
           return 'Relative to container'
