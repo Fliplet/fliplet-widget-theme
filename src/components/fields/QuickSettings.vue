@@ -17,7 +17,6 @@
         <div class="quick-settings-field">
           <template v-for="(field, index) in variable.fields">
             <component :is="fieldType(field.type)" :data="fieldData(field)"></component>
-            <div class="label-holder">{{ variable.description }}</div>
           </template>
         </div>
       </template>

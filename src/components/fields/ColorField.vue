@@ -2,9 +2,9 @@
   <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="wrapper">
       <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
-        <div id="color-picker-container" class="color-holder" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
+        <div id="color-picker-container" class="color-holder" ref="colorsquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
       </div>
-      <div v-if="label" class="field-label">{{ label }}</div>
+      <div v-if="label" class="field-label" @click.prevent="toggleColorPicker">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -94,8 +94,8 @@ export default {
       this.value = value
       this.prepareToSave(this.value)
     },
-    toggleColorPicker(e) {
-      const target = e.target.getBoundingClientRect()
+    toggleColorPicker() {
+      const target = this.$refs.colorsquare.getBoundingClientRect()
 
       this.colorpicker.show({
         left: target.left,

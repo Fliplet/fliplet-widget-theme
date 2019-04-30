@@ -169,7 +169,8 @@ header {
       margin-left: 10px; }
   #theme-application .field-label {
     margin-left: 10px;
-    color: rgba(51, 51, 51, 0.5); }
+    color: rgba(51, 51, 51, 0.5);
+    cursor: pointer; }
   #theme-application .error-holder {
     display: flex;
     align-items: center;
@@ -618,7 +619,9 @@ header {
   align-items: center;
   min-height: 30px; }
   .font-field-holder .wrapper {
-    position: relative; }
+    position: relative;
+    display: flex !important;
+    align-items: center; }
   .font-field-holder .form-control.custom-font {
     padding: 0 8px;
     line-height: 1;

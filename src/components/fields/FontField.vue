@@ -2,7 +2,7 @@
   <div v-if="showField" class="font-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="wrapper">
       <div class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span :style="'font-family:' + getFontFamily(valueToShow) + ';'">{{ valueToShow }}</span>
           <span class="caret"></span>
         </button>
@@ -22,6 +22,7 @@
           </li>
         </ul>
       </div>
+      <div v-if="label" class="field-label" @click.prevent="toggleDropdown">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -40,6 +41,7 @@ export default {
       state,
       value: getDefaultFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
+      label: this.data.fieldConfig.label,
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
@@ -111,6 +113,11 @@ export default {
     },
     inheritValue(value) {
       this.value = value
+    },
+    toggleDropdown(event) {
+      event.preventDefault()
+      event.stopPropagation()
+      $(this.$refs.dropdowntoggle).dropdown('toggle')
     },
     onValueChange(value) {
       if (typeof value === 'string') {

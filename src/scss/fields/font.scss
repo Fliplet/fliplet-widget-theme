@@ -6,6 +6,8 @@
 
   .wrapper {
     position: relative;
+    display: flex !important;
+    align-items: center;
   }
 
   .form-control {

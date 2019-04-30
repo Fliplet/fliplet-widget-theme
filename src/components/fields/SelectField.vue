@@ -2,7 +2,7 @@
   <div v-if="showField" class="select-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="wrapper">
       <div class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ valueToShow }}
           <span class="caret"></span>
         </button>
@@ -12,7 +12,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="label" class="field-label">{{ label }}</div>
+      <div v-if="label" class="field-label" @click.prevent="toggleDropdown">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -110,6 +110,11 @@ export default {
       }
 
       return propsArr
+    },
+    toggleDropdown(event) {
+      event.preventDefault()
+      event.stopPropagation()
+      $(this.$refs.dropdowntoggle).dropdown('toggle')
     },
     onValueChange(value) {
       this.valueToShow = this.parseValueToShow(value)
