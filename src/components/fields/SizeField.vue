@@ -3,7 +3,7 @@
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
           <span class="caret"></span>
         </button>
@@ -13,7 +13,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="label" class="field-label">{{ label }}</div>
+      <div v-if="label" class="field-label" @click.prevent="manualEdit">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
     <div class="input-holder" v-show="inputIsActive">
@@ -128,9 +128,13 @@ export default {
         return value
       }
 
+      if (typeof value != 'string') {
+        value = value.toString()
+      }
+
       let parsedValue = value.replace(new RegExp(this.getProperties().join('$|') + '$'), '')
       if (parsedValue == '') {
-        parsedValue = '0'
+        parsedValue = 0
       }
       const parsedFloatVal = parseFloat(parsedValue, 10)
 
@@ -157,7 +161,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting || this.value == 'auto' || this.value == 'none' ? this.value : this.value !== '' ? this.value : '0' + (this.property !== 'x' ? this.property : '')
+        value: isInheriting || this.value == 'auto' || this.value == 'none' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' ? this.property : '') : '0' + (this.property !== 'x' ? this.property : '')
       }
 
       if (this.isAligned) {
@@ -170,7 +174,14 @@ export default {
     editToggle() {
       this.inputIsActive = this.enterPressedToClose ? this.inputIsActive : !this.inputIsActive
     },
-    manualEdit(e) {
+    manualEdit(event) {
+      if (this.value == 'auto' || this.value == 'none') {
+        event.preventDefault()
+        event.stopPropagation()
+        $(this.$refs.dropdowntoggle).dropdown('toggle')
+        return
+      }
+
       this.editToggle()
 
       if (this.inputIsActive) {
