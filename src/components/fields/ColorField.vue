@@ -56,7 +56,6 @@ export default {
         },
         { 
           name: "Last used",
-          edit: true,
           colors: cookieSavedColors
         }
       ]
