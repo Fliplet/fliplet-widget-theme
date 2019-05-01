@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { tooltips } from '../../libs/tooltips'
+
 export default {
   data() {
     return {
@@ -92,6 +94,10 @@ export default {
         this.preventClose = false
       })
     }
+  },
+  mounted() {
+    // Start Bootstrap tooltips
+    tooltips()
   }
 }
 </script>

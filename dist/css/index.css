@@ -390,14 +390,25 @@ header {
           box-shadow: none; }
 
 .dropdown.select-box .dropdown-toggle {
+  display: flex;
+  align-items: center;
   background-color: transparent;
   padding: 0;
   line-height: 0;
   box-shadow: none;
-  font-size: 13px; }
+  font-size: 13px;
+  min-height: 18px; }
   .dropdown.select-box .dropdown-toggle:hover, .dropdown.select-box .dropdown-toggle:focus, .dropdown.select-box .dropdown-toggle:active, .dropdown.select-box .dropdown-toggle:active:hover, .dropdown.select-box .dropdown-toggle:active:focus {
     background-color: transparent;
     box-shadow: none; }
+  .dropdown.select-box .dropdown-toggle .caret {
+    margin-left: 4px; }
+  .dropdown.select-box .dropdown-toggle .font-name {
+    display: block;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
 
 .dropdown.select-box.open .dropdown-toggle {
   background-color: transparent;
