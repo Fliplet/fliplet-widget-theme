@@ -55,7 +55,7 @@ export default {
           ]
         },
         { 
-          name: "Custom",
+          name: "Last used",
           edit: true,
           colors: cookieSavedColors
         }
