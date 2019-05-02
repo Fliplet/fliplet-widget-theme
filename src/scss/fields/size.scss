@@ -12,9 +12,12 @@
     display: flex;
     align-items: center;
     min-width: 50px;
+    margin-left: -4px;
 
     .drag-input-holder {
       cursor: ew-resize;
+      padding: 0px 4px;
+      border-radius: 4px;
 
       &.expanded {
         width: 50px;
@@ -26,10 +29,20 @@
           margin-left: 0;
         }
       }
+
+      &:hover {
+        background-color: $highlight-gray-hover;
+      }
     }
 
     .select-box {
-      margin-left: 5px;
+      padding: 0px 4px;
+      margin-left: -4px;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: $highlight-gray-hover;
+      }
     }
   }
 

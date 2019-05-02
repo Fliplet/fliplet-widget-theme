@@ -5,7 +5,6 @@
       <div v-if="property && properties" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ property }}
-          <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
           <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop === property }">
