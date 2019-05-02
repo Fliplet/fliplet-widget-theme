@@ -53,8 +53,7 @@ export default {
       isAligned: typeof this.data.fieldConfig.isAligned !== 'undefined'
         ? this.data.fieldConfig.isAligned
         : false,
-      fromReset: false,
-      debouncedSave: _.debounce(this.prepareToSave, 150)
+      fromReset: false
     }
   },
   components: {
@@ -69,7 +68,7 @@ export default {
       this.valueToShow = isInheriting ? oldVal : newVal
 
       if (newVal != oldVal && !this.fromReset && !this.inputIsActive) {
-        this.debouncedSave()
+        this.prepareToSave()
         return
       }
 
