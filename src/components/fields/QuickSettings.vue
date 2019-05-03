@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getInheritance, checkSavedValue } from '../../store'
+import { state, getDefaultFieldValue, checkSavedValue } from '../../store'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
@@ -35,11 +35,7 @@ export default {
   data() {
     return {
       state,
-      notMobile: state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false,
-      inheritingFrom: getInheritance(),
-      currentContext: state.componentContext.toLowerCase(),
-      variables: this.computeVariables(),
-      showNotInheritingInfo: this.areNotInheriting()
+      variables: this.computeVariables()
     }
   },
   props: {
@@ -50,10 +46,6 @@ export default {
     FontField
   },
   methods: {
-    goToDeviceTab() {
-      const tab = _.find(deviceTypes, { type: this.inheritingFrom })
-      bus.$emit('context-switch', tab)
-    },
     fieldType(fieldType) {
       return `${fieldType}-field`
     },
@@ -68,16 +60,6 @@ export default {
       }
 
       return data
-    },
-    areNotInheriting() {
-      return this.groupConfig.variables.some((variable) => {
-        const fields = _.filter(variable.fields, { inheriting: false })
-        if (fields.length) {
-          return true
-        }
-
-        return
-      })
     },
     isInheriting(value) {
       if (!value) {
@@ -100,18 +82,9 @@ export default {
         variable.fields.forEach((field, idx) => {
           const values = checkSavedValue(field, true)
 
-          // To check if the field is inheriting
-          const isDefaultInheriting = this.isInheriting(values.defaultValue)
-          const isSavedValueInheriting = this.isInheriting(values.generalSavedValue)
-          const isLocalSavedValueInheriting = this.isInheriting(values.generalLocalSavedValue)
-
           const newObj = {
             value: values.fieldValue,
-            inheriting: !!(
-              isLocalSavedValueInheriting
-              || (!values.generalLocalSavedValue && isSavedValueInheriting)
-              || (!values.generalLocalSavedValue && !values.generalSavedValue && isDefaultInheriting)
-            )
+            inheriting: true
           }
 
           _.extend(this.groupConfig.variables[index].fields[idx], newObj)
@@ -122,7 +95,6 @@ export default {
     },
     reSetVariables() {
       this.variables = this.computeVariables()
-      this.showNotInheritingInfo = this.areNotInheriting()
       this.$nextTick(() => {
         bus.$emit('variables-computed')
       })

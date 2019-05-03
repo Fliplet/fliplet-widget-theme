@@ -12,19 +12,12 @@
 
         <!-- <div v-if="state.themeInstance && state.themeInstance.id" @click.prevent="resetTheme">Reset theme</div> -->
 
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs breakpoint-tabs">
-          <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
-            <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
-          </li>
-        </ul>
       </div>
-      <!-- Tab panes -->
-      <div class="tab-content">
-        <div v-for="(tab, index) in tabs" v-if="activeTab === index" :class="{ active: activeTab === index }" :ref="index" class="tab-pane" :id="'tab-' + tab.type">
-          <component :is="tabType(tab.type)"></component>
-        </div>
+      <QuickSettings v-if="!state.widgetMode" :group-config="getQuickSettings()"></QuickSettings>
+      <div class="components-buttons-holder">
+        <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="!configuration.quickSettings && !state.widgetMode" :group-config="configuration"></SettingsButtons>
       </div>
+      <ComponentSettings></ComponentSettings>
       <transition name="slide-up">
         <div v-if="error" class="error-holder">
           <p>{{ error }}</p>
@@ -48,9 +41,9 @@ import { state, setComponentContext,
   toggleSavingStatus, openAppearanceGroupSettings } from './store'
 import WidgetHeader from './components/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
-import MobileTab from './components/MobileTab'
-import TabletTab from './components/TabletTab'
-import DesktopTab from './components/DesktopTab'
+import SettingsButtons from './components/UI/SettingsButtons'
+import QuickSettings from './components/fields/QuickSettings'
+import ComponentSettings from './components/UI/ComponentSettings'
 import deviceTypes from './libs/device-types'
 import widgetsMap from './libs/widgets-map'
 import bus from './libs/bus'
@@ -75,7 +68,6 @@ export default {
       },
       appearanceGroup: undefined,
       tabs: deviceTypes,
-      activeTab: 0,
       error: undefined,
       dataToSave: {},
       debouncedSave: _.debounce(this.save, 500, { leading: true })
@@ -84,21 +76,17 @@ export default {
   components: {
     WidgetHeader,
     ThemeSelection,
-    MobileTab,
-    TabletTab,
-    DesktopTab
+    SettingsButtons,
+    QuickSettings,
+    ComponentSettings
   },
   methods: {
-    setActiveTab(tab) {
-      // Sets the active device tab
-      const tabIndex = _.findIndex(this.tabs, { type: tab.type })
-      this.activeTab = tabIndex
+    getQuickSettings() {
+      return _.find(state.activeTheme.settings.configuration, { quickSettings: true })
     },
     handleContextSwitch(tab) {
       tab = tab || this.tabs[0]
-      this.setActiveTab(tab)
       setComponentContext(tab.name)
-      Fliplet.Studio.emit('select-device-tab', tab.type === 'desktop' ? 'web' : tab.type)
     },
     handleAppearanceGroup(group) {
       if (typeof group === 'undefined') {
