@@ -593,7 +593,7 @@ function checkFieldValue(value, field) {
 
   // Try to find the value in the theme instance saved values
   const savedValues = state.themeInstance.settings.values
-  foundValue = savedValues[(inherit === 'mobile' ? field.name : field.breakpoints[inherit].name)]
+  foundValue = savedValues ? savedValues[(inherit === 'mobile' ? field.name : field.breakpoints[inherit].name)] : undefined
   if (foundValue) {
     return checkFieldValue(foundValue, field)
   }

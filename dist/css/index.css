@@ -649,16 +649,25 @@ header {
     position: relative;
     display: flex;
     align-items: center;
-    min-width: 50px; }
+    min-width: 50px;
+    margin-left: -4px; }
     .size-field-holder .interactive-holder .drag-input-holder {
-      cursor: ew-resize; }
+      cursor: ew-resize;
+      padding: 0px 4px;
+      border-radius: 4px; }
       .size-field-holder .interactive-holder .drag-input-holder.expanded {
         width: 50px;
         overflow: hidden; }
       .size-field-holder .interactive-holder .drag-input-holder.hidden + .select-box {
         margin-left: 0; }
+      .size-field-holder .interactive-holder .drag-input-holder:hover {
+        background-color: #efebed; }
     .size-field-holder .interactive-holder .select-box {
-      margin-left: 5px; }
+      padding: 0px 4px;
+      margin-left: -4px;
+      border-radius: 4px; }
+      .size-field-holder .interactive-holder .select-box:hover {
+        background-color: #efebed; }
   .size-field-holder .input-holder {
     position: absolute;
     top: 0;

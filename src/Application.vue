@@ -9,6 +9,9 @@
       <div class="top-area-fixed">
         <WidgetHeader></WidgetHeader>
         <ThemeSelection v-if="themes && themes.length > 1" :themes="themes"></ThemeSelection>
+
+        <!-- <div v-if="state.themeInstance && state.themeInstance.id" @click.prevent="resetTheme">Reset theme</div> -->
+
         <!-- Nav tabs -->
         <ul class="nav nav-tabs breakpoint-tabs">
           <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
@@ -128,7 +131,7 @@ export default {
       const customFonts = _.filter(this.fonts, (font) => { return font.url })
       setCustomFonts(customFonts)
     },
-    initialize(widgetInstanceData) {
+    initialize(widgetInstanceData, toReuse) {
       const widgetId = Fliplet.Widget.getDefaultId()
       const widgetData = widgetInstanceData || Fliplet.Widget.getData(widgetId) || {}
 
@@ -140,14 +143,14 @@ export default {
           this.fonts = response[1]
           this.storeFonts()
           this.themes = response[0]
-          this.getThemeInstance(response[0])
+          this.getThemeInstance(response[0], toReuse)
         })
         .catch((err) => {
           this.error = Fliplet.parseError(err)
           console.error(err)
         })
     },
-    getThemeInstance(themes) {
+    getThemeInstance(themes, toReuse) {
       let themeWithoutInstances = 0
       let tab
 
@@ -193,27 +196,31 @@ export default {
       // Automatically create a theme instance if one doesn't exist
       if (themeWithoutInstances == themes.length) {
         const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
-        this.createDefaultInstance(flipletTheme.id)
+        this.createDefaultInstance(flipletTheme.id, toReuse)
           .then(this.initialize)
           .then(this.reloadPagePreview)
+          .then(() => {
+            bus.$emit('saved-fields-set')
+          })
           .catch((err) => {
             this.error = Fliplet.parseError(err)
             console.error(err)
           })
       }
     },
-    createDefaultInstance(themeId) {
+    createDefaultInstance(themeId, toReuse) {
+      toReuse = typeof toReuse === 'undefined' ? true : toReuse
       return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
         method: 'POST',
         url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
         data: {
           widgetId: themeId,
-          reuse: true
+          reuse: toReuse
         }
       })
     },
     reloadPagePreview() {
-      Fliplet.Studio.emit('reload-page-preview');
+      return Fliplet.Studio.emit('reload-page-preview');
     },
     onFieldSave(dataToSave) {
       // Processes data when a field is changed
@@ -365,6 +372,16 @@ export default {
     },
     dismissErrorToast() {
       this.error = undefined
+    },
+    resetTheme() {
+      // @TODO: Loading
+      Fliplet.API.request({
+        method: 'DELETE',
+        url: 'v1/widget-instances/' + state.themeInstance.id
+      })
+      .then(() => {
+        this.initialize(undefined, false)
+      });
     }
   },
   created() {
