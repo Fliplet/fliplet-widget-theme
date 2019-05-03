@@ -53,7 +53,8 @@ export default {
       isAligned: typeof this.data.fieldConfig.isAligned !== 'undefined'
         ? this.data.fieldConfig.isAligned
         : false,
-      fromReset: false
+      fromReset: false,
+      fromCreated: true
     }
   },
   components: {
@@ -73,11 +74,36 @@ export default {
       }
 
       this.fromReset = false
+    },
+    valueToShow(newVal, oldVal) {
+      if (newVal != oldVal && !this.fromCreated) {
+        const cssProperties = []
+        this.data.fieldConfig.css.forEach((css) => {
+          const selectors = {
+            selector: css.selector,
+            properties: {}
+          }
+
+          css.properties.forEach((prop) => {
+            selectors.properties[prop] = newVal + (this.property !== 'x' ? this.property : '')
+          })
+
+          cssProperties.push(selectors)
+        })
+
+        Fliplet.Studio.emit('page-preview-send-event', {
+          type: 'inlineCss',
+          cssProperties: cssProperties
+        })
+      }
     }
   },
   methods: {
     setValues() {
       this.valueToShow = this.value
+      this.$nextTick(() => {
+        this.fromCreated = false
+      })
     },
     getValueToShow() {
       return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
