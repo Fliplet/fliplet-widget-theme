@@ -480,7 +480,7 @@ export function sendCssToFrame(value, currentField) {
 
   styles.forEach((css) => {
     let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"] ` : ''
-    if (savedWidgetFound || localSavedWidgetFound) {
+    if (!state.widgetMode && (savedWidgetFound || localSavedWidgetFound)) {
       widgetSelector = `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
     }
 
@@ -530,7 +530,7 @@ export function sendCssToFrame(value, currentField) {
 
           // Add depending fields to changing array of properties
           let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"] ` : ''
-          if (savedWidgetFound || localSavedWidgetFound) {
+          if (!state.widgetMode && (savedWidgetFound || localSavedWidgetFound)) {
             widgetSelector = `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
           }
           const fieldSelectors = {
