@@ -39,7 +39,7 @@ import { state, setComponentContext,
   setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
   toggleSavingStatus, openAppearanceGroupSettings } from './store'
-import WidgetHeader from './components/WidgetHeader'
+import WidgetHeader from './components/UI/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import SettingsButtons from './components/UI/SettingsButtons'
 import QuickSettings from './components/fields/QuickSettings'

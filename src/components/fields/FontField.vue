@@ -30,7 +30,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, getInheritance, checkIsFieldChanged } from '../../store'
+  getFieldName, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import fontMapping from '../../libs/font-mapping'
 import bus from '../../libs/bus'
@@ -45,7 +45,7 @@ export default {
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
-      inheritingFrom: getInheritance(),
+      inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField

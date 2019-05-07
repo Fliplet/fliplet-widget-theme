@@ -277,10 +277,12 @@ export function checkIsFieldChanged(field) {
 * @return {String} The value saved
 * @return {Object} Object with all the saved values including the default value
 */
-export function checkSavedValue(field, returnAll) {
-  const fieldName = state.componentContext === 'Mobile' || field.isQuickSetting
+export function checkSavedValue(field, returnAll, context) {
+  context = context || state.componentContext
+  context = context.toLowerCase()
+  const fieldName = context === 'mobile' || field.isQuickSetting
     ? field.name
-    : field.breakpoints[state.componentContext.toLowerCase()].name
+    : field.breakpoints[context].name
 
   const generalSavedValue = state.themeInstance.settings
     && state.themeInstance.settings.values
@@ -292,9 +294,9 @@ export function checkSavedValue(field, returnAll) {
   const widgetSavedValue = widgetFound ? widgetFound.values[fieldName] : undefined
   const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
 
-  const defaultValue = state.componentContext === 'Mobile' || field.isQuickSetting
+  const defaultValue = context === 'mobile' || field.isQuickSetting
     ? field.default
-    : field.breakpoints[state.componentContext.toLowerCase()].default
+    : field.breakpoints[context].default
 
   const value = state.widgetMode
     ? widgetLocalSavedValue
@@ -417,16 +419,42 @@ export function checkSizeLogic(fieldConfig) {
 * Gets the inheritance context
 * @return {String} Name of context it is inheriting from
 */
-export function getInheritance() {
+export function getInheritance(variables) {
   switch(state.componentContext) {
     case 'Desktop':
-      return 'tablet'
+      if (!variables) {
+        return 'tablet'
+      }
+
+      const newArr = []
+      variables.forEach((variable) => {
+        const fields = _.filter(variable.fields, { inheriting: true })
+        if (fields.length) {
+          let inheritingFrom = []
+          fields.forEach((field) => {
+            inheritingFrom.push(field.inheritingFrom)
+          })
+
+          inheritingFrom = _.uniq(inheritingFrom)
+          if (inheritingFrom.indexOf('tablet') > -1) {
+            newArr.push('tablet')
+            return
+          }
+
+          newArr.push('mobile')
+          return
+        }
+
+        newArr.push('tablet')
+      })
+
+      return newArr
       break;
     case 'Tablet':
       return 'mobile'
       break;
     default:
-      ''
+      return 'mobile'
   }
 }
 

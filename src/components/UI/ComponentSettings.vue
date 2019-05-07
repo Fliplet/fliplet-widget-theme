@@ -21,7 +21,7 @@
               <div class="inherit-settings col-xs-12">
                 <div v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styles set (not inherited)</div>
                 <template v-else>
-                  <span class="label-holder">Inheriting styles from {{ inheritingFrom }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritingFrom)">View</a>
+                  <span class="label-holder">Inheriting styles from {{ inheritFromValue(index) }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritFromValue(index))">View</a>
                 </template>
               </div>
             </template>
@@ -200,7 +200,7 @@ export default {
       this.context = state.appearanceGroupOverlay.context == 'Mobile' ? '' : state.appearanceGroupOverlay.context
       this.showNotInheritingInfo = this.areNotInheriting()
       this.currentContext = state.componentContext.toLowerCase()
-      this.inheritingFrom = getInheritance()
+      this.inheritingFrom = getInheritance(this.variables)
     },
     computeVariables(toRecompute) {
       // Variables processing
@@ -222,8 +222,11 @@ export default {
           const isWidgetSavedValueInheriting = this.isInheriting(values.widgetSavedValue)
           const isLocalWidgetSavedValueInheriting = this.isInheriting(values.widgetLocalSavedValue)
 
-           const newObj = {
+          const isInheritingFrom = this.isInheritingFrom(values.fieldValue, field)
+
+          const newObj = {
             value: values.fieldValue,
+            inheritingFrom: isInheritingFrom,
             inheriting: state.widgetMode
               ? !!(
                   (isLocalWidgetSavedValueInheriting
@@ -255,6 +258,13 @@ export default {
         bus.$emit('variables-computed')
       })
     },
+    inheritFromValue(index) {
+      if (Array.isArray(this.inheritingFrom)) {
+        return this.inheritingFrom[index]
+      }
+
+      return this.inheritingFrom
+    },
     areNotInheriting() {
       const newArr = []
       this.variables.forEach((variable) => {
@@ -268,6 +278,27 @@ export default {
       })
 
       return newArr
+    },
+    isInheritingFrom(value, field) {
+      if (!value) {
+        return false
+      }
+
+      // Checks if the value matches the 'inherit-x' reserved key
+      const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
+
+      if (!matchInherit || !matchInherit.length) {
+        return false
+      }
+
+      const checkedValue = checkSavedValue(field, false, matchInherit[1])
+      const result = this.isInheritingFrom(checkedValue, field)
+
+      if (!result) {
+        return matchInherit[1]
+      }
+
+      return result
     },
     isInheriting(value) {
       if (!value) {
