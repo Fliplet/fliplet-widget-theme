@@ -78,7 +78,7 @@ export default {
     valueToShow(newVal, oldVal) {
       if (newVal != oldVal && !this.fromCreated) {
         const cssProperties = []
-        this.data.fieldConfig.css.forEach((css) => {
+        this.data.fieldConfig.style.forEach((css) => {
           const selectors = {
             selector: css.selector,
             properties: {}
