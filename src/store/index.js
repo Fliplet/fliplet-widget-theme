@@ -206,7 +206,7 @@ export function clearDataToSave() {
 * @return {String} CSS variable name
 */
 export function getFieldName(field) {
-  const fieldName = state.componentContext === 'Mobile'
+  const fieldName = state.componentContext === 'Mobile' || field.isQuickSetting
     ? field.name
     : field.breakpoints[state.componentContext.toLowerCase()].name
 
@@ -277,10 +277,12 @@ export function checkIsFieldChanged(field) {
 * @return {String} The value saved
 * @return {Object} Object with all the saved values including the default value
 */
-export function checkSavedValue(field, returnAll) {
-  const fieldName = state.componentContext === 'Mobile'
+export function checkSavedValue(field, returnAll, context) {
+  context = context || state.componentContext
+  context = context.toLowerCase()
+  const fieldName = context === 'mobile' || field.isQuickSetting
     ? field.name
-    : field.breakpoints[state.componentContext.toLowerCase()].name
+    : field.breakpoints[context].name
 
   const generalSavedValue = state.themeInstance.settings
     && state.themeInstance.settings.values
@@ -292,9 +294,9 @@ export function checkSavedValue(field, returnAll) {
   const widgetSavedValue = widgetFound ? widgetFound.values[fieldName] : undefined
   const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
 
-  const defaultValue = state.componentContext === 'Mobile'
+  const defaultValue = context === 'mobile' || field.isQuickSetting
     ? field.default
-    : field.breakpoints[state.componentContext.toLowerCase()].default
+    : field.breakpoints[context].default
 
   const value = state.widgetMode
     ? widgetLocalSavedValue
@@ -333,7 +335,7 @@ export function getDefaultFieldValue(field) {
   const isMobile = state.componentContext === 'Mobile'
 
   // Gets the value based on which tab the user is (Mobile, Tablet or Desktop)
-  defaultValue = isMobile
+  defaultValue = isMobile || field.isQuickSetting
     ? field.default
     : field.breakpoints[state.componentContext.toLowerCase()].default
 
@@ -417,16 +419,42 @@ export function checkSizeLogic(fieldConfig) {
 * Gets the inheritance context
 * @return {String} Name of context it is inheriting from
 */
-export function getInheritance() {
+export function getInheritance(variables) {
   switch(state.componentContext) {
     case 'Desktop':
-      return 'tablet'
+      if (!variables) {
+        return 'tablet'
+      }
+
+      const newArr = []
+      variables.forEach((variable) => {
+        const fields = _.filter(variable.fields, { inheriting: true })
+        if (fields.length) {
+          let inheritingFrom = []
+          fields.forEach((field) => {
+            inheritingFrom.push(field.inheritingFrom)
+          })
+
+          inheritingFrom = _.uniq(inheritingFrom)
+          if (inheritingFrom.indexOf('tablet') > -1) {
+            newArr.push('tablet')
+            return
+          }
+
+          newArr.push('mobile')
+          return
+        }
+
+        newArr.push('tablet')
+      })
+
+      return newArr
       break;
     case 'Tablet':
       return 'mobile'
       break;
     default:
-      ''
+      return 'mobile'
   }
 }
 
@@ -544,7 +572,7 @@ function checkFieldValue(value, field) {
           if (f.name === variableName) {
             value = f.default
             return true; // short circuit
-          } else {
+          } else if (f.breakpoints) {
             if (f.breakpoints.tablet.name === variableName) {
               value = f.breakpoints.tablet.default
               return true; // short circuit
@@ -554,6 +582,8 @@ function checkFieldValue(value, field) {
               return true; // short circuit
             }
 
+            return;
+          } else {
             return;
           }
         })
@@ -569,34 +599,34 @@ function checkFieldValue(value, field) {
   if (state.widgetMode) {
     // Try to find the value in the local saved widget values
     const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
-    foundValue = foundWidgetValue ? foundWidgetValue.values[inherit === 'mobile' ? field.name : field.breakpoints[inherit].name] : undefined
+    foundValue = foundWidgetValue ? foundWidgetValue.values[inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name] : undefined
     if (foundValue) {
       return checkFieldValue(foundValue, field)
     }
 
     // Try to find the value in the theme instance saved widgets
     const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
-    foundValue = foundWidget ? foundWidget.values[inherit === 'mobile' ? field.name : field.breakpoints[inherit].name] : undefined
+    foundValue = foundWidget ? foundWidget.values[inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name] : undefined
     if (foundValue) {
       return checkFieldValue(foundValue, field)
     }
 
-    if (inherit != 'mobile') {
+    if (inherit != 'mobile' && !field.isQuickSetting) {
       return checkFieldValue(field.breakpoints[inherit].default, field)
     }
   }
 
-  foundValue = _.find(state.savedFields.values, { name: (inherit === 'mobile' ? field.name : field.breakpoints[inherit].name) })
+  foundValue = _.find(state.savedFields.values, { name: (inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name) })
   if (foundValue) {
     return checkFieldValue(foundValue.value,  field)
   }
 
   // Try to find the value in the theme instance saved values
   const savedValues = state.themeInstance.settings.values
-  foundValue = savedValues ? savedValues[(inherit === 'mobile' ? field.name : field.breakpoints[inherit].name)] : undefined
+  foundValue = savedValues ? savedValues[(inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name)] : undefined
   if (foundValue) {
     return checkFieldValue(foundValue, field)
   }
 
-  return checkFieldValue((inherit === 'mobile' ? field.default : field.breakpoints[inherit].default), field)
+  return checkFieldValue((inherit === 'mobile' || field.isQuickSetting ? field.default : field.breakpoints[inherit].default), field)
 }

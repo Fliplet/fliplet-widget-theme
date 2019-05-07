@@ -54,12 +54,14 @@ header {
 #theme-application {
   font-size: 13px;
   padding: 1rem 15px 54px;
-  height: calc(100% - 136px);
+  height: calc(100% - 54px);
   overflow: auto;
-  margin-top: 176px; }
+  margin-top: 94px; }
   #theme-application.theme-selection-hidden {
-    height: calc(100% - 52px);
-    margin-top: 92px; }
+    height: 100%;
+    margin-top: 40px; }
+    #theme-application.theme-selection-hidden header {
+      margin-bottom: 0; }
     #theme-application.theme-selection-hidden .top-area-fixed .breakpoint-tabs {
       margin-top: -10px; }
   #theme-application .top-area-fixed {
@@ -289,6 +291,9 @@ header {
     align-items: center; }
     .quick-settings .quick-settings-field + .quick-settings-field {
       margin-top: 5px; }
+
+.theme-selection-hidden .quick-settings {
+  margin-top: 20px; }
 
 .form-holder {
   margin: 0 -15px; }

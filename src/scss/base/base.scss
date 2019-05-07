@@ -69,13 +69,17 @@ header {
 #theme-application {
   font-size: 13px;
   padding: 1rem 15px 54px;
-  height: calc(100% - 136px);
+  height: calc(100% - 54px);
   overflow: auto;
-  margin-top: 176px;
+  margin-top: 94px;
 
   &.theme-selection-hidden {
-    height: calc(100% - 52px);
-    margin-top: 92px;
+    height: 100%;
+    margin-top: 40px;
+
+    header {
+      margin-bottom: 0;
+    }
 
     .top-area-fixed {
       .breakpoint-tabs {

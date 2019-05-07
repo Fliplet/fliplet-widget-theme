@@ -16,7 +16,7 @@
 
 <script>
 import { state, getDefaultFieldValue, getFieldName,
-  saveFieldData, getInheritance, checkIsFieldChanged, checkLogic } from '../../store'
+  saveFieldData, checkIsFieldChanged, checkLogic } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import positionProperties from '../../libs/display-properties'
 import { tooltips } from '../../libs/tooltips'
@@ -31,7 +31,7 @@ export default {
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
-      inheritingFrom: getInheritance(),
+      inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField

@@ -14,7 +14,7 @@
 
 <script>
 import { state, getDefaultFieldValue, getFieldName,
-  saveFieldData, checkLogic, getInheritance, checkIsFieldChanged } from '../../store'
+  saveFieldData, checkLogic, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bgProperties from '../../libs/background-properties'
 import bus from '../../libs/bus'
@@ -28,7 +28,7 @@ export default {
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
-      inheritingFrom: getInheritance(),
+      inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField

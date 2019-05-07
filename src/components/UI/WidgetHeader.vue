@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import bus from '../libs/bus'
+import bus from '../../libs/bus'
 
 export default {
   data() {

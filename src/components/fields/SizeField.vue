@@ -23,7 +23,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, getInheritance, checkIsFieldChanged, checkSizeLogic } from '../../store'
+  getFieldName, checkIsFieldChanged, checkSizeLogic } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
 import bus from '../../libs/bus'
@@ -44,7 +44,7 @@ export default {
       keyMap: {},
       enterPressedToClose: false,
       isInheriting: this.checkInheritance(),
-      inheritingFrom: getInheritance(),
+      inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
       allowNegative: !!this.data.fieldConfig.allowNegative,
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
