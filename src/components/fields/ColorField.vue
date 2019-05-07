@@ -84,7 +84,6 @@ export default {
       saveFieldData(this.dataToSave)
     },
     setValues() {
-      debugger
       this.valueToShow = this.value
     },
     getValueToShow() {

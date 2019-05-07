@@ -226,7 +226,7 @@ export default {
 
           const newObj = {
             value: values.fieldValue,
-            inheritingFrom: isInheritingFrom,
+            inheritingFrom: isInheritingFrom ? isInheritingFrom : getInheritance(),
             inheriting: state.widgetMode
               ? !!(
                   (isLocalWidgetSavedValueInheriting
