@@ -417,7 +417,8 @@ export function checkSizeLogic(fieldConfig) {
 
 /**
 * Gets the inheritance context
-* @return {String} Name of context it is inheriting from
+* @param {Array} Array of variables from the theme configuration
+* @return {String || Array} Name of context it is inheriting from
 */
 export function getInheritance(variables) {
   switch(state.componentContext) {
@@ -456,6 +457,102 @@ export function getInheritance(variables) {
     default:
       return 'mobile'
   }
+}
+
+/**
+* Send the CSS properties to the iframe
+* @param {String} The value of the field being changed
+*/
+export function sendCssToFrame(value, currentField) {
+  if (!value || !currentField) {
+    return
+  }
+
+  const configurations = state.activeTheme.settings.configuration
+  const cssProperties = []
+  const styles = currentField.styles || []
+  const savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
+    return !!widget.values[currentField.name]
+  })
+  const localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
+    return !!widget.values[currentField.name]
+  })
+
+  styles.forEach((css) => {
+    let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"] ` : ''
+    if (savedWidgetFound || localSavedWidgetFound) {
+      widgetSelector = `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
+    }
+
+    const selectors = {
+      selector: (css.parentSelector + widgetSelector + css.selector).trim(),
+      properties: {}
+    }
+
+    css.properties.forEach((prop) => {
+      selectors.properties[prop] = value
+    })
+
+    cssProperties.push(selectors)
+  })
+
+  configurations.forEach((config) => {
+    config.variables.forEach((variable) => {
+      variable.fields.forEach((field) => {
+
+        const fieldStyles = field.styles || []
+        fieldStyles.forEach((style) => {
+          // Check if the names match
+          if (!style.dependency || style.dependency !== currentField.name) {
+            return
+          }
+
+          // Check if the field depending on the change already has a value saved
+          const generalSavedValue = state.themeInstance.settings
+            && state.themeInstance.settings.values
+            && state.themeInstance.settings.values[field.name]
+          const savedLocalField = _.find(state.savedFields.values, { name: field.name })
+          const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
+          const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
+          const widgetSavedValue = widgetFound ? widgetFound.values[field.name] : undefined
+          const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[field.name] : undefined
+
+          const savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
+            return !!widget.values[field.name]
+          })
+          const localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
+            return !!widget.values[field.name]
+          })
+
+          if (generalSavedValue || savedLocalField || widgetSavedValue || widgetLocalSavedValue) {
+            return
+          }
+
+          // Add depending fields to changing array of properties
+          let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"] ` : ''
+          if (savedWidgetFound || localSavedWidgetFound) {
+            widgetSelector = `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
+          }
+          const fieldSelectors = {
+            selector: (style.parentSelector + widgetSelector + style.selector).trim(),
+            properties: {}
+          }
+
+          style.properties.forEach((fieldProp) => {
+            fieldSelectors.properties[fieldProp] = value
+          })
+
+          cssProperties.push(fieldSelectors)
+        })
+
+      })
+    })
+  })
+
+  Fliplet.Studio.emit('page-preview-send-event', {
+    type: 'inlineCss',
+    cssProperties: cssProperties
+  })
 }
 
 // Private functions

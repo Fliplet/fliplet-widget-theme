@@ -23,7 +23,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, checkIsFieldChanged, checkSizeLogic } from '../../store'
+  getFieldName, checkIsFieldChanged, checkSizeLogic, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
 import bus from '../../libs/bus'
@@ -77,24 +77,7 @@ export default {
     },
     valueToShow(newVal, oldVal) {
       if (newVal != oldVal && !this.fromCreated) {
-        const cssProperties = []
-        this.data.fieldConfig.style.forEach((css) => {
-          const selectors = {
-            selector: css.selector,
-            properties: {}
-          }
-
-          css.properties.forEach((prop) => {
-            selectors.properties[prop] = newVal + (this.property !== 'x' ? this.property : '')
-          })
-
-          cssProperties.push(selectors)
-        })
-
-        Fliplet.Studio.emit('page-preview-send-event', {
-          type: 'inlineCss',
-          cssProperties: cssProperties
-        })
+        sendCssToFrame(newVal + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
       }
     }
   },
