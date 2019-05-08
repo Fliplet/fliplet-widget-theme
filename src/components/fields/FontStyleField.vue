@@ -92,15 +92,17 @@ export default {
       }
 
       // Clean of everything else other than the possible options
-      newVal.forEach((value, index) => {
-        if (value != 'normal'
-          || value != 'bold'
-          || value != 'lighter'
-          || value != 'underline'
-          || value != 'italic') {
-          newVal.splice(index, 1)
-        }
-      })
+      if (Array.isArray(newVal)) {
+        newVal.forEach((value, index) => {
+          if (value != 'normal'
+            && value != 'bold'
+            && value != 'lighter'
+            && value != 'underline'
+            && value != 'italic') {
+            newVal.splice(index, 1)
+          }
+        })
+      }
 
       this.value = newVal
       this.prepareToSave()
