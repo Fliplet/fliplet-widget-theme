@@ -471,31 +471,27 @@ export function sendCssToFrame(value, currentField) {
   const configurations = state.activeTheme.settings.configuration
   const cssProperties = []
   const styles = currentField.styles || []
-  const savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
+  let savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
     return !!widget.values[currentField.name]
   })
-  const localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
+  let localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
     return !!widget.values[currentField.name]
   })
 
+  // If there is a "styles" key
   styles.forEach((css) => {
-    let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"] ` : ''
+    let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"]` : ''
     if (!state.widgetMode && (savedWidgetFound || localSavedWidgetFound)) {
       widgetSelector = `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
     }
 
-    const selectors = {
-      selector: (css.parentSelector + widgetSelector + css.selector).trim(),
-      properties: {}
-    }
-
-    css.properties.forEach((prop) => {
-      selectors.properties[prop] = value
+    const preparedStyles = prepareStyles(css, value, widgetSelector)
+    preparedStyles.forEach((styles) => {
+      cssProperties.push(styles)
     })
-
-    cssProperties.push(selectors)
   })
 
+  // Checks if there is a field that has a dependency on the value that has been changed
   configurations.forEach((config) => {
     config.variables.forEach((variable) => {
       variable.fields.forEach((field) => {
@@ -503,7 +499,7 @@ export function sendCssToFrame(value, currentField) {
         const fieldStyles = field.styles || []
         fieldStyles.forEach((style) => {
           // Check if the names match
-          if (!style.dependency || style.dependency !== currentField.name) {
+          if (!style.dependencies || style.dependencies.indexOf(currentField.name) < 0) {
             return
           }
 
@@ -516,33 +512,26 @@ export function sendCssToFrame(value, currentField) {
           const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
           const widgetSavedValue = widgetFound ? widgetFound.values[field.name] : undefined
           const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[field.name] : undefined
-
-          const savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
+          savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
             return !!widget.values[field.name]
           })
-          const localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
+          localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
             return !!widget.values[field.name]
           })
-
           if (generalSavedValue || savedLocalField || widgetSavedValue || widgetLocalSavedValue) {
             return
           }
 
           // Add depending fields to changing array of properties
-          let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"] ` : ''
+          let widgetSelector = state.widgetMode ? `[data-id="${state.widgetId}"]` : ''
           if (!state.widgetMode && (savedWidgetFound || localSavedWidgetFound)) {
             widgetSelector = `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
           }
-          const fieldSelectors = {
-            selector: (style.parentSelector + widgetSelector + style.selector).trim(),
-            properties: {}
-          }
 
-          style.properties.forEach((fieldProp) => {
-            fieldSelectors.properties[fieldProp] = value
+          const preparedStyles = prepareStyles(style, value, widgetSelector)
+          preparedStyles.forEach((styles) => {
+            cssProperties.push(styles)
           })
-
-          cssProperties.push(fieldSelectors)
         })
 
       })
@@ -566,6 +555,50 @@ function removeWidgetFromInstance(id) {
 
 function updateWidgetData(data) {
   state.appearanceGroupOverlay.data = data
+}
+
+/**
+* Prepares the selectors, properties and values to be sent to interact.js
+* @param {Object} Object with the selectors and properties to by modified
+* @param {String} The value to be modified
+* @param {String} String of widget ID selector
+* @return {Array} Array of all the compiled selectors and properties with the value
+*/
+function prepareStyles(styles, value, widgetSelector) {
+  if (!styles || !value || typeof widgetSelector === 'undefined') {
+    return []
+  }
+
+  styles.parentSelector = styles.parentSelector || ''
+  styles.selectors = styles.selectors || ''
+  const cssProperties = []
+  const selectors = {
+    selector: undefined,
+    properties: {}
+  }
+
+  if (Array.isArray(styles.selectors)) {
+    styles.selectors.forEach(() => {
+      // Reset properties object
+      selectors.properties = {}
+
+      selectors.selector = (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+      styles.properties.forEach((prop) => {
+        selectors.properties[prop] = value
+      })
+
+      cssProperties.push(selectors)
+    })
+  } else {
+    selectors.selector = (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+    styles.properties.forEach((prop) => {
+      selectors.properties[prop] = value
+    })
+
+    cssProperties.push(selectors)
+  }
+
+  return cssProperties
 }
 
 /**
