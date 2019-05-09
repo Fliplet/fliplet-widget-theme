@@ -17,7 +17,7 @@
 
 <script>
 import { state, getDefaultFieldValue, getFieldName,
-  saveFieldData, checkLogic, checkIsFieldChanged } from '../../store'
+  saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import positionProperties from '../../libs/position-properties'
 import { tooltips } from '../../libs/tooltips'
@@ -52,7 +52,11 @@ export default {
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
         checkLogic(this.data.fieldConfig, newVal)
-        this.prepareToSave()
+        sendCssToFrame(newVal, this.data.fieldConfig)
+
+        this.$nextTick(() => {
+          this.prepareToSave()
+        })
         return
       }
 

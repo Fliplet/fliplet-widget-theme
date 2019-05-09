@@ -30,7 +30,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, checkIsFieldChanged } from '../../store'
+  getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import fontMapping from '../../libs/font-mapping'
 import bus from '../../libs/bus'
@@ -61,7 +61,11 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.prepareToSave()
+        sendCssToFrame(newVal, this.data.fieldConfig)
+
+        this.$nextTick(() => {
+          this.prepareToSave()
+        })
       }
     }
   },
