@@ -75,15 +75,23 @@ export default {
 
       this.fromReset = false
     },
-    valueToShow(newVal, oldVal) {
-      if (newVal != oldVal && !this.fromCreated) {
+    valueToShow(newVal) {
+      if (!this.fromCreated) {
         sendCssToFrame(newVal + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
+      }
+    },
+    property(newVal) {
+      if (!this.fromCreated) {
+        sendCssToFrame(this.value + (newVal !== 'x' ? newVal : ''), this.data.fieldConfig)
       }
     }
   },
   methods: {
     setValues() {
+      // Set the value
       this.valueToShow = this.value
+      // Set property
+      this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
       this.$nextTick(() => {
         this.fromCreated = false
       })
@@ -128,7 +136,7 @@ export default {
         return match[0]
       }
 
-      return 'px'
+      return 'x'
     },
     parseValue(value) {
       if (value == 'auto' || value == 'none' ) {
@@ -150,19 +158,21 @@ export default {
     onValueChange(value) {
       this.property = value
 
-      if (this.property == 'auto' || this.property == 'none') {
-        this.value = this.property
-        this.prepareToSave()
-        return
-      }
+      this.$nextTick(() => {
+        if (this.property == 'auto' || this.property == 'none') {
+          this.value = this.property
+          this.prepareToSave()
+          return
+        }
 
-      if (this.value == 'auto' || this.value == 'none') {
-        this.value = 0
-        this.prepareToSave()
-        return
-      }
+        if (this.value == 'auto' || this.value == 'none') {
+          this.value = 0
+          this.prepareToSave()
+          return
+        }
 
-      this.prepareToSave()
+        this.prepareToSave()
+      })
     },
     prepareToSave() {
       const isInheriting = this.checkIfIsInheriting(this.value)
@@ -371,9 +381,6 @@ export default {
     this.setValues()
   },
   mounted() {
-    // Set property
-    this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
-
     this.hammerInstance = new Hammer.Manager(this.$refs.ondrag)
     this.hammerInstance.on('hammer.input', this.onHammerInput)
 
