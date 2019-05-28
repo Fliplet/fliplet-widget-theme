@@ -451,9 +451,6 @@ export function getInheritance(variables) {
 
       return newArr
       break;
-    case 'Tablet':
-      return 'mobile'
-      break;
     default:
       return 'mobile'
   }
