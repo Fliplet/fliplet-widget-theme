@@ -26,6 +26,7 @@ import { state, saveFieldData, getDefaultFieldValue,
   getFieldName, checkIsFieldChanged, checkSizeLogic, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
+import keyHandler from '../../libs/key-down-handler'
 import bus from '../../libs/bus'
 
 export default {
@@ -221,96 +222,10 @@ export default {
       let value = parseFloat(this.value, 10)
       value = isNaN(value) ? 0 : value
 
-      this.keyMap[e.keyCode] = true
-
-      // Resets up and down keys when pressing Command
-      if (this.keyMap[91] && e.keyCode == 38 && e.metaKey) {
-        this.keyMap[40] = false
-      } else if (this.keyMap[91] && e.keyCode == 40 && e.metaKey) {
-        this.keyMap[38] = false
-      }
-
-      // Combos
-      if (this.keyMap[91] && this.keyMap[38]) {
-        // Command + Arrow up key
-        this.value = new Number(value + 100).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[91] && this.keyMap[40]) {
-        // Command + Arrow down key
-        if (new Number(value - 100).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 100).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 100).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[17] && this.keyMap[38]) {
-        // Control + Arrow up key
-        this.value = new Number(value + 100).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[17] && this.keyMap[40]) {
-        // Control + Arrow down key
-        if (new Number(value - 100).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 100).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 100).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[16] && this.keyMap[38]) {
-        // Shift + Arrow up key
-        this.value = new Number(value + 10).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[16] && this.keyMap[40]) {
-        // Shift + Arrow down key
-        if (new Number(value - 10).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 10).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 10).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[18] && this.keyMap[38]) {
-        // Alt/Option + Arrow up key
-        this.value = new Number(value + 0.1).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[18] && this.keyMap[40]) {
-        // Alt/Option + Arrow down key
-        if (new Number(value - 0.1).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 0.1).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 0.1).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[38]) {
-        // Arrow up key
-        this.value = new Number(value + 1).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[40]) {
-        // Arrow down key
-        if (new Number(value - 1).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 1).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 1).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      }
+      this.value = keyHandler.getValue(e, value, this.allowNegative)
     },
     onKeyUp(e) {
-      this.keyMap[e.keyCode] = false
-
-      // If used Command key resets Up and Down keys 
-      if (e.keyCode == 91) {
-        this.keyMap[40] = false
-        this.keyMap[38] = false
-      }
+      keyHandler.resetKeyMap(e)
     },
     onHammerInput(e) {
       if (e.distance == 0 && e.isFinal) {
@@ -332,9 +247,9 @@ export default {
         this.valueToShow = tempValue
       }
 
-      // If dragging right
+      // If dragging left
       if (e.deltaX < 0 && distanceX < distanceY) {
-        // If dragging left
+        // When it should continue decreasing or stop at 0
         if (this.valueToShow > 0) {
           tempValue -= Math.abs(halfDeltaX)
 
@@ -345,12 +260,14 @@ export default {
           }
         }
 
+        // If negative numbers are allowed
         if (this.allowNegative && this.valueToShow <= 0) {
           tempValue -= Math.abs(halfDeltaX)
           this.valueToShow = tempValue
         }
       }
 
+      // When dragging stops
       if (e.isFinal) {
         this.value = this.valueToShow
         this.prepareToSave()
