@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import { state, closeAppearanceGroupSettings, saveInheritanceData,
-  getInheritance, checkSavedValue, setComponentContext, getDefaultFieldValue } from '../../store'
+import { state, closeAppearanceGroupSettings,
+  getInheritance, checkSavedValue, setComponentContext } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'

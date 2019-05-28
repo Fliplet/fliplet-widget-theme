@@ -23,6 +23,7 @@
 
 <script>
 import { state } from '../../store'
+import theme from '../../resources/theme'
 import bus from '../../libs/bus'
 
 export default {
@@ -53,20 +54,10 @@ export default {
       }
     },
     removeInstance() {
-      return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
-        method: 'DELETE',
-        url: 'v1/widget-instances/' + state.themeInstance.id
-      })
+      return theme.delete()
     },
     createInstance(themeId) {
-      return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
-        method: 'POST',
-        url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
-        data: {
-          widgetId: themeId,
-          reuse: true
-        }
-      })
+      return theme.create(themeId, true)
     }
   }
 }

@@ -16,7 +16,7 @@
 
 <script>
 import { state, getDefaultFieldValue, getFieldName,
-  saveFieldData, checkLogic, checkIsFieldChanged } from '../../store'
+  saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 
@@ -47,7 +47,11 @@ export default {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
         checkLogic(this.data.fieldConfig, newVal)
-        this.prepareToSave()
+        sendCssToFrame(`url('${newVal.url}')`, this.data.fieldConfig)
+
+        this.$nextTick(() => {
+          this.prepareToSave()
+        })
       }
     }
   },
@@ -79,6 +83,10 @@ export default {
       saveFieldData(data)
     },
     openFilePicker() {
+      if (Fliplet.Env.get('development')) {
+        return
+      }
+
       const filePickerData = {
         selectFiles: typeof this.value === 'object' ? [this.value] : [],
         selectMultiple: false,

@@ -46,6 +46,7 @@ import QuickSettings from './components/fields/QuickSettings'
 import ComponentSettings from './components/UI/ComponentSettings'
 import deviceTypes from './libs/device-types'
 import widgetsMap from './libs/widgets-map'
+import theme from './resources/theme'
 import bus from './libs/bus'
 import { dropdown } from './libs/dropdown'
 
@@ -198,14 +199,7 @@ export default {
     },
     createDefaultInstance(themeId, toReuse) {
       toReuse = typeof toReuse === 'undefined' ? true : toReuse
-      return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
-        method: 'POST',
-        url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
-        data: {
-          widgetId: themeId,
-          reuse: toReuse
-        }
-      })
+      return theme.create(themeId, toReuse)
     },
     reloadPagePreview() {
       return Fliplet.Studio.emit('reload-page-preview');
@@ -283,15 +277,7 @@ export default {
       this.debouncedSave()
     },
     updateInstance(dataObj) {
-      return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
-        url: 'v1/widget-instances/' + state.themeInstance.id,
-        method: 'PUT',
-        data: {
-          package: state.activeTheme.package,
-          values: dataObj.values || {},
-          widgetInstances: dataObj.widgetInstances || []
-        }
-      })
+      return theme.update(dataObj)
     },
     save() {
       // Updates the theme saved settings
@@ -362,21 +348,18 @@ export default {
       this.error = undefined
     },
     resetTheme() {
-      // @TODO: Loading
-      Fliplet.API.request({
-        method: 'DELETE',
-        url: 'v1/widget-instances/' + state.themeInstance.id
-      })
-      .then(() => {
-        this.initialize(undefined, false)
-      });
+      this.isLoading = true
+
+      theme.delete()
+        .then(() => {
+          this.initialize(undefined, false)
+        })
     }
   },
   created() {
     // Listeners
     bus.$on('field-saved', this.onFieldSave)
     bus.$on('initialize-widget', this.initialize)
-    bus.$on('context-switch', this.handleContextSwitch)
     bus.$on('context-changed', this.changeContext)
     bus.$on('apply-to-theme', this.applySettingsTheme)
     bus.$on('reset-to-theme', this.resetSettingsTheme)
@@ -406,7 +389,6 @@ export default {
     // Remove listeners
     bus.$off('field-saved', this.onFieldSave)
     bus.$off('initialize-widget', this.initialize)
-    bus.$off('context-switch', this.handleContextSwitch)
     bus.$off('context-changed', this.changeContext)
     bus.$off('apply-to-theme', this.applySettingsTheme)
     bus.$off('reset-to-theme', this.resetSettingsTheme)

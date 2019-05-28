@@ -12,7 +12,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, checkIsFieldChanged } from '../../store'
+  getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
 import { ColorPicker } from 'codemirror-colorpicker'
@@ -99,13 +99,9 @@ export default {
       this.colorpicker.show({
         left: target.left,
         top: target.bottom
-      }, this.valueToShow, this.onColorChange, this.onColorChange)
+      }, this.valueToShow, this.onColorChange, this.onColorChanged)
     },
-    onColorChange(color) {
-      if (color === this.valueToShow) {
-        return
-      }
-
+    onColorChanged(color) {
       // Save last used colors to Cookie
       cookieSavedColors.unshift(color)
       if (cookieSavedColors.length > 7) {
@@ -117,6 +113,13 @@ export default {
       this.colorpicker.setUserPalette(this.colorSets)
 
       this.prepareToSave(color)
+    },
+    onColorChange(color) {
+      if (color === this.valueToShow) {
+        return
+      }
+
+      sendCssToFrame(color, this.data.fieldConfig)
     },
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting

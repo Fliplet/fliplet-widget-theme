@@ -20,7 +20,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, checkLogic, checkIsFieldChanged } from '../../store'
+  getFieldName, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import selectProperties from '../../libs/select-properties'
 import bus from '../../libs/bus'
@@ -55,7 +55,11 @@ export default {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
         checkLogic(this.data.fieldConfig, newVal)
-        this.prepareToSave()
+        sendCssToFrame(newVal, this.data.fieldConfig)
+
+        this.$nextTick(() => {
+          this.prepareToSave()
+        })
       }
     }
   },

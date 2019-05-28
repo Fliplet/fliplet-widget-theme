@@ -23,7 +23,7 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, checkIsFieldChanged } from '../../store'
+  getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import fontProperties from '../../libs/font-style-properties'
 import bus from '../../libs/bus'
@@ -105,7 +105,11 @@ export default {
       }
 
       this.value = newVal
-      this.prepareToSave()
+      sendCssToFrame(newVal.length ? newVal.join(' ') : this.subType === 'decoration' ? 'none' : 'normal', this.data.fieldConfig)
+
+      this.$nextTick(() => {
+        this.prepareToSave()
+      })
     }
   },
   methods: {

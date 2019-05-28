@@ -23,9 +23,10 @@
 
 <script>
 import { state, saveFieldData, getDefaultFieldValue,
-  getFieldName, checkIsFieldChanged, checkSizeLogic } from '../../store'
+  getFieldName, checkIsFieldChanged, checkSizeLogic, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
+import keyHandler from '../../libs/key-down-handler'
 import bus from '../../libs/bus'
 
 export default {
@@ -75,32 +76,23 @@ export default {
 
       this.fromReset = false
     },
-    valueToShow(newVal, oldVal) {
-      if (newVal != oldVal && !this.fromCreated) {
-        const cssProperties = []
-        this.data.fieldConfig.css.forEach((css) => {
-          const selectors = {
-            selector: css.selector,
-            properties: {}
-          }
-
-          css.properties.forEach((prop) => {
-            selectors.properties[prop] = newVal + (this.property !== 'x' ? this.property : '')
-          })
-
-          cssProperties.push(selectors)
-        })
-
-        Fliplet.Studio.emit('page-preview-send-event', {
-          type: 'inlineCss',
-          cssProperties: cssProperties
-        })
+    valueToShow(newVal) {
+      if (!this.fromCreated) {
+        sendCssToFrame(newVal + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
+      }
+    },
+    property(newVal) {
+      if (!this.fromCreated) {
+        sendCssToFrame(this.value + (newVal !== 'x' ? newVal : ''), this.data.fieldConfig)
       }
     }
   },
   methods: {
     setValues() {
+      // Set the value
       this.valueToShow = this.value
+      // Set property
+      this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
       this.$nextTick(() => {
         this.fromCreated = false
       })
@@ -145,7 +137,7 @@ export default {
         return match[0]
       }
 
-      return 'px'
+      return 'x'
     },
     parseValue(value) {
       if (value == 'auto' || value == 'none' ) {
@@ -167,19 +159,21 @@ export default {
     onValueChange(value) {
       this.property = value
 
-      if (this.property == 'auto' || this.property == 'none') {
-        this.value = this.property
-        this.prepareToSave()
-        return
-      }
+      this.$nextTick(() => {
+        if (this.property == 'auto' || this.property == 'none') {
+          this.value = this.property
+          this.prepareToSave()
+          return
+        }
 
-      if (this.value == 'auto' || this.value == 'none') {
-        this.value = 0
-        this.prepareToSave()
-        return
-      }
+        if (this.value == 'auto' || this.value == 'none') {
+          this.value = 0
+          this.prepareToSave()
+          return
+        }
 
-      this.prepareToSave()
+        this.prepareToSave()
+      })
     },
     prepareToSave() {
       const isInheriting = this.checkIfIsInheriting(this.value)
@@ -228,96 +222,10 @@ export default {
       let value = parseFloat(this.value, 10)
       value = isNaN(value) ? 0 : value
 
-      this.keyMap[e.keyCode] = true
-
-      // Resets up and down keys when pressing Command
-      if (this.keyMap[91] && e.keyCode == 38 && e.metaKey) {
-        this.keyMap[40] = false
-      } else if (this.keyMap[91] && e.keyCode == 40 && e.metaKey) {
-        this.keyMap[38] = false
-      }
-
-      // Combos
-      if (this.keyMap[91] && this.keyMap[38]) {
-        // Command + Arrow up key
-        this.value = new Number(value + 100).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[91] && this.keyMap[40]) {
-        // Command + Arrow down key
-        if (new Number(value - 100).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 100).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 100).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[17] && this.keyMap[38]) {
-        // Control + Arrow up key
-        this.value = new Number(value + 100).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[17] && this.keyMap[40]) {
-        // Control + Arrow down key
-        if (new Number(value - 100).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 100).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 100).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[16] && this.keyMap[38]) {
-        // Shift + Arrow up key
-        this.value = new Number(value + 10).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[16] && this.keyMap[40]) {
-        // Shift + Arrow down key
-        if (new Number(value - 10).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 10).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 10).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[18] && this.keyMap[38]) {
-        // Alt/Option + Arrow up key
-        this.value = new Number(value + 0.1).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[18] && this.keyMap[40]) {
-        // Alt/Option + Arrow down key
-        if (new Number(value - 0.1).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 0.1).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 0.1).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      } else if (this.keyMap[38]) {
-        // Arrow up key
-        this.value = new Number(value + 1).toFixed(1).replace('.0', '')
-        e.preventDefault()
-      } else if (this.keyMap[40]) {
-        // Arrow down key
-        if (new Number(value - 1).toFixed(1).replace('.0', '') > 0 || (this.allowNegative && new Number(value - 1).toFixed(1).replace('.0', '') <= 0)) {
-          // If value is 0 do nothing
-          this.value = new Number(value - 1).toFixed(1).replace('.0', '')
-          e.preventDefault()
-        } else {
-          this.value = 0
-          e.preventDefault()
-        }
-      }
+      this.value = keyHandler.getValue(e, value, this.allowNegative)
     },
     onKeyUp(e) {
-      this.keyMap[e.keyCode] = false
-
-      // If used Command key resets Up and Down keys 
-      if (e.keyCode == 91) {
-        this.keyMap[40] = false
-        this.keyMap[38] = false
-      }
+      keyHandler.resetKeyMap(e)
     },
     onHammerInput(e) {
       if (e.distance == 0 && e.isFinal) {
@@ -339,9 +247,9 @@ export default {
         this.valueToShow = tempValue
       }
 
-      // If dragging right
+      // If dragging left
       if (e.deltaX < 0 && distanceX < distanceY) {
-        // If dragging left
+        // When it should continue decreasing or stop at 0
         if (this.valueToShow > 0) {
           tempValue -= Math.abs(halfDeltaX)
 
@@ -352,12 +260,14 @@ export default {
           }
         }
 
+        // If negative numbers are allowed
         if (this.allowNegative && this.valueToShow <= 0) {
           tempValue -= Math.abs(halfDeltaX)
           this.valueToShow = tempValue
         }
       }
 
+      // When dragging stops
       if (e.isFinal) {
         this.value = this.valueToShow
         this.prepareToSave()
@@ -388,9 +298,6 @@ export default {
     this.setValues()
   },
   mounted() {
-    // Set property
-    this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
-
     this.hammerInstance = new Hammer.Manager(this.$refs.ondrag)
     this.hammerInstance.on('hammer.input', this.onHammerInput)
 
