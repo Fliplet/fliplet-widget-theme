@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, checkSavedValue } from '../../store'
+import { state, checkSavedValue } from '../../store'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
