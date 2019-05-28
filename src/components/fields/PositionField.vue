@@ -76,7 +76,7 @@ export default {
           return 'Relative to screen'
           break;
         default:
-          return 'Relative'
+          return 'Block stack'
       }
     },
     getValue() {
