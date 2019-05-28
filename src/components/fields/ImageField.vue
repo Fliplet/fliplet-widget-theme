@@ -83,6 +83,10 @@ export default {
       saveFieldData(data)
     },
     openFilePicker() {
+      if (Fliplet.Env.get('development')) {
+        return
+      }
+
       const filePickerData = {
         selectFiles: typeof this.value === 'object' ? [this.value] : [],
         selectMultiple: false,
