@@ -487,7 +487,7 @@ export function sendCssToFrame(value, currentField) {
         ? `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
         : ''
 
-    const preparedStyles = prepareStyles(css, value, widgetSelector)
+    const preparedStyles = prepareStyles(css, value, widgetSelector, currentField)
     preparedStyles.forEach((styles) => {
       cssProperties.push(styles)
     })
@@ -505,22 +505,19 @@ export function sendCssToFrame(value, currentField) {
             return
           }
 
-          // Check if the field depending on the change already has a value saved
-          const generalSavedValue = state.themeInstance.settings
-            && state.themeInstance.settings.values
-            && state.themeInstance.settings.values[field.name]
-          const savedLocalField = _.find(state.savedFields.values, { name: field.name })
-          const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
-          const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
-          const widgetSavedValue = widgetFound ? widgetFound.values[field.name] : undefined
-          const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[field.name] : undefined
           savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
             return !!widget.values[field.name]
           })
           localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
             return !!widget.values[field.name]
           })
-          if (generalSavedValue || savedLocalField || widgetSavedValue || widgetLocalSavedValue) {
+
+          const savedValues = checkSavedValue(field, true)
+
+          if (savedValues.generalSavedValue
+            || savedValues.generalLocalSavedValue
+            || savedValues.widgetSavedValue
+            || savedValues.widgetLocalSavedValue) {
             return
           }
 
@@ -534,12 +531,11 @@ export function sendCssToFrame(value, currentField) {
                 : `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
               : ''
 
-          const preparedStyles = prepareStyles(style, value, widgetSelector)
+          const preparedStyles = prepareStyles(style, value, widgetSelector, currentField)
           preparedStyles.forEach((styles) => {
             cssProperties.push(styles)
           })
         })
-
       })
     })
   })
@@ -564,19 +560,125 @@ function updateWidgetData(data) {
 }
 
 /**
+* Compile the CSS 'box-shadow' values
+* @param {Object} Object with the styles configuration
+* @param {String} The value of the field being changed
+* @param {Object} Object of the current field being changed
+* @return {String | Boolean} Returns a string of the compiled values, or returns 'false'
+*/
+function compileShadowValues(styles, value, currentField) {
+  if (!styles.siblings) {
+    return false
+  }
+
+  if (value == 'none') {
+    return value
+  }
+
+  let newValue = ''
+  const configurations = state.activeTheme.settings.configuration
+  configurations.forEach((config) => {
+    config.variables.forEach((variable) => {
+      variable.fields.some((field) => {
+        for (const key in styles.siblings) {
+          if (styles.siblings[key] === field.name) {
+            if (styles.siblings[key] === currentField.name) {
+              if (value === 'outset') {
+                break
+              }
+
+              newValue += " " + value
+              break
+            }
+
+            const finalValue = checkSavedValue(field)
+
+            if (finalValue === 'outset') {
+              break
+            }
+
+            newValue += " " + finalValue
+            break
+          }
+        }
+
+        return
+      })
+    })
+  })
+
+  return newValue.trim()
+}
+
+/**
+* Compile the CSS 'border' values
+* @param {Object} Object with the styles configuration
+* @param {String} The value of the field being changed
+* @param {Object} Object of the current field being changed
+* @return {String | Boolean} Returns a string of the compiled values, or returns 'false'
+*/
+function compileBorderValues(styles, value, currentField) {
+  if (!styles.siblings) {
+    return false
+  }
+
+  const newValue = {
+    property: '',
+    value: ''
+  }
+  
+  const configurations = state.activeTheme.settings.configuration
+  configurations.forEach((config) => {
+    config.variables.forEach((variable) => {
+      variable.fields.some((field) => {
+        for (const key in styles.siblings) {
+          if (styles.siblings[key] === field.name) {
+            if (key === 'sides') {
+              if (styles.siblings[key] === currentField.name) {
+                newValue.property = value
+                break
+              }
+
+              newValue.property = checkSavedValue(field)
+              break
+            }
+
+            if (styles.siblings[key] === currentField.name) {
+              newValue.value += " " + value
+              break
+            }
+
+            const finalValue = checkSavedValue(field)
+
+            newValue.value += " " + finalValue
+            break
+          }
+        }
+
+        return
+      })
+    })
+  })
+
+  newValue.value = newValue.value.trim()
+  return newValue
+}
+
+/**
 * Prepares the selectors, properties and values to be sent to interact.js
 * @param {Object} Object with the selectors and properties to by modified
 * @param {String} The value to be modified
 * @param {String} String of widget ID selector
 * @return {Array} Array of all the compiled selectors and properties with the value
 */
-function prepareStyles(styles, value, widgetSelector) {
+function prepareStyles(styles, value, widgetSelector, currentField) {
   if (!styles || !value || typeof widgetSelector === 'undefined') {
     return []
   }
 
   styles.parentSelector = styles.parentSelector || ''
   styles.selectors = styles.selectors || ''
+  let newValue
   const cssProperties = []
   const selectors = {
     selector: undefined,
@@ -587,8 +689,52 @@ function prepareStyles(styles, value, widgetSelector) {
     styles.selectors.forEach(() => {
       // Reset properties object
       selectors.properties = {}
-
       selectors.selector = (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+
+      if (styles.type === 'border') {
+        newValue = compileBorderValues(styles, value, currentField)
+
+        switch(newValue.property) {
+          case 'all':
+            selectors.properties['border'] = newValue.value
+            break
+          case 'top':
+            selectors.properties['border-top'] = newValue.value
+            selectors.properties['border-right'] = 'none'
+            selectors.properties['border-bottom'] = 'none'
+            selectors.properties['border-left'] = 'none'
+            break
+          case 'right':
+            selectors.properties['border-top'] = 'none'
+            selectors.properties['border-right'] = newValue.value
+            selectors.properties['border-bottom'] = 'none'
+            selectors.properties['border-left'] = 'none'
+            break
+          case 'bottom':
+            selectors.properties['border-top'] = 'none'
+            selectors.properties['border-right'] = 'none'
+            selectors.properties['border-bottom'] = newValue.value
+            selectors.properties['border-left'] = 'none'
+            break
+          case 'left':
+            selectors.properties['border-top'] = 'none'
+            selectors.properties['border-right'] = 'none'
+            selectors.properties['border-bottom'] = 'none'
+            selectors.properties['border-left'] = newValue.value
+            break
+          default:
+            selectors.properties['border'] = 'none'
+        }
+
+        cssProperties.push(selectors)
+        return cssProperties
+      }
+
+      if (styles.type === 'shadow') {
+        newValue = compileShadowValues(styles, value, currentField)
+      }
+
+      value = newValue || value
       styles.properties.forEach((prop) => {
         selectors.properties[prop] = value
       })
@@ -597,6 +743,51 @@ function prepareStyles(styles, value, widgetSelector) {
     })
   } else {
     selectors.selector = (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+
+    if (styles.type === 'border') {
+      newValue = compileBorderValues(styles, value, currentField)
+
+      switch(newValue.property) {
+        case 'all':
+          selectors.properties['border'] = newValue.value
+          break
+        case 'top':
+          selectors.properties['border-top'] = newValue.value
+          selectors.properties['border-right'] = 'none'
+          selectors.properties['border-bottom'] = 'none'
+          selectors.properties['border-left'] = 'none'
+          break
+        case 'right':
+          selectors.properties['border-top'] = 'none'
+          selectors.properties['border-right'] = newValue.value
+          selectors.properties['border-bottom'] = 'none'
+          selectors.properties['border-left'] = 'none'
+          break
+        case 'bottom':
+          selectors.properties['border-top'] = 'none'
+          selectors.properties['border-right'] = 'none'
+          selectors.properties['border-bottom'] = newValue.value
+          selectors.properties['border-left'] = 'none'
+          break
+        case 'left':
+          selectors.properties['border-top'] = 'none'
+          selectors.properties['border-right'] = 'none'
+          selectors.properties['border-bottom'] = 'none'
+          selectors.properties['border-left'] = newValue.value
+          break
+        default:
+          selectors.properties['border'] = 'none'
+      }
+
+      cssProperties.push(selectors)
+      return cssProperties
+    }
+
+    if (styles.type === 'shadow') {
+      newValue = compileShadowValues(styles, value, currentField)
+    }
+
+    value = newValue || value
     styles.properties.forEach((prop) => {
       selectors.properties[prop] = value
     })
