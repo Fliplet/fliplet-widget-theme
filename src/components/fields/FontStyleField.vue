@@ -164,6 +164,7 @@ export default {
 
       if (this.fromReset) {
         this.value = this.getValue()
+        sendCssToFrame(this.value, this.data.fieldConfig)
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'

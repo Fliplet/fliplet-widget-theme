@@ -584,11 +584,12 @@ function compileShadowValues(styles, value, currentField) {
                 break
               }
 
-              newValue += " " + value
+              newValue += " " + checkFieldValue(value, currentField)
               break
             }
 
-            const finalValue = checkSavedValue(field)
+            const fieldValue = checkSavedValue(field)
+            const finalValue = checkFieldValue(fieldValue, field)
 
             if (finalValue === 'outset') {
               break
@@ -632,20 +633,22 @@ function compileBorderValues(styles, value, currentField) {
           if (styles.siblings[key] === field.name) {
             if (key === 'sides') {
               if (styles.siblings[key] === currentField.name) {
-                newValue.property = value
+                newValue.property = checkFieldValue(value, currentField)
                 break
               }
 
-              newValue.property = checkSavedValue(field)
+              const fieldValue = checkSavedValue(field)
+              newValue.property = checkFieldValue(fieldValue, field)
               break
             }
 
             if (styles.siblings[key] === currentField.name) {
-              newValue.value += " " + value
+              newValue.value += " " + checkFieldValue(value, currentField)
               break
             }
 
-            const finalValue = checkSavedValue(field)
+            const fieldValue = checkSavedValue(field)
+            const finalValue = checkFieldValue(fieldValue, field)
 
             newValue.value += " " + finalValue
             break
@@ -731,7 +734,7 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
         newValue = compileShadowValues(styles, value, currentField)
       }
 
-      value = newValue || value
+      value = newValue || checkFieldValue(value, currentField)
       styles.properties.forEach((prop) => {
         selectors.properties[prop] = value
       })
@@ -784,7 +787,7 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       newValue = compileShadowValues(styles, value, currentField)
     }
 
-    value = newValue || value
+    value = newValue || checkFieldValue(value, currentField)
     styles.properties.forEach((prop) => {
       selectors.properties[prop] = value
     })

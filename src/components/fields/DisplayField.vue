@@ -101,6 +101,7 @@ export default {
       if (this.fromReset) {
         this.value = this.getValue()
         checkLogic(this.data.fieldConfig, this.value)
+        sendCssToFrame(this.value, this.data.fieldConfig)
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'

@@ -280,12 +280,13 @@ export default {
       this.isInheriting = this.checkInheritance()
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
       this.valueToShow = this.getValueToShow()
+      this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
 
       if (this.fromReset) {
         this.value = this.getValueToShow()
+        sendCssToFrame(this.value + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
       }
 
-      this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
