@@ -689,7 +689,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
     styles.selectors.forEach(() => {
       // Reset properties object
       selectors.properties = {}
-      selectors.selector = (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+      const selector = styles.parentSelector
+        ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+        : ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
+      selectors.selector = selector
 
       if (styles.type === 'border') {
         newValue = compileBorderValues(styles, value, currentField)
@@ -742,7 +745,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       cssProperties.push(selectors)
     })
   } else {
-    selectors.selector = (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+    const selector = styles.parentSelector
+      ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+      : ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
+    selectors.selector = selector
 
     if (styles.type === 'border') {
       newValue = compileBorderValues(styles, value, currentField)
