@@ -479,9 +479,9 @@ export function sendCssToFrame(value, currentField) {
   styles.forEach((css) => {
     const widgetSelector = state.widgetMode
       ? currentField.name === 'Accordion'
-        ? `[data-collapse-id="${state.widgetId}"]` : `[data-id="${state.widgetId}"]`
+        ? `[data-collapse-id='${state.widgetId}']` : `[data-id='${state.widgetId}']`
       : savedWidgetFound || localSavedWidgetFound
-        ? `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
+        ? `:not([data-id='${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}'])`
         : ''
 
     const preparedStyles = prepareStyles(css, value, widgetSelector, currentField)
