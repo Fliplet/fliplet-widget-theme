@@ -2,7 +2,7 @@
   <div id="theme-application" :class="{ 'theme-selection-hidden': !themes || (themes && themes.length <= 1) }">
     <link rel="stylesheet" type="text/css" :href="customFontsCssUrl" />
     <div v-if="isLoading" class="spinner-holder animated">
-      <div class="spinner-overlay">Loadings...</div>
+      <div class="spinner-overlay">Loading...</div>
       <p>Loading your settings...</p>
     </div>
     <template v-else>
