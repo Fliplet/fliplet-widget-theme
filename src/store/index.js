@@ -691,7 +691,9 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       selectors.properties = {}
       const selector = styles.parentSelector
         ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
-        : ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
+        : widgetSelector
+          ? ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
+          : styles.selectors
       selectors.selector = selector
 
       if (styles.type === 'border') {
@@ -747,7 +749,9 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
   } else {
     const selector = styles.parentSelector
       ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
-      : ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
+      : widgetSelector
+        ? ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
+        : styles.selectors
     selectors.selector = selector
 
     if (styles.type === 'border') {
