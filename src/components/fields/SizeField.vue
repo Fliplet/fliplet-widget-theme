@@ -219,7 +219,7 @@ export default {
       this.enterPressedToClose = true
     },
     onKeyDown(e) {
-      let value = parseFloat(this.value, 10)
+      let value = this.value
       value = isNaN(value) ? 0 : value
 
       this.value = keyHandler.getValue(e, value, this.allowNegative)
@@ -238,7 +238,7 @@ export default {
       const halfDeltaX = Math.floor(e.deltaX / 1.5)
 
       // Normalize
-      this.value = isNaN(this.value) ? 0 : parseInt(this.value)
+      this.value = isNaN(this.value) ? 0 : this.value
       let tempValue = this.value
 
       // If dragging right
