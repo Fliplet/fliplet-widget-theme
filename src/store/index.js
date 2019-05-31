@@ -815,6 +815,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
 * @return {String} Final field value
 */
 function checkFieldValue(value, field) {
+  if (!value) {
+    return
+  }
+
   let foundValue
   let defaultValue
   let tempVariableName
@@ -946,10 +950,6 @@ function checkFieldValue(value, field) {
     foundValue = foundWidget ? foundWidget.values[inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name] : undefined
     if (foundValue) {
       return checkFieldValue(foundValue, field)
-    }
-
-    if (inherit != 'mobile' && !field.isQuickSetting) {
-      return checkFieldValue(field.breakpoints[inherit].default, field)
     }
   }
 
