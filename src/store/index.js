@@ -339,7 +339,7 @@ export function getDefaultFieldValue(field) {
     ? field.default
     : field.breakpoints[state.componentContext.toLowerCase()].default
 
-  savedValue = field.value || checkSavedValue(field)
+  savedValue = checkSavedValue(field)
 
   return checkFieldValue(savedValue || defaultValue, field)
 }
