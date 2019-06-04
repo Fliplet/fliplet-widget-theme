@@ -13,6 +13,7 @@ export const state = {
   isSaving: false,
   dataToSave: [],
   componentContext: 'Mobile',
+  activeTab: 0,
   savedFields: {
     values: [],
     widgetInstances: []
@@ -90,6 +91,10 @@ export function resetStylesToTheme(widgetId, appearanceGroup) {
 */
 export function setComponentContext(context) {
   state.componentContext = context
+}
+
+export function setActiveTab(tab) {
+  state.activeTab = tab
 }
 
 /**

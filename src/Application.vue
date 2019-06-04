@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { state, setComponentContext,
+import { state, setComponentContext, setActiveTab,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId,
   setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
@@ -87,6 +87,7 @@ export default {
     },
     handleContextSwitch(tab) {
       tab = tab || this.tabs[0]
+      setActiveTab(_.findIndex(deviceTypes, { name: tab.name }))
       setComponentContext(tab.name)
     },
     handleAppearanceGroup(group) {

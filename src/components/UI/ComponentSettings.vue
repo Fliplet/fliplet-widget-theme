@@ -7,7 +7,7 @@
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
-        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: activeTab == index }" :ref="index">
+        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: state.activeTab == index }" :ref="index">
           <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
         </li>
       </ul>
@@ -50,7 +50,7 @@
 
 <script>
 import { state, closeAppearanceGroupSettings,
-  getInheritance, checkSavedValue, setComponentContext } from '../../store'
+  getInheritance, checkSavedValue, setComponentContext, setActiveTab } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'
@@ -81,7 +81,6 @@ export default {
       },
       currentContext: undefined,
       tabs: deviceTypes,
-      activeTab: this.getActiveTab(),
       componentKey: 0,
       groupedComponentKey: 0,
       isChanged: false
@@ -120,21 +119,17 @@ export default {
       this.groupedComponentKey += 1
       this.componentKey += 1
     },
-    setActiveTab(tab) {
+    updateActiveTab(tab) {
       // Sets the active device tab
       tab = tab || this.tabs[0]
-      const tabIndex = _.findIndex(this.tabs, { type: tab.type })
-      this.activeTab = tabIndex
+      setActiveTab(_.findIndex(this.tabs, { type: tab.type }))
     },
     handleContextSwitch(tab) {
-      this.setActiveTab(tab)
+      this.updateActiveTab(tab)
       setComponentContext(tab.name, true)
       Fliplet.Studio.emit('select-device-tab', tab.type === 'desktop' ? 'web' : tab.type)
       this.forceRerender()
       this.reSetVariables()
-    },
-    getActiveTab() {
-      return _.findIndex(deviceTypes, { name: state.componentContext })
     },
     groupFontStyleFields(fields) {
       // This function makes all the font style fields (Bold, Italic, Underline, etc) together
