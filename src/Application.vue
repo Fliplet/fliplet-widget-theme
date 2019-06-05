@@ -36,7 +36,7 @@
 <script>
 import { state, setComponentContext, setActiveTab,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId,
-  setWebFonts, setCustomFonts, setSavedFields, setWidgetData,
+  setWebFonts, setCustomFonts, setSavedFields, handleWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
   toggleSavingStatus, openAppearanceGroupSettings } from './store'
 import WidgetHeader from './components/UI/WidgetHeader'
@@ -80,6 +80,9 @@ export default {
     SettingsButtons,
     QuickSettings,
     ComponentSettings
+  },
+  watch: {
+
   },
   methods: {
     getQuickSettings() {
@@ -125,7 +128,7 @@ export default {
       const widgetId = Fliplet.Widget.getDefaultId()
       const widgetData = widgetInstanceData || Fliplet.Widget.getData(widgetId) || {}
 
-      setWidgetData(widgetData)
+      handleWidgetData(widgetData)
 
       // Get themes and fonts simultaneously
       return Promise.all([this.getThemes(), this.getFonts()])
@@ -377,6 +380,9 @@ export default {
     Fliplet.Studio.onMessage((eventData) => {
       if (eventData && eventData.data && eventData.data.type === 'theme-set-current-widget-instance') {
         bus.$emit('initialize-widget', eventData.data.widgetData)
+      }
+      if (eventData && eventData.data && eventData.data.type === 'device-tab-changed') {
+        handleWidgetData(eventData.data.widgetData)
       }
       if (eventData && eventData.data && eventData.data.type === 'custom-fonts-closed') {
         this.reloadCustomFonts()

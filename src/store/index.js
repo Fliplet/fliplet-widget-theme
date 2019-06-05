@@ -1,3 +1,4 @@
+import deviceTypes from '../libs/device-types'
 import bus from '../libs/bus'
 
 export const state = {
@@ -29,8 +30,14 @@ export const state = {
 *   General styles: Contains "activeTab", "id", "version", "package" properties
 *   Widget styles: Contains the same as above, plus "widgetInstanceId", "widgetPackage"
 */
-export function setWidgetData(data) {
+export function handleWidgetData(data) {
   state.widgetData = data
+
+  if (typeof data.activeTab !== 'undefined') {
+    setActiveTab(data.activeTab)
+    deviceTypes[data.activeTab]
+    setComponentContext(deviceTypes[data.activeTab].name)
+  }
 }
 
 /**
