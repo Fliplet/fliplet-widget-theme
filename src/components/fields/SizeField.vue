@@ -150,7 +150,7 @@ export default {
 
       let parsedValue = value.replace(new RegExp(this.getProperties().join('$|') + '$'), '')
       if (parsedValue == '') {
-        parsedValue = 100
+        parsedValue = 0
       }
       const parsedFloatVal = parseFloat(parsedValue, 10)
 
@@ -167,7 +167,7 @@ export default {
         }
 
         if (this.value == 'auto' || this.value == 'none') {
-          this.value = 0
+          this.value = 100
           this.prepareToSave()
           return
         }

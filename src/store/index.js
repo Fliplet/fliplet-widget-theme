@@ -701,7 +701,89 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
           : styles.selectors
       selectors.selector = selector
 
-      if (styles.type === 'border') {
+      switch (styles.type) {
+        case 'border':
+          newValue = compileBorderValues(styles, value, currentField)
+
+          switch(newValue.property) {
+            case 'all':
+              selectors.properties['border'] = newValue.value
+              break
+            case 'top':
+              selectors.properties['border-top'] = newValue.value
+              selectors.properties['border-right'] = 'none'
+              selectors.properties['border-bottom'] = 'none'
+              selectors.properties['border-left'] = 'none'
+              break
+            case 'right':
+              selectors.properties['border-top'] = 'none'
+              selectors.properties['border-right'] = newValue.value
+              selectors.properties['border-bottom'] = 'none'
+              selectors.properties['border-left'] = 'none'
+              break
+            case 'bottom':
+              selectors.properties['border-top'] = 'none'
+              selectors.properties['border-right'] = 'none'
+              selectors.properties['border-bottom'] = newValue.value
+              selectors.properties['border-left'] = 'none'
+              break
+            case 'left':
+              selectors.properties['border-top'] = 'none'
+              selectors.properties['border-right'] = 'none'
+              selectors.properties['border-bottom'] = 'none'
+              selectors.properties['border-left'] = newValue.value
+              break
+            default:
+              selectors.properties['border'] = 'none'
+          }
+
+          cssProperties.push(selectors)
+          return cssProperties
+          break
+        case 'shadow':
+          newValue = compileShadowValues(styles, value, currentField)
+          break
+        case 'margin':
+          switch (value) {
+            case 'left':
+              selectors.properties['margin-left'] = '0px'
+              selectors.properties['margin-right'] = 'auto'
+              break
+            case 'right':
+              selectors.properties['margin-left'] = 'auto'
+              selectors.properties['margin-right'] = '0px'
+              break
+            case 'center':
+              selectors.properties['margin-left'] = 'auto'
+              selectors.properties['margin-right'] = 'auto'
+              break
+            default:
+          }
+
+          cssProperties.push(selectors)
+          return cssProperties
+          break
+        default:
+          newValue = undefined
+      }
+
+      value = newValue || checkFieldValue(value, currentField)
+      styles.properties.forEach((prop) => {
+        selectors.properties[prop] = value
+      })
+
+      cssProperties.push(selectors)
+    })
+  } else {
+    const selector = styles.parentSelector
+      ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+      : widgetSelector
+        ? ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
+        : styles.selectors
+    selectors.selector = selector
+
+    switch (styles.type) {
+      case 'border':
         newValue = compileBorderValues(styles, value, currentField)
 
         switch(newValue.property) {
@@ -738,68 +820,32 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
 
         cssProperties.push(selectors)
         return cssProperties
-      }
-
-      if (styles.type === 'shadow') {
+        break
+      case 'shadow':
         newValue = compileShadowValues(styles, value, currentField)
-      }
+        break
+      case 'margin':
+        switch (value) {
+          case 'left':
+            selectors.properties['margin-left'] = '0px'
+            selectors.properties['margin-right'] = 'auto'
+            break
+          case 'right':
+            selectors.properties['margin-left'] = 'auto'
+            selectors.properties['margin-right'] = '0px'
+            break
+          case 'center':
+            selectors.properties['margin-left'] = 'auto'
+            selectors.properties['margin-right'] = 'auto'
+            break
+          default:
+        }
 
-      value = newValue || checkFieldValue(value, currentField)
-      styles.properties.forEach((prop) => {
-        selectors.properties[prop] = value
-      })
-
-      cssProperties.push(selectors)
-    })
-  } else {
-    const selector = styles.parentSelector
-      ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
-      : widgetSelector
-        ? ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
-        : styles.selectors
-    selectors.selector = selector
-
-    if (styles.type === 'border') {
-      newValue = compileBorderValues(styles, value, currentField)
-
-      switch(newValue.property) {
-        case 'all':
-          selectors.properties['border'] = newValue.value
-          break
-        case 'top':
-          selectors.properties['border-top'] = newValue.value
-          selectors.properties['border-right'] = 'none'
-          selectors.properties['border-bottom'] = 'none'
-          selectors.properties['border-left'] = 'none'
-          break
-        case 'right':
-          selectors.properties['border-top'] = 'none'
-          selectors.properties['border-right'] = newValue.value
-          selectors.properties['border-bottom'] = 'none'
-          selectors.properties['border-left'] = 'none'
-          break
-        case 'bottom':
-          selectors.properties['border-top'] = 'none'
-          selectors.properties['border-right'] = 'none'
-          selectors.properties['border-bottom'] = newValue.value
-          selectors.properties['border-left'] = 'none'
-          break
-        case 'left':
-          selectors.properties['border-top'] = 'none'
-          selectors.properties['border-right'] = 'none'
-          selectors.properties['border-bottom'] = 'none'
-          selectors.properties['border-left'] = newValue.value
-          break
-        default:
-          selectors.properties['border'] = 'none'
-      }
-
-      cssProperties.push(selectors)
-      return cssProperties
-    }
-
-    if (styles.type === 'shadow') {
-      newValue = compileShadowValues(styles, value, currentField)
+        cssProperties.push(selectors)
+        return cssProperties
+        break
+      default:
+        newValue = undefined
     }
 
     value = newValue || checkFieldValue(value, currentField)

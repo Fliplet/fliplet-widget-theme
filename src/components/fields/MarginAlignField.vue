@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getFieldName,
+import { state, getDefaultFieldValue, getFieldName, sendCssToFrame,
   checkMarginLogic, saveFieldData, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import marginAlignProperties from '../../libs/margin-align-properties'
@@ -60,6 +60,7 @@ export default {
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
         checkMarginLogic(this.data.fieldConfig, newVal)
+        sendCssToFrame(newVal, this.data.fieldConfig)
         this.prepareToSave()
         return
       }
