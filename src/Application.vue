@@ -38,7 +38,7 @@ import { state, setComponentContext, setActiveTab,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId,
   setWebFonts, setCustomFonts, setSavedFields, handleWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
-  toggleSavingStatus, openAppearanceGroupSettings } from './store'
+  toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings } from './store'
 import WidgetHeader from './components/UI/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import SettingsButtons from './components/UI/SettingsButtons'
@@ -182,6 +182,10 @@ export default {
           return
         }
 
+        setWidgetMode(false)
+        if (state.appearanceGroupOverlay.isOpen) {
+          closeAppearanceGroupSettings()
+        }
         this.handleContextSwitch(tab)
         this.isLoading = false
       })
