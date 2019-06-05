@@ -60,6 +60,15 @@ header {
   }
 }
 
+.danger-circle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: $danger-color;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+}
+
 #theme-widget-holder {
   font-size: 13px;
   height: 100%;

@@ -46,6 +46,14 @@ header {
   .control-label label {
     margin: 0; }
 
+.danger-circle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: #F05865;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%; }
+
 #theme-widget-holder {
   font-size: 13px;
   height: 100%;
@@ -354,6 +362,10 @@ header {
     #component-settings-overlay .settings-fields .control-label {
       text-transform: uppercase;
       font-weight: 600; }
+      #component-settings-overlay .settings-fields .control-label span {
+        text-transform: none;
+        font-weight: normal;
+        font-size: 12px; }
     #component-settings-overlay .settings-fields .form-group {
       margin-bottom: 25px; }
     #component-settings-overlay .settings-fields .multi-field {

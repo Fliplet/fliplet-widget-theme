@@ -40,6 +40,12 @@
     .control-label {
       text-transform: uppercase;
       font-weight: 600;
+
+      span {
+        text-transform: none;
+        font-weight: normal;
+        font-size: 12px;
+      }
     }
 
     .form-group {
