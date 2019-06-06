@@ -701,14 +701,14 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
   }
 
   if (Array.isArray(styles.selectors)) {
-    styles.selectors.forEach(() => {
+    styles.selectors.forEach((sel) => {
       // Reset properties object
       selectors.properties = {}
       const selector = styles.parentSelector
-        ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
+        ? (styles.parentSelector + widgetSelector + ' ' + sel).trim()
         : widgetSelector
-          ? ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
-          : styles.selectors
+          ? ('div' + widgetSelector + ' ' + sel + ', ' + 'span' + widgetSelector + ' ' + sel).trim()
+          : sel
       selectors.selector = selector
 
       switch (styles.type) {
@@ -771,6 +771,31 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
           }
 
           cssProperties.push(selectors)
+          return cssProperties
+          break
+        case 'height':
+          styles.preSelectors.forEach((preSelector) => {
+            selectors.selector = preSelector.selector + ' ' + selector
+            switch (preSelector.type) {
+              case 'top':
+                selectors.properties['height'] = 'calc(' + value + ' - 44px)'
+                break
+              case 'bottom':
+                selectors.properties['height'] = 'calc(' + value + ' - 65px)'
+                break
+              case 'top-with-notch':
+                selectors.properties['height'] = 'calc(' + value + ' - (44px + 34px))'
+                break
+              case 'bottom-with-notch':
+                selectors.properties['height'] = 'calc(' + value + ' - (65px + 34px))'
+                break
+              default:
+            }
+
+            const newSelectors = _.clone(selectors)
+            cssProperties.push(newSelectors)
+          })
+
           return cssProperties
           break
         default:
@@ -852,6 +877,31 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
         }
 
         cssProperties.push(selectors)
+        return cssProperties
+        break
+      case 'height':
+        styles.preSelectors.forEach((preSelector) => {
+          selectors.selector = preSelector.selector + ' ' + selector
+          switch (preSelector.type) {
+            case 'top':
+              selectors.properties['height'] = 'calc(' + value + ' - 44px)'
+              break
+            case 'bottom':
+              selectors.properties['height'] = 'calc(' + value + ' - 65px)'
+              break
+            case 'top-with-notch':
+              selectors.properties['height'] = 'calc(' + value + ' - (44px + 34px))'
+              break
+            case 'bottom-with-notch':
+              selectors.properties['height'] = 'calc(' + value + ' - (65px + 34px))'
+              break
+            default:
+          }
+
+          const newSelectors = _.clone(selectors)
+          cssProperties.push(newSelectors)
+        })
+
         return cssProperties
         break
       default:
