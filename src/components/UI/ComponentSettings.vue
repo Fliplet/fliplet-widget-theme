@@ -15,11 +15,7 @@
         <div v-for="(variable, index) in variables" v-if="showVariable(variable)" :key="index">
           <div class="form-group clearfix">
             <div class="col-xs-12 control-label">
-              <label>{{ variable.description }} 
-                <span v-if="variable.showWarning">
-                  <span class='danger-circle'></span> Requires a preview refresh
-                </span>
-              </label>
+              <label>{{ variable.description }}</label>
             </div>
             <template v-if="notMobile && !ignoreInheritance(variable)">
               <div class="inherit-settings col-xs-12">

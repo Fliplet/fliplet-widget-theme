@@ -479,6 +479,7 @@ export function sendCssToFrame(value, currentField) {
 
   const configurations = state.activeTheme.settings.configuration
   const cssProperties = []
+  let triggerResize = false
   const styles = currentField.styles || []
   let savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
     return !!widget.values[currentField.name]
@@ -489,6 +490,7 @@ export function sendCssToFrame(value, currentField) {
 
   // If there is a "styles" key
   styles.forEach((css) => {
+    triggerResize = css.triggerResize
     const widgetSelector = state.widgetMode
       ? currentField.name === 'Accordion'
         ? `[data-collapse-id='${state.widgetId}']` : `[data-id='${state.widgetId}']`
@@ -551,7 +553,8 @@ export function sendCssToFrame(value, currentField) {
 
   Fliplet.Studio.emit('page-preview-send-event', {
     type: 'inlineCss',
-    cssProperties: cssProperties
+    cssProperties: cssProperties,
+    resize: triggerResize
   })
 }
 
