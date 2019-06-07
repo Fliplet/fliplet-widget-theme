@@ -59,7 +59,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal !== oldVal) {
+      if (newVal != oldVal) {
         sendCssToFrame(newVal, this.data.fieldConfig)
         this.$nextTick(() => {
           this.prepareToSave()

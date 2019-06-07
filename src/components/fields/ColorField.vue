@@ -112,7 +112,9 @@ export default {
       this.colorSets[2].colors = cookieSavedColors
       this.colorpicker.setUserPalette(this.colorSets)
 
-      this.prepareToSave(color)
+      if (this.valueToShow != color) {
+        this.prepareToSave(color)
+      }
     },
     onColorChange(color) {
       if (color === this.valueToShow) {

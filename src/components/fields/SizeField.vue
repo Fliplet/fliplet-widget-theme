@@ -1,14 +1,16 @@
 <template>
   <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
     <div class="interactive-holder">
-      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
+      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' || property == 'initial' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ property }}
+          <template v-if="property == 'initial'">none</template>
+          <template v-else>{{ property }}</template>
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
-          <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop === property }">
-            <a href="#" @click.prevent="onValueChange(prop)">{{ prop }}</a>
+          <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop === property || prop.value && prop.value === property }">
+            <a v-if="prop.hasOwnProperty('name') && prop.hasOwnProperty('value')" href="#" @click.prevent="onValueChange(prop.value)">{{ prop.name }}</a>
+            <a v-else href="#" @click.prevent="onValueChange(prop)">{{ prop }}</a>
           </li>
         </ul>
       </div>
@@ -66,9 +68,6 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      const isInheriting = this.checkIfIsInheriting(newVal)
-      this.valueToShow = isInheriting ? oldVal : newVal
-
       if (newVal != oldVal && !this.fromReset && !this.inputIsActive) {
         this.prepareToSave()
         return
@@ -90,15 +89,22 @@ export default {
   methods: {
     setValues() {
       // Set the value
-      this.valueToShow = this.value
+      this.valueToShow = this.value == 'initial' ? 'none' : this.value
       // Set property
       this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
       this.$nextTick(() => {
         this.fromCreated = false
       })
     },
-    getValueToShow() {
-      return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
+    getValueToShow(toShow) {
+      const parsedValue = this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
+
+      if (!toShow) {
+        return parsedValue
+      }
+
+      const value = parsedValue == 'initial' ? 'none' : parsedValue
+      return value
     },
     getProperties() {
       const type = typeof this.data.fieldConfig.subtype !== 'undefined' && this.data.fieldConfig.subtype !== ''
@@ -127,7 +133,7 @@ export default {
       return inherit || variableName ? true : false
     },
     getProperty(value) {
-      if (value == 'auto' || value == 'none' ) {
+      if (value == 'auto' || value == 'none' || value == 'initial') {
         return value
       }
 
@@ -140,7 +146,7 @@ export default {
       return 'x'
     },
     parseValue(value) {
-      if (value == 'auto' || value == 'none' ) {
+      if (value == 'auto' || value == 'none' || value == 'initial') {
         return value
       }
 
@@ -160,13 +166,13 @@ export default {
       this.property = value
 
       this.$nextTick(() => {
-        if (this.property == 'auto' || this.property == 'none') {
+        if (this.property == 'auto' || this.property == 'none' || this.property == 'initial') {
           this.value = this.property
           this.prepareToSave()
           return
         }
 
-        if (this.value == 'auto' || this.value == 'none') {
+        if (this.value == 'auto' || this.value == 'none' || this.value == 'initial') {
           this.value = 100
           this.prepareToSave()
           return
@@ -179,7 +185,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting || this.value == 'auto' || this.value == 'none' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' ? this.property : '') : '0' + (this.property !== 'x' ? this.property : '')
+        value: isInheriting || this.value == 'auto' || this.value == 'none' || this.value == 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' ? this.property : '') : '0' + (this.property !== 'x' ? this.property : '')
       }
 
       if (this.isAligned) {
@@ -193,7 +199,7 @@ export default {
       this.inputIsActive = this.enterPressedToClose ? this.inputIsActive : !this.inputIsActive
     },
     manualEdit(event) {
-      if (this.value == 'auto' || this.value == 'none') {
+      if (this.value == 'auto' || this.value == 'none' || this.value == 'initial') {
         event.preventDefault()
         event.stopPropagation()
         $(this.$refs.dropdowntoggle).dropdown('toggle')
@@ -209,14 +215,28 @@ export default {
       }
     },
     onInputBlur() {
-      this.prepareToSave()
       this.editToggle()
       this.enterPressedToClose = false
+
+      if (this.valueToShow != this.value) {
+        this.valueToShow = this.checkIfIsInheriting(this.value)
+        ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
+        : this.value == 'initial' ? 'none' : this.value
+
+        this.prepareToSave()
+      }
     },
     onInputEnter() {
-      this.prepareToSave()
       this.editToggle()
       this.enterPressedToClose = true
+
+      if (this.valueToShow != this.value) {
+        this.valueToShow = this.checkIfIsInheriting(this.value)
+        ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
+        : this.value == 'initial' ? 'none' : this.value
+
+        this.prepareToSave()
+      }
     },
     onKeyDown(e) {
       let value = this.value
@@ -279,7 +299,7 @@ export default {
     reCheckProps() {
       this.isInheriting = this.checkInheritance()
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
-      this.valueToShow = this.getValueToShow()
+      this.valueToShow = this.getValueToShow(true)
       this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
 
       if (this.fromReset) {
