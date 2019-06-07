@@ -25,4 +25,9 @@
       font-size: 18px;
     }
   }
+
+  ~ .buttons-holder {
+    justify-content: center;
+    margin-bottom: 0;
+  }
 }

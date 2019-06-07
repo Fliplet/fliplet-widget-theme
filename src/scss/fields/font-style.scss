@@ -2,28 +2,8 @@
   position: relative;
   margin-right: 0 !important;
 
-  .checkbox-holder.inline-boxed:last-child label {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-  }
-
   ~ .style-field-holder {
-    margin-left: 0 !important;
-
-    .checkbox-holder.inline-boxed:last-child label {
-      border-radius: 0px;
-      border-left: none;
-    }
-
-    ~ .style-field-holder {
-      .checkbox-holder.inline-boxed:last-child label {
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-        border-left: none;
-      }
-    }
+    margin-left: 4px !important;
   }
 
   .wrapper {

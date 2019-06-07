@@ -56,14 +56,14 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      padding: 0 3px;
+      padding: 0;
     }
 
     .multi-field {
       > * {
         display: flex;
         width: auto;
-        margin: 0 12px 8px 12px;
+        margin: 0 15px 8px 15px;
       }
     }
 
@@ -74,43 +74,6 @@
 
     .half-width {
       min-width: calc(50% - 30px);
-    }
-
-    .buttons-holder {
-      display: flex;
-      align-items: center;
-      padding: 0 15px;
-      margin: 40px 0 25px;
-
-      .btn + .btn {
-        margin: 0;
-      }
-
-      .btn-primary {
-        background: transparent;
-        border: 1px solid rgba($text-color, 0.5);
-        border-radius: 45px;
-        line-height: 2.4;
-        color: rgba($text-color, 0.5);
-
-        &:hover {
-          color: #333333;
-        }
-      }
-
-      .btn-default {
-        background: transparent;
-        line-height: 2.4;
-        color: rgba($text-color, 0.5);
-
-        &:hover {
-          color: $text-color;
-        }
-
-        &:active {
-          box-shadow: none;
-        }
-      }
     }
   }
 }
