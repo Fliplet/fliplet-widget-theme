@@ -680,6 +680,53 @@ function compileBorderValues(styles, value, currentField) {
 }
 
 /**
+* Compile the CSS 'position' values
+* @param {Object} Object with the styles configuration
+* @param {Object} Object of the current field being changed
+* @return {Array} Returns an array of the positions CSS properties
+*/
+function compilePositionValues(styles, currentField) {
+  if (!styles.siblings) {
+    return false
+  }
+
+  const positionProperties = {}
+  
+  const configurations = state.activeTheme.settings.configuration
+  configurations.forEach((config) => {
+    config.variables.forEach((variable) => {
+      variable.fields.some((field) => {
+        for (const key in styles.siblings) {
+          if (styles.siblings[key] === field.name) {
+            const fieldValue = checkSavedValue(field)
+            const value = checkFieldValue(fieldValue, field)
+            switch (key) {
+              case 'top':
+                positionProperties['top'] = value
+                break
+              case 'right':
+                positionProperties['right'] = value
+                break
+              case 'bottom':
+                positionProperties['bottom'] = value
+                break
+              case 'left':
+               positionProperties['left'] = value
+                break
+              default:
+            }
+            break
+          }
+        }
+        return
+      })
+    })
+  })
+
+  return positionProperties
+}
+
+/**
 * Prepares the selectors, properties and values to be sent to interact.js
 * @param {Object} Object with the selectors and properties to by modified
 * @param {String} The value to be modified
@@ -752,6 +799,29 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
           break
         case 'shadow':
           newValue = compileShadowValues(styles, value, currentField)
+          break
+        case 'position':
+          const positions = compilePositionValues(styles, currentField)
+
+          switch (value) {
+            case 'relative':
+              selectors.properties['position'] = value
+              for (const key in positions) {
+                selectors.properties[key] = 'auto'
+              }
+              break
+            case 'fixed':
+            case 'absolute':
+              selectors.properties['position'] = value
+              for (const key in positions) {
+                selectors.properties[key] = positions[key]
+              }
+              break
+            default:
+          }
+
+          cssProperties.push(selectors)
+          return cssProperties
           break
         case 'margin':
           switch (value) {
@@ -858,6 +928,29 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
         break
       case 'shadow':
         newValue = compileShadowValues(styles, value, currentField)
+        break
+      case 'position':
+        const positions = compilePositionValues(styles, currentField)
+
+        switch (value) {
+          case 'relative':
+            selectors.properties['position'] = value
+            for (const key in positions) {
+              selectors.properties[key] = 'auto'
+            }
+            break
+          case 'fixed':
+          case 'absolute':
+            selectors.properties['position'] = value
+            for (const key in positions) {
+              selectors.properties[key] = positions[key]
+            }
+            break
+          default:
+        }
+
+        cssProperties.push(selectors)
+        return cssProperties
         break
       case 'margin':
         switch (value) {
