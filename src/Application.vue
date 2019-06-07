@@ -9,13 +9,13 @@
       <div class="top-area-fixed">
         <WidgetHeader></WidgetHeader>
         <ThemeSelection v-if="themes && themes.length > 1" :themes="themes"></ThemeSelection>
-
-        <!-- <div v-if="state.themeInstance && state.themeInstance.id" @click.prevent="resetTheme">Reset theme</div> -->
-
       </div>
       <QuickSettings v-if="!state.widgetMode" :group-config="getQuickSettings()"></QuickSettings>
       <div class="components-buttons-holder">
         <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="!configuration.quickSettings && !state.widgetMode" :group-config="configuration"></SettingsButtons>
+      </div>
+      <div v-if="state.themeInstance && state.themeInstance.id" class="buttons-holder">
+        <div class="btn btn-primary" @click.prevent="resetTheme">Reset theme to Fliplet default</div>
       </div>
       <ComponentSettings></ComponentSettings>
       <transition name="slide-up">
@@ -125,6 +125,7 @@ export default {
       setCustomFonts(customFonts)
     },
     initialize(widgetInstanceData, toReuse) {
+      this.isLoading = true
       const widgetId = Fliplet.Widget.getDefaultId()
       const widgetData = widgetInstanceData || Fliplet.Widget.getData(widgetId) || {}
 
@@ -290,6 +291,12 @@ export default {
     save() {
       // Updates the theme saved settings
       toggleSavingStatus(true)
+
+      // Event to flag that settings will be saved
+      Fliplet.Studio.emit('page-preview-send-event', {
+        type: 'savingNewStyles'
+      });
+
       this.updateInstance(this.dataToSave)
         .then((response) => {
           clearDataToSave()
@@ -356,9 +363,18 @@ export default {
       this.error = undefined
     },
     resetTheme() {
-      this.isLoading = true
-
-      theme.delete()
+      // Reset settings to theme settings
+      Fliplet.Modal.confirm({
+        title: 'Reset to Fliplet styles',
+        message: '<p>You will lose all your changes and the styles will be reset to Fliplet\'s initial styles.<br>Are you sure you want to continue?</p>'
+      })
+        .then((result) => {
+          if (!result) {
+            return
+          }
+          this.isLoading = true
+          return theme.delete()
+        })
         .then(() => {
           this.initialize(undefined, false)
         })
