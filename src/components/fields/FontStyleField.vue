@@ -105,7 +105,12 @@ export default {
       }
 
       this.value = newVal
-      sendCssToFrame(newVal.length ? newVal.join(' ') : this.subType === 'decoration' ? 'none' : 'normal', this.data.fieldConfig)
+      const compiledValue = this.checkIfIsInheriting(newVal)
+        ? newVal
+        : Array.isArray(newVal) && newVal.length
+          ? newVal.join(' ')
+          : this.subType === 'decoration' ? 'none' : 'normal'
+      sendCssToFrame(compiledValue, this.data.fieldConfig)
 
       this.$nextTick(() => {
         this.prepareToSave()
@@ -175,7 +180,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting ? this.value : this.value.length ? this.value.join(' ') : this.subType === 'decoration' ? 'none' : 'normal'
+        value: isInheriting ? this.value : Array.isArray(this.value) && this.value.length ? this.value.join(' ') : this.subType === 'decoration' ? 'none' : 'normal'
       }
 
       saveFieldData(data)

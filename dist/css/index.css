@@ -46,6 +46,30 @@ header {
   .control-label label {
     margin: 0; }
 
+.buttons-holder {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  margin: 40px 0 25px; }
+  .buttons-holder .btn + .btn {
+    margin: 0; }
+  .buttons-holder .btn-primary {
+    background: transparent;
+    border: 1px solid rgba(51, 51, 51, 0.5);
+    border-radius: 45px;
+    line-height: 2.4;
+    color: rgba(51, 51, 51, 0.5); }
+    .buttons-holder .btn-primary:hover {
+      color: #333333; }
+  .buttons-holder .btn-default {
+    background: transparent;
+    line-height: 2.4;
+    color: rgba(51, 51, 51, 0.5); }
+    .buttons-holder .btn-default:hover {
+      color: #333333; }
+    .buttons-holder .btn-default:active {
+      box-shadow: none; }
+
 .danger-circle {
   display: inline-block;
   width: 10px;
@@ -178,7 +202,7 @@ header {
     #theme-application .inherit-settings a {
       margin-left: 10px; }
   #theme-application .field-label {
-    margin-left: 10px;
+    margin-left: 4px;
     color: rgba(51, 51, 51, 0.5);
     cursor: pointer; }
   #theme-application .error-holder {
@@ -329,6 +353,9 @@ header {
     .components-buttons-holder .components-buttons i {
       margin-left: 12px;
       font-size: 18px; }
+  .components-buttons-holder ~ .buttons-holder {
+    justify-content: center;
+    margin-bottom: 0; }
 
 #component-settings-overlay {
   position: fixed;
@@ -372,39 +399,16 @@ header {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      padding: 0 3px; }
+      padding: 0; }
     #component-settings-overlay .settings-fields .multi-field > * {
       display: flex;
       width: auto;
-      margin: 0 12px 8px 12px; }
+      margin: 0 15px 8px 15px; }
     #component-settings-overlay .settings-fields .full-width {
       display: flex;
       min-width: calc(100% - 30px); }
     #component-settings-overlay .settings-fields .half-width {
       min-width: calc(50% - 30px); }
-    #component-settings-overlay .settings-fields .buttons-holder {
-      display: flex;
-      align-items: center;
-      padding: 0 15px;
-      margin: 40px 0 25px; }
-      #component-settings-overlay .settings-fields .buttons-holder .btn + .btn {
-        margin: 0; }
-      #component-settings-overlay .settings-fields .buttons-holder .btn-primary {
-        background: transparent;
-        border: 1px solid rgba(51, 51, 51, 0.5);
-        border-radius: 45px;
-        line-height: 2.4;
-        color: rgba(51, 51, 51, 0.5); }
-        #component-settings-overlay .settings-fields .buttons-holder .btn-primary:hover {
-          color: #333333; }
-      #component-settings-overlay .settings-fields .buttons-holder .btn-default {
-        background: transparent;
-        line-height: 2.4;
-        color: rgba(51, 51, 51, 0.5); }
-        #component-settings-overlay .settings-fields .buttons-holder .btn-default:hover {
-          color: #333333; }
-        #component-settings-overlay .settings-fields .buttons-holder .btn-default:active {
-          box-shadow: none; }
 
 .dropdown.select-box .dropdown-toggle {
   display: flex;
@@ -666,7 +670,6 @@ header {
     position: relative;
     display: flex;
     align-items: center;
-    min-width: 50px;
     margin-left: -4px; }
     .size-field-holder .interactive-holder .drag-input-holder {
       cursor: ew-resize;
@@ -706,20 +709,8 @@ header {
 .style-field-holder {
   position: relative;
   margin-right: 0 !important; }
-  .style-field-holder .checkbox-holder.inline-boxed:last-child label {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px; }
   .style-field-holder ~ .style-field-holder {
-    margin-left: 0 !important; }
-    .style-field-holder ~ .style-field-holder .checkbox-holder.inline-boxed:last-child label {
-      border-radius: 0px;
-      border-left: none; }
-    .style-field-holder ~ .style-field-holder ~ .style-field-holder .checkbox-holder.inline-boxed:last-child label {
-      border-top-left-radius: 0px;
-      border-bottom-left-radius: 0px;
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
-      border-left: none; }
+    margin-left: 4px !important; }
   .style-field-holder .wrapper {
     position: relative; }
   .style-field-holder .style-field-container {
@@ -764,7 +755,7 @@ header {
     height: 20px;
     margin-right: 5px;
     border-width: 4px;
-    border-color: #707070; }
+    border-color: #ACACAC; }
 
 .background-field-holder {
   position: relative; }
