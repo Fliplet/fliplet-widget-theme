@@ -1,7 +1,7 @@
 const sizeProperties = {
   'withoutAuto': ['px', 'em', 'rem', '%'],
   'lineHeight': ['x', 'px', 'em', 'rem', '%'],
-  'withAuto': ['px', 'em', 'rem', '%', 'auto'],
+  'withAuto': ['px', 'em', 'rem', '%', 'auto', { name: 'none', value: 'initial' }],
   'withNone': ['px', 'em', 'rem', '%', 'none'],
   'full': ['px', 'em', 'rem', '%', 'vw', 'vh', 'auto']
 }
