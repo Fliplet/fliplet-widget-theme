@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue,
+import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import fontProperties from '../../libs/font-style-properties'
@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       state,
-      value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
+      value: this.parseValue(getCurrentFieldValue(this.data.fieldConfig)),
       properties: fontProperties[this.data.fieldConfig.properties],
       subType: this.data.fieldConfig.subType,
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -137,7 +137,7 @@ export default {
       }
     },
     getValue() {
-      return this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
+      return this.parseValue(getCurrentFieldValue(this.data.fieldConfig))
     },
     inheritValue(value) {
       this.value = value

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getFieldName,
+import { state, getCurrentFieldValue, getFieldName,
   saveFieldData, checkLogic, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bgProperties from '../../libs/background-properties'
@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       state,
-      value: getDefaultFieldValue(this.data.fieldConfig),
+      value: getCurrentFieldValue(this.data.fieldConfig),
       properties: bgProperties[this.data.fieldConfig.properties],
       isFullRow: this.data.fieldConfig.isFullRow,
       isHalfRow: this.data.fieldConfig.isHalfRow,
@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     getValue() {
-      return getDefaultFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
       this.value = value

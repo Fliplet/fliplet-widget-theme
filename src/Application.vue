@@ -46,7 +46,7 @@ import QuickSettings from './components/fields/QuickSettings'
 import ComponentSettings from './components/UI/ComponentSettings'
 import deviceTypes from './libs/device-types'
 import widgetsMap from './libs/widgets-map'
-import theme from './resources/theme'
+import ThemeModel from './resources/theme'
 import bus from './libs/bus'
 import { dropdown } from './libs/dropdown'
 
@@ -137,14 +137,14 @@ export default {
           this.fonts = response[1]
           this.storeFonts()
           this.themes = response[0]
-          this.getThemeInstance(response[0], toReuse)
+          this.setThemeInstance(response[0], toReuse)
         })
         .catch((err) => {
           this.error = Fliplet.parseError(err)
           console.error(err)
         })
     },
-    getThemeInstance(themes, toReuse) {
+    setThemeInstance(themes, toReuse) {
       let themeWithoutInstances = 0
       let tab
 
@@ -172,6 +172,7 @@ export default {
               return config.packages && config.packages.indexOf(state.widgetData.widgetPackage) > -1
             })
 
+            // Set state in widget mode
             setWidgetMode(!!this.appearanceGroup)
           }
 
@@ -183,6 +184,7 @@ export default {
           return
         }
 
+        // Set state in widget mode to false
         setWidgetMode(false)
         if (state.appearanceGroupOverlay.isOpen) {
           closeAppearanceGroupSettings()
@@ -208,7 +210,7 @@ export default {
     },
     createDefaultInstance(themeId, toReuse) {
       toReuse = typeof toReuse === 'undefined' ? true : toReuse
-      return theme.create(themeId, toReuse)
+      return ThemeModel.create(themeId, toReuse)
     },
     reloadPagePreview() {
       return Fliplet.Studio.emit('reload-page-preview');
@@ -286,7 +288,7 @@ export default {
       this.debouncedSave()
     },
     updateInstance(dataObj) {
-      return theme.update(dataObj)
+      return ThemeModel.update(dataObj)
     },
     save() {
       // Updates the theme saved settings
@@ -373,7 +375,7 @@ export default {
             return
           }
           this.isLoading = true
-          return theme.delete()
+          return ThemeModel.delete()
         })
         .then(() => {
           this.initialize(undefined, false)

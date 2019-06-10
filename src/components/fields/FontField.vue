@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue,
+import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import fontMapping from '../../libs/font-mapping'
@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       state,
-      value: getDefaultFieldValue(this.data.fieldConfig),
+      value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -112,7 +112,7 @@ export default {
       this.valueToShow = this.value
     },
     getValueToShow() {
-      const defaultValue = getDefaultFieldValue(this.data.fieldConfig)
+      const defaultValue = getCurrentFieldValue(this.data.fieldConfig)
       return this.searchFontMapping(defaultValue)
     },
     inheritValue(value) {

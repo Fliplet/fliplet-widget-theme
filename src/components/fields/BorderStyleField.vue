@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue,
+import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import borderProperties from '../../libs/border-properties'
@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       state,
-      value: getDefaultFieldValue(this.data.fieldConfig),
+      value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
       properties: borderProperties,
@@ -72,7 +72,7 @@ export default {
       this.valueToShow = this.value
     },
     getValueToShow() {
-      return getDefaultFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
       this.value = value

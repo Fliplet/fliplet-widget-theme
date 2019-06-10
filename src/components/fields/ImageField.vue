@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getFieldName,
+import { state, getCurrentFieldValue, getFieldName,
   saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import bus from '../../libs/bus'
@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       state,
-      value: getDefaultFieldValue(this.data.fieldConfig),
+      value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       properties: this.data.fieldConfig.properties,
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -69,7 +69,7 @@ export default {
       this.valueToShow = this.value
     },
     getValueToShow() {
-      return getDefaultFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
       this.value = value

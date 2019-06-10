@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue,
+import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import selectProperties from '../../libs/select-properties'
@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       state,
-      value: getDefaultFieldValue(this.data.fieldConfig),
+      value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
       properties: this.parseProperties(this.data.fieldConfig.subtype
@@ -68,7 +68,7 @@ export default {
       this.valueToShow = this.value
     },
     getValueToShow() {
-      return this.parseValueToShow(getDefaultFieldValue(this.data.fieldConfig))
+      return this.parseValueToShow(getCurrentFieldValue(this.data.fieldConfig))
     },
     inheritValue(value) {
       this.value = value

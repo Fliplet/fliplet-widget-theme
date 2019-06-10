@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { state, saveFieldData, getDefaultFieldValue,
+import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkIsFieldChanged, checkSizeLogic, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
@@ -37,7 +37,7 @@ export default {
       state,
       property: undefined,
       properties: this.getProperties(),
-      value: this.parseValue(getDefaultFieldValue(this.data.fieldConfig)),
+      value: this.parseValue(getCurrentFieldValue(this.data.fieldConfig)),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -91,13 +91,13 @@ export default {
       // Set the value
       this.valueToShow = this.value == 'initial' ? 'none' : this.value
       // Set property
-      this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
+      this.property = this.getProperty(getCurrentFieldValue(this.data.fieldConfig))
       this.$nextTick(() => {
         this.fromCreated = false
       })
     },
     getValueToShow(toShow) {
-      const parsedValue = this.parseValue(getDefaultFieldValue(this.data.fieldConfig))
+      const parsedValue = this.parseValue(getCurrentFieldValue(this.data.fieldConfig))
 
       if (!toShow) {
         return parsedValue
@@ -300,7 +300,7 @@ export default {
       this.isInheriting = this.checkInheritance()
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
       this.valueToShow = this.getValueToShow(true)
-      this.property = this.getProperty(getDefaultFieldValue(this.data.fieldConfig))
+      this.property = this.getProperty(getCurrentFieldValue(this.data.fieldConfig))
 
       if (this.fromReset) {
         this.value = this.getValueToShow()

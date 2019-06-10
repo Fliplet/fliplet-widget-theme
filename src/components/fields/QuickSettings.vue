@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { state, checkSavedValue } from '../../store'
+import { state, getSavedValue } from '../../store'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 import ColorField from './ColorField'
@@ -57,7 +57,7 @@ export default {
       // Processing variables    
       this.groupConfig.variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
-          const values = checkSavedValue(field, true)
+          const values = getSavedValue(field, true)
 
           const newObj = {
             value: values.fieldValue,

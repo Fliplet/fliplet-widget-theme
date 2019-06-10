@@ -21,7 +21,7 @@
               <div class="inherit-settings col-xs-12">
                 <div v-if="showNotInheritingInfo[index]" class="label-holder"><span class="inheritance-warn"></span> Specific {{ currentContext }} styles set (not inherited)</div>
                 <template v-else>
-                  <span class="label-holder">Inheriting from {{ inheritFromValue(index) }}</span> <a href="#" @click.prevent="goToDeviceTab(inheritFromValue(index))">View</a>
+                  <span class="label-holder">Inheriting from {{ getInheritFromValue(index) }}</span> <a href="#" @click.prevent="goToDeviceTab(getInheritFromValue(index))">View</a>
                 </template>
               </div>
             </template>
@@ -50,7 +50,7 @@
 
 <script>
 import { state, closeAppearanceGroupSettings,
-  getInheritance, checkSavedValue, setComponentContext, setActiveTab } from '../../store'
+  getInheritance, getSavedValue, setComponentContext, setActiveTab } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
 import BorderStyleField from '../fields/BorderStyleField'
@@ -208,7 +208,7 @@ export default {
 
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
-          const values = checkSavedValue(field, true)
+          const values = getSavedValue(field, true)
 
           // To check if the field is inheriting
           const isDefaultInheriting = this.isInheriting(values.defaultValue)
@@ -253,7 +253,7 @@ export default {
         bus.$emit('variables-computed')
       })
     },
-    inheritFromValue(index) {
+    getInheritFromValue(index) {
       if (Array.isArray(this.inheritingFrom)) {
         return this.inheritingFrom[index]
       }
@@ -261,6 +261,8 @@ export default {
       return this.inheritingFrom
     },
     areNotInheriting() {
+      // Return an array of booleans to flag
+      // which fields should show the 'not inheriting' copy
       const newArr = []
       this.variables.forEach((variable) => {
         const fields = _.filter(variable.fields, { inheriting: false })
@@ -275,18 +277,21 @@ export default {
       return newArr
     },
     isInheritingFrom(value, field) {
+      // Gets from where the value is iheriting from
+      // E.g. If a Desktop value is inheriting from Tablet, but Tablet is inheriting from Mobile
+      // This function will return 'mobile' for the Desktop value
       if (!value) {
         return false
       }
 
-      // Checks if the value matches the 'inherit-x' reserved key
+      // Checks if the value matches the 'inherit-' reserved key
       const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
 
       if (!matchInherit || !matchInherit.length) {
         return false
       }
 
-      const checkedValue = checkSavedValue(field, false, matchInherit[1])
+      const checkedValue = getSavedValue(field, false, matchInherit[1])
       const result = this.isInheritingFrom(checkedValue, field)
 
       if (!result) {

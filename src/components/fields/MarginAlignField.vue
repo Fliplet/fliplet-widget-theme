@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getFieldName, sendCssToFrame,
+import { state, getCurrentFieldValue, getFieldName, sendCssToFrame,
   checkMarginLogic, saveFieldData, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import marginAlignProperties from '../../libs/margin-align-properties'
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       state,
-      value: getDefaultFieldValue(this.data.fieldConfig),
+      value: getCurrentFieldValue(this.data.fieldConfig),
       properties: marginAlignProperties,
       label: this.data.fieldConfig.label,
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -85,7 +85,7 @@ export default {
       }
     },
     getValueToShow() {
-      return getDefaultFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
       this.value = value

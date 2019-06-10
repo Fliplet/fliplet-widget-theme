@@ -289,7 +289,7 @@ export function checkIsFieldChanged(field) {
 * @return {String} The value saved
 * @return {Object} Object with all the saved values including the default value
 */
-export function checkSavedValue(field, returnAll, context) {
+export function getSavedValue(field, returnAll, context) {
   context = context || state.componentContext
   context = context.toLowerCase()
   const fieldName = context === 'mobile' || field.isQuickSetting
@@ -335,11 +335,11 @@ export function checkSavedValue(field, returnAll, context) {
 }
 
 /**
-* Gets the default value for the specific field
+* Gets the current value for the specific field, it can be a saved value or the default value
 * @param {Object} Object of the field JSON configuration
 * @return {String} The default value of the field
 */
-export function getDefaultFieldValue(field) {
+export function getCurrentFieldValue(field) {
   // Variables to use later down
   let defaultValue
   let savedValue
@@ -351,7 +351,7 @@ export function getDefaultFieldValue(field) {
     ? field.default
     : field.breakpoints[state.componentContext.toLowerCase()].default
 
-  savedValue = checkSavedValue(field)
+  savedValue = getSavedValue(field)
 
   return checkFieldValue(savedValue || defaultValue, field)
 }
@@ -523,7 +523,7 @@ export function sendCssToFrame(value, currentField) {
             return !!widget.values[field.name]
           })
 
-          const savedValues = checkSavedValue(field, true)
+          const savedValues = getSavedValue(field, true)
 
           if (savedValues.generalSavedValue
             || savedValues.generalLocalSavedValue
@@ -603,7 +603,7 @@ function compileShadowValues(styles, value, currentField) {
               break
             }
 
-            const fieldValue = checkSavedValue(field)
+            const fieldValue = getSavedValue(field)
             const finalValue = checkFieldValue(fieldValue, field)
 
             if (finalValue === 'outset') {
@@ -652,7 +652,7 @@ function compileBorderValues(styles, value, currentField) {
                 break
               }
 
-              const fieldValue = checkSavedValue(field)
+              const fieldValue = getSavedValue(field)
               newValue.property = checkFieldValue(fieldValue, field)
               break
             }
@@ -662,7 +662,7 @@ function compileBorderValues(styles, value, currentField) {
               break
             }
 
-            const fieldValue = checkSavedValue(field)
+            const fieldValue = getSavedValue(field)
             const finalValue = checkFieldValue(fieldValue, field)
 
             newValue.value += " " + finalValue
@@ -698,7 +698,7 @@ function compilePositionValues(styles, currentField) {
       variable.fields.some((field) => {
         for (const key in styles.siblings) {
           if (styles.siblings[key] === field.name) {
-            const fieldValue = checkSavedValue(field)
+            const fieldValue = getSavedValue(field)
             const value = checkFieldValue(fieldValue, field)
             switch (key) {
               case 'top':

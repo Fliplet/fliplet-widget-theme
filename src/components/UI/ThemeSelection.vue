@@ -23,7 +23,7 @@
 
 <script>
 import { state } from '../../store'
-import theme from '../../resources/theme'
+import ThemeModel from '../../resources/theme'
 import bus from '../../libs/bus'
 
 export default {
@@ -38,6 +38,8 @@ export default {
   },
   methods: {
     onValueChange(id) {
+      // When changing to a different theme
+      // Remove the current one and create a new instance of the new one
       if (id !== state.activeTheme.id) {
         this.removeInstance()
           .then(() => {
@@ -54,10 +56,10 @@ export default {
       }
     },
     removeInstance() {
-      return theme.delete()
+      return ThemeModel.delete()
     },
     createInstance(themeId) {
-      return theme.create(themeId, true)
+      return ThemeModel.create(themeId, true)
     }
   }
 }

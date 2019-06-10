@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { state, getDefaultFieldValue, getFieldName,
+import { state, getCurrentFieldValue, getFieldName,
   saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import positionProperties from '../../libs/position-properties'
@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       state,
-      value: getDefaultFieldValue(this.data.fieldConfig),
+      value: getCurrentFieldValue(this.data.fieldConfig),
       properties: positionProperties,
       label: this.data.fieldConfig.label,
       isFullRow: this.data.fieldConfig.isFullRow,
@@ -80,7 +80,7 @@ export default {
       }
     },
     getValue() {
-      return getDefaultFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig)
     },
     inheritValue(value) {
       this.value = value
