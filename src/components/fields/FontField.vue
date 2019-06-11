@@ -76,7 +76,6 @@ export default {
       return this.data.webFonts
     },
     columnClass() {
-      console.log('FONT', createClass(this.data.fieldConfig.columns))
       return createClass(this.data.fieldConfig.columns)
     }
   },
