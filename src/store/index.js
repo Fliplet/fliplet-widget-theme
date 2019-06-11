@@ -479,7 +479,6 @@ export function sendCssToFrame(value, currentField) {
 
   const configurations = state.activeTheme.settings.configuration
   const cssProperties = []
-  let triggerResize = false
   const styles = currentField.styles || []
   let savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
     return !!widget.values[currentField.name]
@@ -490,7 +489,6 @@ export function sendCssToFrame(value, currentField) {
 
   // If there is a "styles" key
   styles.forEach((css) => {
-    triggerResize = css.triggerResize
     const widgetSelector = state.widgetMode
       ? currentField.name === 'Accordion'
         ? `[data-collapse-id='${state.widgetId}']` : `[data-id='${state.widgetId}']`
@@ -508,11 +506,12 @@ export function sendCssToFrame(value, currentField) {
   configurations.forEach((config) => {
     config.variables.forEach((variable) => {
       variable.fields.forEach((field) => {
+        const inheritingVariable = isInheriting(field.default)
 
         const fieldStyles = field.styles || []
         fieldStyles.forEach((style) => {
           // Check if the names match
-          if (!style.dependencies || style.dependencies.indexOf(currentField.name) < 0) {
+          if (!inheritingVariable || inheritingVariable !== currentField.name) {
             return
           }
 
@@ -553,8 +552,7 @@ export function sendCssToFrame(value, currentField) {
 
   Fliplet.Studio.emit('page-preview-send-event', {
     type: 'inlineCss',
-    cssProperties: cssProperties,
-    resize: triggerResize
+    cssProperties: cssProperties
   })
 }
 
@@ -569,6 +567,22 @@ function removeWidgetFromInstance(id) {
 
 function updateWidgetData(data) {
   state.appearanceGroupOverlay.data = data
+}
+
+/**
+* Check if it is inheriting from another variable
+* @param {String} Default value of a field
+*/
+function isInheriting(value) {
+  if (!value) {
+    return false
+  }
+  // Checks if the value matches a variable name
+  const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
+  // If the value matches to a variable get the name of the variable
+  const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+
+  return variableName ? variableName : false
 }
 
 /**
@@ -877,7 +891,8 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
         selectors.properties[prop] = value
       })
 
-      cssProperties.push(selectors)
+      const newSelectors = _.clone(selectors)
+      cssProperties.push(newSelectors)
     })
   } else {
     const selector = styles.parentSelector
@@ -1006,7 +1021,8 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       selectors.properties[prop] = value
     })
 
-    cssProperties.push(selectors)
+    const newSelectors = _.clone(selectors)
+    cssProperties.push(newSelectors)
   }
 
   return cssProperties
