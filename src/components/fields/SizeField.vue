@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showField" class="size-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
+  <div v-show="showField" :class="'size-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="interactive-holder">
       <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' || property == 'initial' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
@@ -29,6 +29,7 @@ import { state, saveFieldData, getCurrentFieldValue,
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
 import keyHandler from '../../libs/key-down-handler'
+import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
 
 export default {
@@ -40,8 +41,6 @@ export default {
       value: this.parseValue(getCurrentFieldValue(this.data.fieldConfig)),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
-      isFullRow: this.data.fieldConfig.isFullRow,
-      isHalfRow: this.data.fieldConfig.isHalfRow,
       inputIsActive: false,
       hammerInstance: undefined,
       keyMap: {},
@@ -84,6 +83,11 @@ export default {
       if (!this.fromCreated) {
         sendCssToFrame(this.value + (newVal !== 'x' ? newVal : ''), this.data.fieldConfig)
       }
+    }
+  },
+  computed: {
+    columnClass() {
+      return createClass(this.data.fieldConfig.columns)
     }
   },
   methods: {

@@ -6,6 +6,54 @@ body {
   min-height: initial !important;
   overflow: hidden; }
 
+.fl-col-1 {
+  flex: 0 0 8.33333%;
+  max-width: calc(8.33333% - 30px); }
+
+.fl-col-2 {
+  flex: 0 0 16.66667%;
+  max-width: calc(16.66667% - 30px); }
+
+.fl-col-3 {
+  flex: 0 0 25%;
+  max-width: calc(25% - 30px); }
+
+.fl-col-4 {
+  flex: 0 0 33.33333%;
+  max-width: calc(33.33333% - 30px); }
+
+.fl-col-5 {
+  flex: 0 0 41.66667%;
+  max-width: calc(41.66667% - 30px); }
+
+.fl-col-6 {
+  flex: 0 0 50%;
+  max-width: calc(50% - 30px); }
+
+.fl-col-7 {
+  flex: 0 0 58.33333%;
+  max-width: calc(58.33333% - 30px); }
+
+.fl-col-8 {
+  flex: 0 0 66.66667%;
+  max-width: calc(66.66667% - 30px); }
+
+.fl-col-9 {
+  flex: 0 0 75%;
+  max-width: calc(75% - 30px); }
+
+.fl-col-10 {
+  flex: 0 0 83.33333%;
+  max-width: calc(83.33333% - 30px); }
+
+.fl-col-11 {
+  flex: 0 0 91.66667%;
+  max-width: calc(91.66667% - 30px); }
+
+.fl-col-12 {
+  flex: 0 0 100%;
+  max-width: calc(100% - 30px); }
+
 .spinner-holder {
   position: fixed;
   top: 50%;
@@ -402,8 +450,7 @@ header {
       padding: 0; }
     #component-settings-overlay .settings-fields .multi-field > * {
       display: flex;
-      width: auto;
-      margin: 0 15px 8px 15px; }
+      margin: 0 15px 8px; }
     #component-settings-overlay .settings-fields .full-width {
       display: flex;
       min-width: calc(100% - 30px); }

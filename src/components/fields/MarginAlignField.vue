@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="align-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
+  <div v-if="showField" :class="'align-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="align-field-container">
         <template v-for="(prop, idx) in properties">
@@ -29,6 +29,7 @@ import { state, getCurrentFieldValue, getFieldName, sendCssToFrame,
 import InheritDot from '../UI/InheritDot'
 import marginAlignProperties from '../../libs/margin-align-properties'
 import { tooltips } from '../../libs/tooltips'
+import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
 
 export default {
@@ -38,8 +39,6 @@ export default {
       value: getCurrentFieldValue(this.data.fieldConfig),
       properties: marginAlignProperties,
       label: this.data.fieldConfig.label,
-      isFullRow: this.data.fieldConfig.isFullRow,
-      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -66,6 +65,11 @@ export default {
       }
 
       this.fromReset = false
+    }
+  },
+  computed: {
+    columnClass() {
+      return createClass(this.data.fieldConfig.columns)
     }
   },
   methods: {

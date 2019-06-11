@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="select-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
+  <div v-if="showField" :class="'select-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -23,6 +23,7 @@ import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import selectProperties from '../../libs/select-properties'
+import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
 
 export default {
@@ -35,8 +36,6 @@ export default {
       properties: this.parseProperties(this.data.fieldConfig.subtype
         ? selectProperties[this.data.fieldConfig.subtype]
         : this.data.fieldConfig.properties),
-      isFullRow: this.data.fieldConfig.isFullRow,
-      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -61,6 +60,11 @@ export default {
           this.prepareToSave()
         })
       }
+    }
+  },
+  computed: {
+    columnClass() {
+      return createClass(this.data.fieldConfig.columns)
     }
   },
   methods: {

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="image-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
+  <div v-if="showField" :class="'image-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <template v-if="!hasImage">
         <div class="btn btn-default" @click.prevent="openFilePicker">
@@ -18,6 +18,7 @@
 import { state, getCurrentFieldValue, getFieldName,
   saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
 
 export default {
@@ -27,8 +28,6 @@ export default {
       value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       properties: this.data.fieldConfig.properties,
-      isFullRow: this.data.fieldConfig.isFullRow,
-      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -62,6 +61,9 @@ export default {
       }
 
       return false
+    },
+    columnClass() {
+      return createClass(this.data.fieldConfig.columns)
     }
   },
   methods: {

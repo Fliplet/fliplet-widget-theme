@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="color-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
+  <div v-if="showField" :class="'color-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
         <div id="color-picker-container" class="color-holder" ref="colorsquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
@@ -14,6 +14,7 @@
 import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
+import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
 import { ColorPicker } from 'codemirror-colorpicker'
 import Cookies from 'js-cookie'
@@ -30,8 +31,6 @@ export default {
       label: this.data.fieldConfig.label,
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId(),
-      isFullRow: this.data.fieldConfig.isFullRow,
-      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -70,6 +69,9 @@ export default {
   computed: {
     bgImg() {
       return window.__widgetData[this.widgetId].assetsUrl ? window.__widgetData[this.widgetId].assetsUrl + 'img/color-bg.gif' : ''
+    },
+    columnClass() {
+      return createClass(this.data.fieldConfig.columns)
     }
   },
   methods: {

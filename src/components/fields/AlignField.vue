@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="align-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
+  <div v-if="showField" :class="'align-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="align-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
@@ -21,6 +21,7 @@ import { state, getCurrentFieldValue, getFieldName,
 import InheritDot from '../UI/InheritDot'
 import alignProperties from '../../libs/align-properties'
 import { tooltips } from '../../libs/tooltips'
+import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
 
 export default {
@@ -30,8 +31,6 @@ export default {
       value: getCurrentFieldValue(this.data.fieldConfig),
       properties: alignProperties[this.data.fieldConfig.properties],
       label: this.data.fieldConfig.label,
-      isFullRow: this.data.fieldConfig.isFullRow,
-      isHalfRow: this.data.fieldConfig.isHalfRow,
       orientation: this.data.fieldConfig.orientation,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
@@ -76,6 +75,9 @@ export default {
         return sufix
       }
       return sufix
+    },
+    columnClass() {
+      return createClass(this.data.fieldConfig.columns)
     }
   },
   methods: {

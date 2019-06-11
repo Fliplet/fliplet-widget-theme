@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" class="font-field-holder" :class="{ 'full-width': isFullRow, 'half-width': isHalfRow, 'field-changed': isChanged }">
+  <div v-if="showField" :class="'font-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -33,6 +33,7 @@ import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import fontMapping from '../../libs/font-mapping'
+import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
 
 export default {
@@ -42,8 +43,6 @@ export default {
       value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
-      isFullRow: this.data.fieldConfig.isFullRow,
-      isHalfRow: this.data.fieldConfig.isHalfRow,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -75,6 +74,10 @@ export default {
     },
     webFonts() {
       return this.data.webFonts
+    },
+    columnClass() {
+      console.log('FONT', createClass(this.data.fieldConfig.columns))
+      return createClass(this.data.fieldConfig.columns)
     }
   },
   methods: {
