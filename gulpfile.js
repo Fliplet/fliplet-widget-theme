@@ -1,0 +1,69 @@
+const gulp = require('gulp');
+const del = require('del');
+const webpack = require('webpack');
+const webpackStream = require('webpack-stream');
+const webpackConfig = require('./config/webpack.config.js');
+
+const named = require('vinyl-named');
+const vueify = require('gulp-vueify2');
+const sass = require('gulp-sass');
+sass.compiler = require('node-sass');
+
+// Clean assets
+function clean() {
+  return del(['dist/']);
+}
+
+// Get CSS file from codemirror-colorpicker
+function copyCss() {
+  return gulp
+  .src(['node_modules/codemirror-colorpicker/dist/codemirror-colorpicker.css'])
+  .pipe(gulp.dest('dist/css/'))
+}
+
+// Copy fonts from static folder
+function copyFonts() {
+  return gulp
+  .src(['static/fonts/*'])
+  .pipe(gulp.dest('dist/fonts/'))
+}
+
+// Copy fonts from static folder
+function copyIcons() {
+  return gulp
+  .src(['static/icons/*'])
+  .pipe(gulp.dest('dist/icons/'))
+}
+
+// SASS task
+function scss() {
+  return gulp
+    .src('src/scss/index.scss')
+    .pipe(sass())
+    .pipe(gulp.dest('dist/css/'));
+}
+
+// JS & VUE task
+function js() {
+  return gulp
+    .src('src/main.js')
+    .pipe(named())
+    .pipe(vueify())
+    .pipe(webpackStream(webpackConfig), webpack)
+    .pipe(gulp.dest('dist/'));
+}
+
+// Watch files
+function watchFiles() {
+  gulp.watch('src/scss/**/*', scss);
+  gulp.watch('src/libs/*.js', js);
+  gulp.watch('src/main.js', js);
+  gulp.watch('src/store/index.js', js);
+  gulp.watch('src/**/*.vue', js);
+}
+
+const build = gulp.series(clean, gulp.parallel(copyCss, copyFonts, copyIcons, scss, js));
+const watch = gulp.parallel(watchFiles);
+
+exports.build = build;
+exports.watch = watch;

@@ -1,0 +1,23 @@
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+@mixin transform($args...) {
+  -webkit-transform: $args;
+  -moz-transform: $args;
+  -ms-transform: $args;
+  -o-transform: $args;
+  transform: $args;
+}
+
+@mixin make-col($size, $columns: $grid-columns) {
+  flex: 0 0 percentage($size / $columns);
+  // Add a `max-width` to ensure content within each column does not blow out
+  // the width of the column. Applies to IE10+ and Firefox. Chrome and Safari
+  // do not appear to require this.
+  max-width: calc(#{percentage($size / $columns)} - 30px); // - 30px because of margin set to elements
+}

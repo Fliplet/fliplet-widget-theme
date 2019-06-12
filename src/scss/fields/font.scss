@@ -1,0 +1,20 @@
+.font-field-holder {
+  position: relative;
+  display: flex !important;
+  align-items: center;
+  min-height: 30px;
+
+  .wrapper {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+  }
+
+  .form-control {
+    &.custom-font {
+      padding: 0 8px;
+      line-height: 1;
+      height: 28px;
+    }
+  }
+}

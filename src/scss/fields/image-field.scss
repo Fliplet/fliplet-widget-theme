@@ -1,0 +1,40 @@
+.image-field-holder {
+  position: relative;
+
+  .wrapper {
+    position: relative;
+  }
+
+  .btn {
+    width: 55px;
+    height: 55px;
+    border: 1px solid lighten($text-color, 69%);
+    color: rgba($text-color, 0.5);
+    font-size: 1.5em;
+    background-color: transparent;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: initial;
+    line-height: 1;
+
+    &:hover {
+      color: $text-color;
+      border-color: lighten($text-color, 55%);
+    }
+
+    &:active:hover,
+    &:active:focus {
+      background-color: transparent;
+      border-color: lighten($text-color, 55%);
+      color: $text-color;
+    }
+
+    &.has-image {
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+  }
+}

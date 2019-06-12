@@ -1,0 +1,28 @@
+.quick-settings {
+  margin: 30px -15px;
+
+  .control-label {
+    &.quick-settings-title {
+      text-transform: uppercase;
+    }
+
+    label {
+      font-weight: 600;
+    }
+  }
+
+  .quick-settings-field {
+    display: flex;
+    align-items: center;
+
+    & + .quick-settings-field {
+      margin-top: 5px;
+    }
+  }
+}
+
+.theme-selection-hidden {
+  .quick-settings {
+    margin-top: 20px;
+  }
+}

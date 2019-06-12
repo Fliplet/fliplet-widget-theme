@@ -1,0 +1,79 @@
+#component-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $widget-background-color;
+  padding: 0 15px;
+  z-index: 2;
+
+  header {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+  }
+
+  .close-component-settings {
+    font-size: 0.8em;
+    margin-top: -3px;
+    cursor: pointer;
+
+    + p {
+      margin-left: 10px;
+    }
+  }
+
+  .breakpoint-tabs {
+    margin-top: 40px;
+  }
+
+  .settings-fields {
+    margin: 0 -15px;
+    height: calc(100% - 92px);
+    overflow: auto;
+    padding: 30px 0 0;
+
+    .control-label {
+      text-transform: uppercase;
+      font-weight: 600;
+
+      span {
+        text-transform: none;
+        font-weight: normal;
+        font-size: 12px;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .multi-field {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 0;
+    }
+
+    .multi-field {
+      > * {
+        display: flex;
+        margin: 0 15px 8px;
+      }
+    }
+
+    .full-width {
+      display: flex;
+      min-width: calc(100% - 30px);
+    }
+
+    .half-width {
+      min-width: calc(50% - 30px);
+    }
+  }
+}
+

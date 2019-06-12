@@ -1,0 +1,102 @@
+.radio-holder {
+  position: relative;
+
+  &.inline-boxed {
+    label {
+      width: 30px;
+      height: 30px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background-color: transparent;
+      border: 1px solid lighten($text-color, 69%);
+      border-left: none;
+
+      &:hover {
+        background-color: $highlight-gray-hover;
+      }
+    }
+
+    input[type="radio"] {
+      z-index: -1;
+      position: absolute;
+      margin: 0;
+      width: 30px;
+      height: 30px;
+      opacity: 0;
+      background: none;
+      display: block;
+
+      &:checked {
+        & + label {
+          background-color: $highlight-gray;
+        }
+      }
+    }
+
+    &:first-child {
+      label {
+        border-top-left-radius: $border-radius;
+        border-bottom-left-radius: $border-radius;
+        border-left: 1px solid lighten($text-color, 69%);
+      }
+    }
+
+    &:last-child {
+      label {
+        border-top-right-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
+      }
+    }
+  }
+
+  &.inline-circle {
+    display: inline-block;
+    label {
+      cursor: pointer;
+      color: rgba($text-color, 0.5);
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+
+      &:hover {
+        color: rgba($text-color, 1);
+      }
+
+      .check-icon {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        background-color: transparent;
+        border: 1px solid lighten($text-color, 69%);
+        border-radius: 50%;
+      }
+    }
+
+    input[type="radio"] {
+      z-index: -1;
+      position: absolute;
+      margin: 0;
+      width: 30px;
+      height: 30px;
+      opacity: 0;
+      background: none;
+      display: block;
+
+      &:checked {
+        & + label {
+          .check-icon {
+            background-color: $text-color;
+          }
+        }
+      }
+    }
+
+    & + .inline-circle {
+      margin-left: 15px;
+    }
+  }
+}

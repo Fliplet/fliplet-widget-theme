@@ -1,7 +1,7 @@
 {
   "name": "Theme",
   "package": "com.fliplet.theme",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "icon": "img/icon.png",
   "tags": [],
   "provider_only": true,
@@ -9,24 +9,20 @@
   "html_tag": "div",
   "interface": {
     "dependencies": [
-      "lodash",
-      "handlebars",
+      "vue.js",
       "fliplet-themes",
       "fliplet-studio-ui",
-      "bootstrap"
+      "lodash",
+      "bootstrap",
+      "font-awesome",
+      "fliplet-icons",
+      "hammer.js"
     ],
     "assets": [
-      "vendor/js.cookie.js",
-      "vendor/bootstrap-colorpicker.min.js",
-      "bootstrap-colorpicker.css",
-      "js/interface.templates.js",
-      "js/interface.js",
-      "interface.css",
-      "img/bootstrap-colorpicker/alpha-horizontal.png",
-      "img/bootstrap-colorpicker/alpha.png",
-      "img/bootstrap-colorpicker/hue-horizontal.png",
-      "img/bootstrap-colorpicker/hue.png",
-      "img/bootstrap-colorpicker/saturation.png"
+      "dist/css/codemirror-colorpicker.css",
+      "dist/css/index.css",
+      "dist/app.js",
+      "static/img/color-bg.gif"
     ]
   }
 }

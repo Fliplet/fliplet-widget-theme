@@ -1,0 +1,37 @@
+.border-style-field-holder {
+  position: relative;
+
+  .wrapper {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+  }
+
+  .dropdown-toggle {
+    display: flex;
+    align-items: center;
+
+    .caret {
+      margin-left: 4px;
+    }
+  }
+
+  .dropdown-menu {
+    li {
+      a {
+        .border-style {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  .border-style {
+    display: block;
+    width: 40px;
+    height: 20px;
+    margin-right: 5px;
+    border-width: 4px;
+    border-color: #ACACAC;
+  }
+}

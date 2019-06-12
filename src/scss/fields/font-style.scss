@@ -1,0 +1,48 @@
+.style-field-holder {
+  position: relative;
+  margin-right: 0 !important;
+
+  ~ .style-field-holder {
+    margin-left: 4px !important;
+  }
+
+  .wrapper {
+    position: relative;
+  }
+
+  .style-field-container {
+    display: flex !important;
+    align-items: center;
+
+    label {
+      .check-icon {
+        opacity: 0.8;
+
+        &.light-button {
+          font-weight: normal;
+          font-family: serif;
+          font-size: 16px;
+          margin-top: 1px;
+        }
+      }
+
+      &:hover {
+        .check-icon {
+          opacity: 1;
+        }
+      }
+    }
+
+    .checkbox-holder {
+      &.inline-boxed {
+        input[type="checkbox"] {
+          &:checked + label {
+            .check-icon {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}
