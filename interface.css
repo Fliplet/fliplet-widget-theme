@@ -1,18 +1,32 @@
 html {
-  overflow-y: scroll;
+  height: 100%;
 }
 
 body {
+  height: calc(100% - 40px) !important;
+  min-height: initial !important;
+  overflow: hidden;
+  padding: 0;
+}
+
+main {
+  height: 100%;
+  margin-top: 40px;
+  position: relative;
+  overflow: auto;
   padding: 0 15px 54px;
 }
 
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgba(51, 51, 51, 0.1);
-  margin-bottom: 1.0rem;
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
+  margin-bottom: 0;
   padding: 0 1.5rem;
   color: #333;
   height: 4rem;
@@ -28,9 +42,9 @@ header p {
 
 header a.closeSideView {
   font-weight: normal;
-  color: $text-color;
-  margin-right: 10px;
+  color: #333;
   margin-top: -3px;
+  margin-right: 0;
 }
 
 #reset_settings {
@@ -95,10 +109,6 @@ header a.closeSideView {
 
 .saving .loader {
   display: block;
-}
-
-main {
-  padding: 0;
 }
 
 section {

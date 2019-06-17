@@ -1,40 +1,42 @@
 <main>
   <header>
-    <p><a href="#" class="closeSideView"><i class="fa fa-times-thin fa-lg fa-2x"></i></a> Appearance</p>
-    <a class="betaAlert" href="#">Need help?</a>
+    <p>Appearance</p>
+    <a href="#" class="closeSideView"><i class="fa fa-times-thin fa-lg fa-2x"></i></a>
   </header>
-  <h2><small>Select a theme</small></h2>
-  <div class="form-group clearfix">
-    <div class="col-sm-4 control-label">
-      <label for="select-theme">Select a theme to change the look of your app</label>
+  <div class="theme-content">
+    <h2><small>Select a theme</small></h2>
+    <div class="form-group clearfix">
+      <div class="col-sm-4 control-label">
+        <label for="select-theme">Select a theme to change the look of your app</label>
+      </div>
+      <div class="col-sm-8">
+        <label for="select_email" class="select-proxy-display">
+          <select name="select-theme" id="select-theme" data-label="select" class="hidden-select form-control" data-theme-instances disabled>
+            <option value="none">-- Please wait...</option>
+          </select>
+          <span class="icon fa fa-chevron-down"></span>
+          <span class="select-value-proxy">-- Please wait...</span>
+        </label>
+        <p id="reset_settings">Reset to default settings - <a href="#" class="text-danger" data-reset-settings>Reset settings</a></p>
+      </div>
     </div>
-    <div class="col-sm-8">
-      <label for="select_email" class="select-proxy-display">
-        <select name="select-theme" id="select-theme" data-label="select" class="hidden-select form-control" data-theme-instances disabled>
-          <option value="none">-- Please wait...</option>
-        </select>
-        <span class="icon fa fa-chevron-down"></span>
-        <span class="select-value-proxy">-- Please wait...</span>
-      </label>
-      <p id="reset_settings">Reset to default settings - <a href="#" class="text-danger" data-reset-settings>Reset settings</a></p>
+    <div class="instance-empty hidden">
+      <h2><small>You haven't applied a theme yet</small></h2>
+      <p>Without a theme you can not change the look of your app.<br/>Select a theme first and change the style of your app.</p>
     </div>
-  </div>
-  <div class="instance-empty hidden">
-    <h2><small>You haven't applied a theme yet</small></h2>
-    <p>Without a theme you can not change the look of your app.<br/>Select a theme first and change the style of your app.</p>
-  </div>
-  <div class="instance-loading">
-    <div class="loading-holder animated">
-      <div class="loading">Loading...</div>
-      <p>Loading...</p>
+    <div class="instance-loading">
+      <div class="loading-holder animated">
+        <div class="loading">Loading...</div>
+        <p>Loading...</p>
+      </div>
     </div>
-  </div>
-  <div data-instances>
-  </div>
-  <div class="loader">
-    <p>Please wait while your theme is getting compiled...</p>
-    <div class="progress">
-      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+    <div data-instances>
+    </div>
+    <div class="loader">
+      <p>Please wait while your theme is getting compiled...</p>
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+      </div>
     </div>
   </div>
 </main>
