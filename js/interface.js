@@ -64,8 +64,8 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
         url: [
           'v1/widgets?include_instances=true&tags=type:theme',
           '&include_all_versions=true',
-          '&appId=' + F.Env.get('appId'),
-          '&organizationId=' + F.Env.get('organizationId')
+          '&appId=' + Fliplet.Env.get('appId'),
+          '&organizationId=' + Fliplet.Env.get('organizationId')
         ].join('')
       }).then(function (response) {
         // Only get themes that use the first version of the engine
