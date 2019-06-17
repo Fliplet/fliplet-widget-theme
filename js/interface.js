@@ -60,10 +60,25 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     }
 
     if (!themesLoadingPromise) {
-      themesLoadingPromise = Fliplet.Themes.get().then(function (response) {
+      themesLoadingPromise = Fliplet.API.request({
+        url: [
+          'v1/widgets?include_instances=true&tags=type:theme',
+          '&include_all_versions=true',
+          '&appId=' + Fliplet.Env.get('appId'),
+          '&organizationId=' + Fliplet.Env.get('organizationId')
+        ].join('')
+      }).then(function (response) {
+        // Only get themes that use the first version of the engine
+        var themeWidgets = response.widgets;
+        themeWidgets = _.values(_.groupBy(themeWidgets, 'package')).map((packageWidgets) => {
+          return _.find(packageWidgets, (widget) => {
+            return widget.tags.indexOf('engineVersion:2') === -1;
+          });
+        });
+
         themesLoadingPromise = null;
-        themes = response;
-        return themes;
+        themes = themeWidgets;
+        return themeWidgets;
       });
     }
 
