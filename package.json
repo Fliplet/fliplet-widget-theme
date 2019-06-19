@@ -9,9 +9,10 @@
     "build": "gulp build"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.4",
     "codemirror-colorpicker": "^1.9.50",
+    "core-js": "^3.1.4",
     "js-cookie": "^2.2.0",
+    "regenerator-runtime": "^0.13.2",
     "vue-multiselect": "^2.1.6"
   },
   "devDependencies": {
