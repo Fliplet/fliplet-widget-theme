@@ -1,4 +1,4 @@
-import 'core-js/stable'
+import 'core-js/stable/object'
 import 'regenerator-runtime/runtime'
 import Application from './Application.vue'
 import InheritDot from './components/UI/InheritDot.vue'
