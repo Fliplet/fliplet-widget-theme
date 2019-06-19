@@ -16,6 +16,7 @@ import { state, saveFieldData, getCurrentFieldValue,
 import InheritDot from '../UI/InheritDot'
 import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
+require('es6-object-assign').polyfill()
 import { ColorPicker } from 'codemirror-colorpicker'
 import Cookies from 'js-cookie'
 
