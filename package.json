@@ -10,17 +10,19 @@
   },
   "dependencies": {
     "codemirror-colorpicker": "^1.9.50",
+    "core-js": "^3.1.4",
     "js-cookie": "^2.2.0",
+    "regenerator-runtime": "^0.13.2",
     "vue-multiselect": "^2.1.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.4",
+    "@babel/core": "^7.4.5",
     "@babel/plugin-transform-modules-amd": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
-    "@babel/runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/runtime": "^7.4.5",
     "babel-loader": "^8.0.6",
-    "css-loader": "^2.1.1",
+    "css-loader": "^3.0.0",
     "del": "^4.1.1",
     "gulp": "^4.0.2",
     "gulp-sass": "^4.0.2",
@@ -32,7 +34,7 @@
     "vinyl-named": "^1.1.0",
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.31.0",
+    "webpack": "^4.34.0",
     "webpack-stream": "^5.2.1"
   }
 }

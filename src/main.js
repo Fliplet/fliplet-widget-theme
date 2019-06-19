@@ -1,3 +1,5 @@
+import 'core-js/stable/object/assign'
+import 'regenerator-runtime/runtime'
 import Application from './Application.vue'
 import InheritDot from './components/UI/InheritDot.vue'
 
