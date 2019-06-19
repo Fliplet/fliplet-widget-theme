@@ -1,3 +1,4 @@
+import '@babel/polyfill'
 import Application from './Application.vue'
 import InheritDot from './components/UI/InheritDot.vue'
 
