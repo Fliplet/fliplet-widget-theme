@@ -2,7 +2,7 @@
   "name": "Theme",
   "package": "com.fliplet.theme",
   "version": "2.0.0",
-  "icon": "img/icon.png",
+  "icon": "static/img/icon.png",
   "tags": [],
   "provider_only": true,
   "references": [],
