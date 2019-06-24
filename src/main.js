@@ -1,7 +1,9 @@
 import 'core-js/stable/object/assign'
+import 'core-js/stable/array/from'
+import 'core-js/stable/array/includes'
+import 'core-js/stable/string/starts-with'
 import 'regenerator-runtime/runtime'
 import Application from './Application.vue'
-import InheritDot from './components/UI/InheritDot.vue'
 
 const mainApp = new Vue({
   el: '#theme-widget-holder',
