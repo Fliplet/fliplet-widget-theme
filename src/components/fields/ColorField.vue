@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     bgImg() {
-      return window.__widgetData[this.widgetId].assetsUrl ? window.__widgetData[this.widgetId].assetsUrl + 'img/color-bg.gif' : ''
+      return window.__widgetData[this.widgetId].assetsUrl ? window.__widgetData[this.widgetId].assetsUrl + 'static/img/color-bg.gif' : ''
     },
     columnClass() {
       return createClass(this.data.fieldConfig.columns)
