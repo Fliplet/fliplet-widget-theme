@@ -60,7 +60,7 @@ export default {
       }
 
       let index
-      let difference = typeof newVal === 'string' ? '' : newVal.filter(x => !oldVal.includes(x))
+      let difference = typeof newVal === 'string' ? '' : _.difference(newVal, oldVal)
 
       if (newVal.indexOf('normal') > -1) {
         // Remove "normal"
