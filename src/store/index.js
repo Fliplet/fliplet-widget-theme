@@ -808,6 +808,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
               selectors.properties['border'] = 'none'
           }
 
+          if (styles.ignore) {
+            selectors.ignore = styles.ignore
+          }
+
           cssProperties.push(selectors)
           return cssProperties
           break
@@ -834,6 +838,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
             default:
           }
 
+          if (styles.ignore) {
+            selectors.ignore = styles.ignore
+          }
+
           cssProperties.push(selectors)
           return cssProperties
           break
@@ -852,6 +860,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
               selectors.properties['margin-right'] = 'auto'
               break
             default:
+          }
+
+          if (styles.ignore) {
+            selectors.ignore = styles.ignore
           }
 
           cssProperties.push(selectors)
@@ -876,6 +888,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
               default:
             }
 
+            if (styles.ignore) {
+              selectors.ignore = styles.ignore
+            }
+
             const newSelectors = _.clone(selectors)
             cssProperties.push(newSelectors)
           })
@@ -890,6 +906,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       styles.properties.forEach((prop) => {
         selectors.properties[prop] = value
       })
+
+      if (styles.ignore) {
+        selectors.ignore = styles.ignore
+      }
 
       const newSelectors = _.clone(selectors)
       cssProperties.push(newSelectors)
@@ -938,6 +958,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
             selectors.properties['border'] = 'none'
         }
 
+        if (styles.ignore) {
+          selectors.ignore = styles.ignore
+        }
+
         cssProperties.push(selectors)
         return cssProperties
         break
@@ -964,6 +988,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
           default:
         }
 
+        if (styles.ignore) {
+          selectors.ignore = styles.ignore
+        }
+
         cssProperties.push(selectors)
         return cssProperties
         break
@@ -982,6 +1010,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
             selectors.properties['margin-right'] = 'auto'
             break
           default:
+        }
+
+        if (styles.ignore) {
+          selectors.ignore = styles.ignore
         }
 
         cssProperties.push(selectors)
@@ -1006,6 +1038,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
             default:
           }
 
+          if (styles.ignore) {
+            selectors.ignore = styles.ignore
+          }
+
           const newSelectors = _.clone(selectors)
           cssProperties.push(newSelectors)
         })
@@ -1020,6 +1056,10 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
     styles.properties.forEach((prop) => {
       selectors.properties[prop] = value
     })
+
+    if (styles.ignore) {
+      selectors.ignore = styles.ignore
+    }
 
     const newSelectors = _.clone(selectors)
     cssProperties.push(newSelectors)
