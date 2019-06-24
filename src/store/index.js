@@ -560,10 +560,10 @@ function updateWidgetData(data) {
 }
 
 function findDependencies(configurations, currentField) {
-	const result = []
-	
-  function recursiveFind(cField) {  
-  	configurations.forEach((config) => {
+  const result = []
+
+  function recursiveFind(cField) {
+    configurations.forEach((config) => {
       config.variables.forEach((variable) => {
         variable.fields.forEach((field) => {
           const inheritingVariable = isInheriting(field.default);
