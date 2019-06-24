@@ -223,7 +223,7 @@ export default {
       this.enterPressedToClose = false
 
       if (this.valueToShow != this.value) {
-        if (isNaN(this.value) && this.value == 'auto' && this.value == 'none' && this.value == 'initial') {
+        if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
           this.value = 100
         }
 
@@ -239,7 +239,7 @@ export default {
       this.enterPressedToClose = true
 
       if (this.valueToShow != this.value) {
-        if (isNaN(this.value) && this.value == 'auto' && this.value == 'none' && this.value == 'initial') {
+        if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
           this.value = 100
         }
 
