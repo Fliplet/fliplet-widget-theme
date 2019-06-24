@@ -223,6 +223,10 @@ export default {
       this.enterPressedToClose = false
 
       if (this.valueToShow != this.value) {
+        if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
+          this.value = 100
+        }
+
         this.valueToShow = this.checkIfIsInheriting(this.value)
         ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
         : this.value == 'initial' ? 'none' : this.value
@@ -235,6 +239,10 @@ export default {
       this.enterPressedToClose = true
 
       if (this.valueToShow != this.value) {
+        if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
+          this.value = 100
+        }
+
         this.valueToShow = this.checkIfIsInheriting(this.value)
         ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
         : this.value == 'initial' ? 'none' : this.value
@@ -243,10 +251,7 @@ export default {
       }
     },
     onKeyDown(e) {
-      let value = this.value
-      value = isNaN(value) ? 0 : value
-
-      this.value = keyHandler.getValue(e, value, this.allowNegative)
+      this.value = keyHandler.getValue(e, this.value, this.allowNegative)
     },
     onKeyUp(e) {
       keyHandler.resetKeyMap(e)
