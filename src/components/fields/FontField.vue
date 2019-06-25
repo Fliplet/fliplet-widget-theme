@@ -8,7 +8,7 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
           <template v-if="customFonts && customFonts.length">
-            <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === valueToShow }" :style="'font-family:' + customFont.name + ',sans-serif;'">
+            <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === valueToShow }" :style="`font-family: '${customFont.name}',sans-serif;`">
               <a href="#" @click.prevent="onValueChange(customFont)">{{ customFont.name }}</a>
             </li>
             <li class="divider"></li>
@@ -84,7 +84,7 @@ export default {
       const webFont = fontMapping[fontName]
 
       if (!webFont) {
-        return `${fontName},sans-serif`
+        return `"${fontName}", sans-serif`
       }
 
       return webFont
@@ -99,7 +99,7 @@ export default {
       }
 
       if (!result) {
-        result = value.split(',')[0].trim()
+        result = value.split(',')[0].trim().replace(/['"]+/g, '')
       }
 
       return result
@@ -133,7 +133,7 @@ export default {
       }
       
       this.valueToShow = value.name
-      this.value = `${value.name},sans-serif`
+      this.value = `"${value.name}",sans-serif`
     },
     openFontUploader() {
       if (Fliplet.Env.get('development')) {
