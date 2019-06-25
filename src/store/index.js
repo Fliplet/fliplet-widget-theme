@@ -502,50 +502,40 @@ export function sendCssToFrame(value, currentField) {
     })
   })
 
-  // Checks if there is a field that has a dependency on the value that has been changed
-  configurations.forEach((config) => {
-    config.variables.forEach((variable) => {
-      variable.fields.forEach((field) => {
-        const inheritingVariable = isInheriting(field.default)
+  const dependenciesFound = findDependencies(configurations, currentField)
 
-        const fieldStyles = field.styles || []
-        fieldStyles.forEach((style) => {
-          // Check if the names match
-          if (!inheritingVariable || inheritingVariable !== currentField.name) {
-            return
-          }
+  dependenciesFound.forEach((field) => {
+    const fieldStyles = field.styles || []
+    fieldStyles.forEach((style) => {
+      savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
+        return !!widget.values[field.name]
+      })
+      localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
+        return !!widget.values[field.name]
+      })
 
-          savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
-            return !!widget.values[field.name]
-          })
-          localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
-            return !!widget.values[field.name]
-          })
+      const savedValues = getSavedValue(field, true)
 
-          const savedValues = getSavedValue(field, true)
+      if (savedValues.generalSavedValue
+        || savedValues.generalLocalSavedValue
+        || savedValues.widgetSavedValue
+        || savedValues.widgetLocalSavedValue) {
+        return
+      }
 
-          if (savedValues.generalSavedValue
-            || savedValues.generalLocalSavedValue
-            || savedValues.widgetSavedValue
-            || savedValues.widgetLocalSavedValue) {
-            return
-          }
+      // Add depending fields to changing array of properties
+      const widgetSelector = state.widgetMode
+        ? currentField.name === 'Accordion'
+          ? `[data-collapse-id="${state.widgetId}"]` : `[data-id="${state.widgetId}"]`
+        : savedWidgetFound || localSavedWidgetFound
+          ? currentField.name === 'Accordion'
+            ? `:not([data-collapse-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
+            : `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
+          : ''
 
-          // Add depending fields to changing array of properties
-          const widgetSelector = state.widgetMode
-            ? currentField.name === 'Accordion'
-              ? `[data-collapse-id="${state.widgetId}"]` : `[data-id="${state.widgetId}"]`
-            : savedWidgetFound || localSavedWidgetFound
-              ? currentField.name === 'Accordion'
-                ? `:not([data-collapse-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
-                : `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
-              : ''
-
-          const preparedStyles = prepareStyles(style, value, widgetSelector, currentField)
-          preparedStyles.forEach((styles) => {
-            cssProperties.push(styles)
-          })
-        })
+      const preparedStyles = prepareStyles(style, value, widgetSelector, currentField)
+      preparedStyles.forEach((styles) => {
+        cssProperties.push(styles)
       })
     })
   })
@@ -567,6 +557,30 @@ function removeWidgetFromInstance(id) {
 
 function updateWidgetData(data) {
   state.appearanceGroupOverlay.data = data
+}
+
+function findDependencies(configurations, currentField) {
+  const result = []
+
+  function recursiveFind(cField) {
+    configurations.forEach((config) => {
+      config.variables.forEach((variable) => {
+        variable.fields.forEach((field) => {
+          const inheritingVariable = isInheriting(field.default);
+
+          if (!inheritingVariable || inheritingVariable !== cField.name) {
+            return
+          }
+
+          result.push(field)
+          recursiveFind(field)
+        })
+      })
+    })
+  }
+	
+  recursiveFind(currentField)
+  return result
 }
 
 /**
