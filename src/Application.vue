@@ -137,14 +137,14 @@ export default {
           this.fonts = response[1]
           this.storeFonts()
           this.themes = response[0]
-          this.setThemeInstance(response[0], toReuse)
+          this.setThemeInstance(response[0], toReuse, widgetData)
         })
         .catch((err) => {
           this.error = Fliplet.parseError(err)
           console.error(err)
         })
     },
-    setThemeInstance(themes, toReuse) {
+    setThemeInstance(themes, toReuse, widgetData) {
       let themeWithoutInstances = 0
       let tab
 
@@ -197,7 +197,9 @@ export default {
       if (themeWithoutInstances == themes.length) {
         const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
         this.createDefaultInstance(flipletTheme.id, toReuse)
-          .then(this.initialize)
+          .then(() => {
+            this.initialize(widgetData)
+          })
           .then(this.reloadPagePreview)
           .then(() => {
             bus.$emit('saved-fields-set')
