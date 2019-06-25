@@ -574,7 +574,6 @@ function findDependencies(configurations, currentField) {
 
           result.push(field)
           recursiveFind(field)
-          return
         })
       })
     })
