@@ -8,7 +8,7 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
           <template v-if="customFonts && customFonts.length">
-            <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === valueToShow }" :style="'font-family:' + customFont.name + ',sans-serif;'">
+            <li v-for="(customFont, index) in customFonts" :key="index" :class="{ active: customFont.name === valueToShow }" :style="`font-family: '${customFont.name}',sans-serif;`">
               <a href="#" @click.prevent="onValueChange(customFont)">{{ customFont.name }}</a>
             </li>
             <li class="divider"></li>
@@ -84,7 +84,7 @@ export default {
       const webFont = fontMapping[fontName]
 
       if (!webFont) {
-        return `${fontName},sans-serif`
+        return `"${fontName}", sans-serif`
       }
 
       return webFont
@@ -139,15 +139,20 @@ export default {
       if (Fliplet.Env.get('development')) {
         return
       }
-
-      Fliplet.Studio.emit('overlay', {
-        name: 'app-settings',
-        options: {
-          size: 'large',
-          title: 'App Settings',
-          section: 'appCustomFonts',
-          appId: Fliplet.Env.get('appId')
-        }
+      
+      Fliplet.Modal.alert({
+        title: 'Reload page after uploading fonts',
+        message: '<p>In order to user custom fonts that you just uploaded, you will need to refresh the browser\'s page.</p>'
+      }).then(() => {
+        Fliplet.Studio.emit('overlay', {
+          name: 'app-settings',
+          options: {
+            size: 'large',
+            title: 'App Settings',
+            section: 'appCustomFonts',
+            appId: Fliplet.Env.get('appId')
+          }
+        })
       })
     },
     checkInheritance() {
