@@ -215,7 +215,7 @@ export default {
       return ThemeModel.create(themeId, toReuse)
     },
     reloadPagePreview() {
-      return Fliplet.Studio.emit('reload-page-preview');
+      return Fliplet.Studio.emit('reload-page-preview')
     },
     onFieldSave(dataToSave) {
       // Processes data when a field is changed
@@ -299,7 +299,7 @@ export default {
       // Event to flag that settings will be saved
       Fliplet.Studio.emit('page-preview-send-event', {
         type: 'savingNewStyles'
-      });
+      })
 
       this.updateInstance(this.dataToSave)
         .then((response) => {
@@ -309,12 +309,12 @@ export default {
           if (response && response.widgetInstance) {
             setThemeInstance(response.widgetInstance)
             // Reloads CSS files without reloading
-            var settings = response.widgetInstance.settings.assets[0];
+            const settings = response.widgetInstance.settings.assets[0]
             Fliplet.Studio.emit('page-preview-send-event', {
               type: 'reloadCssAsset',
               path: settings.path,
               url: settings.url
-            });
+            })
           }
 
           return 
@@ -330,6 +330,12 @@ export default {
         .then((response) => {
           this.fonts = response
           this.storeFonts()
+
+          // Reloads the custom fonts URL
+          this.customFontsCssUrl = [
+            Fliplet.Env.get('apiUrl'),
+            `v1/apps/${Fliplet.Env.get('appId')}/fonts/css`
+          ].join('')
         })
     },
     applySettingsTheme() {
@@ -409,6 +415,7 @@ export default {
         handleWidgetData(eventData.data.widgetData)
       }
       if (eventData && eventData.data && eventData.data.type === 'custom-fonts-closed') {
+        Fliplet.Studio.emit('reload-page-preview')
         this.reloadCustomFonts()
       }
     })

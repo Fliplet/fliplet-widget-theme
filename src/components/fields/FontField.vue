@@ -99,7 +99,7 @@ export default {
       }
 
       if (!result) {
-        result = value.split(',')[0].trim()
+        result = value.split(',')[0].trim().replace(/['"]+/g, '')
       }
 
       return result
@@ -133,7 +133,7 @@ export default {
       }
       
       this.valueToShow = value.name
-      this.value = `${value.name},sans-serif`
+      this.value = `"${value.name}",sans-serif`
     },
     openFontUploader() {
       if (Fliplet.Env.get('development')) {
