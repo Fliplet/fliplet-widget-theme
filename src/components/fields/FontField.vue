@@ -139,7 +139,7 @@ export default {
       if (Fliplet.Env.get('development')) {
         return
       }
-      
+
       Fliplet.Studio.emit('overlay', {
         name: 'app-settings',
         options: {
