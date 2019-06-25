@@ -140,19 +140,14 @@ export default {
         return
       }
       
-      Fliplet.Modal.alert({
-        title: 'Reload page after uploading fonts',
-        message: '<p>In order to user custom fonts that you just uploaded, you will need to refresh the browser\'s page.</p>'
-      }).then(() => {
-        Fliplet.Studio.emit('overlay', {
-          name: 'app-settings',
-          options: {
-            size: 'large',
-            title: 'App Settings',
-            section: 'appCustomFonts',
-            appId: Fliplet.Env.get('appId')
-          }
-        })
+      Fliplet.Studio.emit('overlay', {
+        name: 'app-settings',
+        options: {
+          size: 'large',
+          title: 'App Settings',
+          section: 'appCustomFonts',
+          appId: Fliplet.Env.get('appId')
+        }
       })
     },
     checkInheritance() {
