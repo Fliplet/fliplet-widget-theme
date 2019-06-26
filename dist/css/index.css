@@ -488,6 +488,8 @@ header {
     box-shadow: none; }
 
 .dropdown.select-box .dropdown-menu {
+  max-height: 320px;
+  overflow: auto;
   margin-top: 0;
   padding: 9px 0;
   border-radius: 0;

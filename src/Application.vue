@@ -71,7 +71,8 @@ export default {
       tabs: deviceTypes,
       error: undefined,
       dataToSave: {},
-      debouncedSave: _.debounce(this.save, 500, { leading: true })
+      debouncedSave: _.debounce(this.save, 500, { leading: true }),
+      oldThemeSettings: undefined
     }
   },
   components: {
@@ -157,6 +158,12 @@ export default {
         setThemeInstance(theme.instances[0])
         setActiveTheme(theme)
 
+        // If there are old settings apply them to the new theme
+        if (this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
+          this.dataToSave = this.oldThemeSettings
+          this.save()
+        }
+
         // Check if there's a tab to be open
         if (typeof state.widgetData.activeTab !== 'undefined') {
           tab = this.tabs[state.widgetData.activeTab]
@@ -196,7 +203,24 @@ export default {
       // Automatically create a theme instance if one doesn't exist
       if (themeWithoutInstances == themes.length) {
         const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
-        this.createDefaultInstance(flipletTheme.id, toReuse)
+
+        // Checks for older versions
+        ThemeModel.getAllVersions()
+          .then((result) => {
+            const allThemes = result.widgets
+            const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
+
+            if (!versionOneTheme.instances.length) {
+              return
+            }
+
+            // Save the old settings
+            this.oldThemeSettings = versionOneTheme.instances[0].settings
+            return
+          })
+          .then(() => {
+            return this.createDefaultInstance(flipletTheme.id, toReuse)
+          })
           .then(() => {
             this.initialize(widgetData)
           })
