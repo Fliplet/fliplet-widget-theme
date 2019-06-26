@@ -11,6 +11,16 @@ export default {
       }
     })
   },
+  getAllVersions() {
+    return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
+      url: [
+        'v1/widgets?include_instances=true&tags=type:theme',
+        '&include_all_versions=true',
+        '&appId=' + Fliplet.Env.get('appId'),
+        '&organizationId=' + Fliplet.Env.get('organizationId')
+      ].join('')
+    })
+  },
   update(data) {
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       url: 'v1/widget-instances/' + state.themeInstance.id,
