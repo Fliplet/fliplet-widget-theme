@@ -216,7 +216,14 @@ export default {
 
             // Save the old settings
             this.oldThemeSettings = versionOneTheme.instances[0].settings
-            return
+            return versionOneTheme.instances[0].id
+          })
+          .then((id) => {
+            if (!id) {
+              return
+            }
+
+            return ThemeModel.delete(id)
           })
           .then(() => {
             return this.createDefaultInstance(flipletTheme.id, toReuse)

@@ -32,7 +32,8 @@ export default {
       }
     })
   },
-  delete() {
+  delete(id) {
+    const themeId = id || state.themeInstance.id
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       method: 'DELETE',
       url: 'v1/widget-instances/' + state.themeInstance.id
