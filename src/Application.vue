@@ -159,7 +159,7 @@ export default {
         setActiveTheme(theme)
 
         // If there are old settings apply them to the new theme
-        if (this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
+        if (this.oldThemeSettings && this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
           this.dataToSave = this.oldThemeSettings
           this.save()
         }
