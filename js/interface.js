@@ -55,10 +55,6 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
   }
 
   function getThemes() {
-    if (themes) {
-      return Promise.resolve(themes);
-    }
-
     if (!themesLoadingPromise) {
       themesLoadingPromise = Fliplet.API.request({
         url: [
@@ -104,7 +100,9 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
       themes.forEach(function(theme) {
         if (theme.instances.length) {
           emptyState = false;
+          $('.new-theme-optin')[theme.name === 'Bootstrap' ? 'removeClass' : 'addClass']('hidden');
         }
+
         theme.instances.forEach(function(instance) {
           $instances.append(tpl('instance')({
             instance: instance,
@@ -192,6 +190,27 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     $themeInstances.prop('disabled', '');
   });
 
+  $(document).on('click', '.update-theme', function() {
+    Fliplet.Modal.confirm({
+      title: 'Upgrade appearance settings',
+      message: '<p>The new appearance settings will give you more settings for configuration. Your current settings will not be changed.</p>',
+      buttons: {
+        confirm: {
+          label: 'Upgrade'
+        }
+      }
+    }).then((result) => {
+      if (!result) {
+        return
+      }
+
+      Fliplet.App.Settings.set({ themeEngineVersion: '2.0.0' })
+        .then(function() {
+          Fliplet.Studio.emit('reload-studio');
+        });
+    })
+  });
+
   $(document).on('change', '.hidden-select', function() {
     var selectedValue = $(this).val();
     var selectedText = $(this).find("option:selected").text();
@@ -208,38 +227,49 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
     $instances.prev('.instance-loading').addClass('load');
     // Removes all widget instances if NONE is selected
     if (widgetId === "none" && $('[data-instances] [data-widget-id]').length) {
+      var promises = [];
       $('[data-instances] [data-widget-id]').each(function(i, el) {
-        Fliplet.API.request({
+        promises.push(Fliplet.API.request({
           method: 'DELETE',
           url: 'v1/widget-instances/' + $(el).data('instance-id')
-        });
+        }));
       });
-      init().then(reloadPage);
-      return;
+
+      return Promise.all(promises)
+        .then(init)
+        .then(reloadPage);
     }
 
     // Check if it is the same theme you selected
     if (!initialLoad && $('[data-widget-id="' + widgetId + '"]').length === 0) {
       // If it isn't then
       // First removes all instances
+      var deletePromises = [];
       $('[data-widget-id]').each(function(i, el) {
-        Fliplet.API.request({
+        deletePromises.push(Fliplet.API.request({
           method: 'DELETE',
           url: 'v1/widget-instances/' + $(el).data('instance-id')
-        });
+        }));
       });
 
-      Cookies.remove('open-panel-index');
-
-      // Then Adds the new one
-      Fliplet.API.request({
-        method: 'POST',
-        url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
-        data: {
-          widgetId: widgetId === 'none' ? undefined : widgetId,
-          reuse: true
-        }
-      }).then(init).then(reloadPage);
+      Promise.all(deletePromises)
+        .then(function() {
+          Cookies.remove('open-panel-index');
+          return
+        })
+        .then(function() {
+          // Then Adds the new one
+          return Fliplet.API.request({
+            method: 'POST',
+            url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
+            data: {
+              widgetId: widgetId === 'none' ? undefined : widgetId,
+              reuse: true
+            }
+          });
+        })
+        .then(init)
+        .then(reloadPage);
     } else {
       init();
       // Turns flag to false

@@ -47,6 +47,14 @@ header a.closeSideView {
   margin-right: 0;
 }
 
+.new-theme-optin {
+  margin-top: 15px;
+}
+
+.new-theme-optin .btn {
+  margin-top: 10px;
+}
+
 #reset_settings {
   /*display: none;*/
   text-align: center;
