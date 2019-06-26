@@ -158,7 +158,7 @@ export default {
         setThemeInstance(theme.instances[0])
         setActiveTheme(theme)
 
-        // There are old settings apply them to the new theme
+        // If there are old settings apply them to the new theme
         if (this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
           this.dataToSave = this.oldThemeSettings
           this.save()
@@ -208,7 +208,7 @@ export default {
         ThemeModel.getAllVersions()
           .then((result) => {
             const allThemes = result.widgets
-            const versionOneTheme = _.find(allThemes, { name: 'Bootstrap' })
+            const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
 
             if (!versionOneTheme.instances.length) {
               return

@@ -14,7 +14,7 @@ export default {
   getAllVersions() {
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       url: [
-        'v1/widgets?include_instances=true&tags=type:theme',
+        'v1/widgets?include_instances=true&tags=type:theme&package=com.fliplet.theme.default',
         '&include_all_versions=true',
         '&appId=' + Fliplet.Env.get('appId'),
         '&organizationId=' + Fliplet.Env.get('organizationId')
