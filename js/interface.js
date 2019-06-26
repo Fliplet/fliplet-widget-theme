@@ -193,7 +193,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
   $(document).on('click', '.update-theme', function() {
     Fliplet.Modal.confirm({
       title: 'Upgrade appearance settings',
-      message: '<p>The new appearance settings will give you more settings for configuration. Your current settings will not be changed.</p>',
+      message: '<p>The new appearance settings will give you more settings for configuration. Your current settings will not be changed.</p><p class="text-warning"><strong>Warning:</strong> Once upgraded you won\'t be able to go back to the previous version.</p>',
       buttons: {
         confirm: {
           label: 'Upgrade'
