@@ -379,6 +379,11 @@ export default {
           return
         }
 
+        Fliplet.Analytics.trackEvent({
+          category: 'theme_manager_v2',
+          action: 'widget_to_theme'
+        })
+
         prepareSettingsForTheme(state.widgetId)
         this.prepareToSave()
       })
@@ -392,6 +397,11 @@ export default {
         if (!result) {
           return
         }
+
+        Fliplet.Analytics.trackEvent({
+          category: 'theme_manager_v2',
+          action: 'theme_to_widget'
+        })
 
         this.prepareToSave(true)
         bus.$emit('group-settings-changed')
@@ -413,6 +423,12 @@ export default {
           if (!result) {
             return
           }
+
+          Fliplet.Analytics.trackEvent({
+            category: 'theme_manager_v2',
+            action: 'reset_theme'
+          })
+
           this.isLoading = true
           return ThemeModel.delete()
         })

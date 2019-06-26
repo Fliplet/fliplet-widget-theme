@@ -23,6 +23,12 @@ export default {
         appearanceGroup: this.groupConfig,
         instance: state.themeInstance
       })
+
+      Fliplet.Analytics.trackEvent({
+        category: 'theme_manager_v2',
+        action: 'open_section',
+        label: this.groupConfig.name
+      })
     }
   }
 }
