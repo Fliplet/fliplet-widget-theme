@@ -379,9 +379,10 @@ export default {
           return
         }
 
-        Fliplet.Analytics.trackEvent({
+        Fliplet.Studio.emit('track-event', {
           category: 'theme_manager_v2',
-          action: 'widget_to_theme'
+          action: 'widget_to_theme',
+          label: state.appearanceGroupOverlay ? state.appearanceGroupOverlay.name : ''
         })
 
         prepareSettingsForTheme(state.widgetId)
@@ -398,9 +399,10 @@ export default {
           return
         }
 
-        Fliplet.Analytics.trackEvent({
+        Fliplet.Studio.emit('track-event', {
           category: 'theme_manager_v2',
-          action: 'theme_to_widget'
+          action: 'theme_to_widget',
+          label: state.appearanceGroupOverlay ? state.appearanceGroupOverlay.name : ''
         })
 
         this.prepareToSave(true)
@@ -424,7 +426,7 @@ export default {
             return
           }
 
-          Fliplet.Analytics.trackEvent({
+          Fliplet.Studio.emit('track-event', {
             category: 'theme_manager_v2',
             action: 'reset_theme'
           })

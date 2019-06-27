@@ -24,7 +24,7 @@ export default {
         instance: state.themeInstance
       })
 
-      Fliplet.Analytics.trackEvent({
+      Fliplet.Studio.emit('track-event', {
         category: 'theme_manager_v2',
         action: 'open_section',
         label: this.groupConfig.name
