@@ -206,7 +206,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
       Fliplet.App.Settings.set({ themeEngineVersion: '2.0.0' })
         .then(function() {
-          Fliplet.Analytics.trackEvent({
+          Fliplet.Studio.emit('track-event', {
             category: 'theme_manager',
             action: 'upgrade_theme'
           });
