@@ -193,7 +193,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
   $(document).on('click', '.update-theme', function() {
     Fliplet.Modal.confirm({
       title: 'Upgrade appearance settings',
-      message: '<p>The new appearance settings will give you more settings for configuration. Your current settings will not be changed.</p><p class="text-warning"><strong>Warning:</strong> Once upgraded you won\'t be able to go back to the previous version.</p>',
+      message: '<p>Once upgraded you will not be able to go back to the previous version, but all your current settings will not be changed or lost.</p>',
       buttons: {
         confirm: {
           label: 'Upgrade'
@@ -206,6 +206,11 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
 
       Fliplet.App.Settings.set({ themeEngineVersion: '2.0.0' })
         .then(function() {
+          Fliplet.Studio.emit('track-event', {
+            category: 'theme_manager',
+            action: 'upgrade_theme'
+          });
+
           Fliplet.Studio.emit('reload-studio');
         });
     })
