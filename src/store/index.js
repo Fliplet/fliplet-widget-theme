@@ -110,6 +110,15 @@ export function setActiveTab(tab) {
 */
 export function setThemeInstance(instance) {
   state.themeInstance = instance
+
+  // Run migration of old variables
+  const migration = migrateOldVariables(state.themeInstance.settings.values)
+
+  // If migration done save values
+  if (migration.migrated) {
+    state.themeInstance.settings.values = migration.data
+    bus.$emit('values-migrated')
+  }
 }
 
 /**
@@ -292,6 +301,7 @@ export function checkIsFieldChanged(field) {
 export function getSavedValue(field, returnAll, context) {
   context = context || state.componentContext
   context = context.toLowerCase()
+
   const fieldName = context === 'mobile' || field.isQuickSetting
     ? field.name
     : field.breakpoints[context].name
@@ -544,6 +554,58 @@ export function sendCssToFrame(value, currentField) {
     type: 'inlineCss',
     cssProperties: cssProperties
   })
+}
+
+/**
+* Function to handle migration of old variables to new variables
+* @param {String} The type of migration needed
+* @param {Object} Saved theme values
+* @return {Object} Final theme values
+*/
+export function migrateOldVariables(data) {
+  let migrated = false
+
+  for (var key in data) {
+    switch(key) {
+      case 'headingOneFont':
+        data['headingOneFontFamily'] = data[key]
+        delete data[key]
+        migrated = true
+        break
+      case 'headingTwoFont':
+        data['headingTwoFontFamily'] = data[key]
+        delete data[key]
+        migrated = true
+        break
+      case 'headingThreeFont':
+        data['headingThreeFontFamily'] = data[key]
+        delete data[key]
+        migrated = true
+        break
+      case 'headingFourFont':
+        data['headingFourFontFamily'] = data[key]
+        delete data[key]
+        migrated = true
+        break
+      case 'headingFiveFont':
+        data['headingFiveFontFamily'] = data[key]
+        delete data[key]
+        migrated = true
+        break
+      case 'headingSixFont':
+        data['headingSixFontFamily'] = data[key]
+        delete data[key]
+        migrated = true
+        break
+      default:
+        break
+    }
+  }
+
+  return {
+    migrated: migrated,
+    data: data
+  }
 }
 
 // Private functions

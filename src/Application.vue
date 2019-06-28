@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { state, setComponentContext, setActiveTab,
+import { state, setComponentContext, setActiveTab, migrateOldVariables,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId,
   setWebFonts, setCustomFonts, setSavedFields, handleWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
@@ -155,11 +155,16 @@ export default {
           return
         }
 
-        setThemeInstance(theme.instances[0])
         setActiveTheme(theme)
+        setThemeInstance(theme.instances[0])
 
         // If there are old settings apply them to the new theme
         if (this.oldThemeSettings && this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
+          // Migrate variable names
+          const migration = migrateOldVariables(this.oldThemeSettings.values)
+          this.oldThemeSettings.values = migration.data
+
+          // Save values from old theme to new theme
           this.dataToSave = this.oldThemeSettings
           this.save()
         }
@@ -447,6 +452,7 @@ export default {
     bus.$on('apply-to-theme', this.applySettingsTheme)
     bus.$on('reset-to-theme', this.resetSettingsTheme)
     bus.$on('on-error', this.setError)
+    bus.$on('values-migrated', this.prepareToSave)
 
     // Save Request from Image Picker
     Fliplet.Widget.onSaveRequest(() => {
@@ -480,6 +486,7 @@ export default {
     bus.$off('apply-to-theme', this.applySettingsTheme)
     bus.$off('reset-to-theme', this.resetSettingsTheme)
     bus.$off('on-error', this.setError)
+    bus.$on('values-migrated', this.prepareToSave)
   }
 }
 </script>
