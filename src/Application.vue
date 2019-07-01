@@ -486,7 +486,7 @@ export default {
     bus.$off('apply-to-theme', this.applySettingsTheme)
     bus.$off('reset-to-theme', this.resetSettingsTheme)
     bus.$off('on-error', this.setError)
-    bus.$on('values-migrated', this.prepareToSave)
+    bus.$off('values-migrated', this.prepareToSave)
   }
 }
 </script>
