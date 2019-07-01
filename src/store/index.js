@@ -1,4 +1,5 @@
 import deviceTypes from '../libs/device-types'
+import migrationObject from '../libs/migration-object'
 import bus from '../libs/bus'
 
 export const state = {
@@ -565,42 +566,57 @@ export function sendCssToFrame(value, currentField) {
 export function migrateOldVariables(data) {
   let migrated = false
 
-  for (var key in data) {
-    switch(key) {
-      case 'headingOneFont':
-        data['headingOneFontFamily'] = data[key]
-        delete data[key]
-        migrated = true
-        break
-      case 'headingTwoFont':
-        data['headingTwoFontFamily'] = data[key]
-        delete data[key]
-        migrated = true
-        break
-      case 'headingThreeFont':
-        data['headingThreeFontFamily'] = data[key]
-        delete data[key]
-        migrated = true
-        break
-      case 'headingFourFont':
-        data['headingFourFontFamily'] = data[key]
-        delete data[key]
-        migrated = true
-        break
-      case 'headingFiveFont':
-        data['headingFiveFontFamily'] = data[key]
-        delete data[key]
-        migrated = true
-        break
-      case 'headingSixFont':
-        data['headingSixFontFamily'] = data[key]
-        delete data[key]
-        migrated = true
-        break
-      default:
-        break
+  _.forIn(data, (value, key) => {
+    let preventDelete = false
+
+    if(!data[migrationObject[key]]) {
+      return
     }
-  }
+
+    if (typeof migrationObject[key] === 'string') {
+      data[migrationObject[key]] = value
+      migrated = true
+      delete data[key]
+    }
+
+    if (_.isArray(migrationObject[key])) {
+      migrationObject[key].forEach((val) => {
+        data[val] = value
+      })
+      migrated = true
+      delete data[key]
+    }
+
+    if (_.isPlainObject(migrationObject[key])) {
+      if (value === 'none') {
+        data[migrationObject[key].none] = value
+        preventDelete = migrationObject[key].none === key
+      } else {
+        let borderArray
+
+        if (value.indexOf('rgb') > -1) {
+          borderArray = value.match(/\w+(\(.*?\))?/g)
+        } else {
+          borderArray = value.split(' ')
+        }
+
+        migrationObject[key].values.forEach((val, index) => {
+          if (!val) {
+            return
+          }
+
+          data[val] = borderArray[index]
+          data[migrationObject[key].none] = 'all'
+          preventDelete = val === key
+        })
+      }
+      migrated = true
+
+      if (!preventDelete) {
+        delete data[key]
+      }
+    }
+  })
 
   return {
     migrated: migrated,
