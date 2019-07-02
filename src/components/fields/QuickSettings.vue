@@ -8,7 +8,7 @@
       <template v-for="(variable, idx) in variables">
         <div class="quick-settings-field">
           <template v-for="(field, index) in variable.fields">
-            <component :is="fieldType(field.type)" :data="fieldData(field)"></component>
+            <component :is="fieldType(field.type)" :data="fieldData(field)" :key="componentKey"></component>
           </template>
         </div>
       </template>
@@ -27,7 +27,8 @@ export default {
   data() {
     return {
       state,
-      variables: this.computeVariables()
+      variables: this.computeVariables(),
+      componentKey: 0
     }
   },
   props: {
@@ -70,9 +71,13 @@ export default {
 
       return this.groupConfig.variables
     },
+    forceRerender() {
+      this.componentKey += 1
+    },
     reSetVariables() {
       this.variables = this.computeVariables()
       this.$nextTick(() => {
+        this.forceRerender()
         bus.$emit('variables-computed')
       })
     }
