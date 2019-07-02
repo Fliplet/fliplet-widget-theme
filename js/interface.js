@@ -193,7 +193,7 @@ Fliplet.Widget.register('com.fliplet.theme', function() {
   $(document).on('click', '.update-theme', function() {
     Fliplet.Modal.confirm({
       title: 'Update is currently in beta testing',
-      message: '<p>We do not anticipate there\'ll be any issues with the update but it is in "beta" testing mode as it is a new feature and bugs are more likely to occur. We will of course fix any bugs should they occur. However bugs can take a couple of days to fix so we do not recommend updating if you have an imminent app deadline.</p>',
+      message: '<p>We do not anticipate there\'ll be any issues with the update, however whilst in beta mode there is a higher risk of issues occurring. We will aim at fixing any issues as soon as possible, however we wouldn\'t recommend updating your Appearance if you have any immediate deadlines.</p>',
       buttons: {
         confirm: {
           label: 'Update'
