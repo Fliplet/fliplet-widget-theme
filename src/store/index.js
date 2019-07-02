@@ -114,10 +114,10 @@ export function setThemeInstance(instance) {
 
   // Run migration of old variables
   const migration = migrateOldVariables(state.themeInstance.settings.values)
+  state.themeInstance.settings.values = migration.data
 
   // If migration done save values
   if (migration.migrated) {
-    state.themeInstance.settings.values = migration.data
     bus.$emit('values-migrated')
   }
 }
@@ -564,18 +564,18 @@ export function sendCssToFrame(value, currentField) {
 * @return {Object} Final theme values
 */
 export function migrateOldVariables(data) {
-  let migrated = false
+  let migrated = []
 
   _.forIn(data, (value, key) => {
     let preventDelete = false
 
-    if(!data[migrationObject[key]]) {
+    if(!migrationObject[key]) {
       return
     }
 
     if (typeof migrationObject[key] === 'string') {
       data[migrationObject[key]] = value
-      migrated = true
+      migrated.push(true)
       delete data[key]
     }
 
@@ -583,14 +583,14 @@ export function migrateOldVariables(data) {
       migrationObject[key].forEach((val) => {
         data[val] = value
       })
-      migrated = true
+      migrated.push(true)
       delete data[key]
     }
 
     if (_.isPlainObject(migrationObject[key])) {
       if (value === 'none') {
         data[migrationObject[key].none] = value
-        preventDelete = migrationObject[key].none === key
+        preventDelete = migrationObject[key].none === key || migrationObject[key].keep
       } else {
         let borderArray
 
@@ -607,10 +607,10 @@ export function migrateOldVariables(data) {
 
           data[val] = borderArray[index]
           data[migrationObject[key].none] = 'all'
-          preventDelete = val === key
+          preventDelete = val === key || migrationObject[key].keep
         })
       }
-      migrated = true
+      migrated.push(!preventDelete)
 
       if (!preventDelete) {
         delete data[key]
@@ -619,7 +619,7 @@ export function migrateOldVariables(data) {
   })
 
   return {
-    migrated: migrated,
+    migrated: migrated.indexOf(true) > -1,
     data: data
   }
 }

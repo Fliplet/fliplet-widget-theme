@@ -24,6 +24,12 @@ export default {
       'accordionBorderColor'
     ]
   },
+  primaryButtonColor: {
+    keep: true,
+    values: [
+      'highlightColor'
+    ]
+  },
   primaryButtonBorder: {
     none: 'primaryButtonBorderSides',
     values: [
@@ -38,6 +44,12 @@ export default {
       'primaryButtonHoverBorderWidth',
       'primaryButtonHoverBorderStyle',
       'primaryButtonHoverBorderColor'
+    ]
+  },
+  secondaryButtonColor: {
+    keep: true,
+    values: [
+      'secondaryColor'
     ]
   },
   secondaryButtonBorder: {
