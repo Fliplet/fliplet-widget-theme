@@ -229,6 +229,7 @@ export default {
             }
 
             return ThemeModel.delete(id)
+              .then(this.reloadPagePreview)
           })
           .then(() => {
             return this.createDefaultInstance(flipletTheme.id, toReuse)
