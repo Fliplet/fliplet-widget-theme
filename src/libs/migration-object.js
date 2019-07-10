@@ -16,6 +16,10 @@ export default {
     'menuSlideTopNavBorderColor',
     'menuSwipeTopNavBorderColor'
   ],
+  listIconColor: [
+    'listSmallIconColor',
+    'listLargeIconColor'
+  ],
   accordionBorder: {
     none: 'accordionBorderColor',
     values: [
