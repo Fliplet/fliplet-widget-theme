@@ -1,11 +1,10 @@
 const keyMap = {}
 
 export default {
-  getValue(e, value, allowNegative) {
+  getValue(e, val, allowNegative) {
     keyMap[e.keyCode] = true
-    const parsedValue = Number(value)
-
-    value = isNaN(parsedValue) ? 0 : parsedValue
+    const parsedValue = Number(val)
+    const value = isNaN(parsedValue) ? 0 : parsedValue
 
     // Resets up and down keys when pressing Command
     if (keyMap[91] && e.keyCode == 38 && e.metaKey) {
@@ -71,7 +70,7 @@ export default {
         return 0
       }
     } else {
-      return value
+      return val
     }
   },
   resetKeyMap(e) {
