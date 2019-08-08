@@ -6,8 +6,8 @@
 
     <div class="col-xs-12">
       <template v-for="(variable, idx) in variables">
-        <div class="quick-settings-field">
-          <template v-for="(field, index) in variable.fields">
+        <div :key="idx" class="quick-settings-field">
+          <template v-for="field in variable.fields">
             <component :is="fieldType(field.type)" :data="fieldData(field)" :key="componentKey"></component>
           </template>
         </div>
@@ -54,9 +54,11 @@ export default {
 
       return data
     },
-    computeVariables() {  
+    computeVariables(toRecompute) {
+      const variables = _.cloneDeep(toRecompute && this.variables.length ? this.variables : this.groupConfig.variables)
+
       // Processing variables    
-      this.groupConfig.variables.forEach((variable, index) => {
+      variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
           const values = getSavedValue(field, true)
 
@@ -65,17 +67,17 @@ export default {
             inheriting: true
           }
 
-          _.extend(this.groupConfig.variables[index].fields[idx], newObj)
+          _.extend(variables[index].fields[idx], newObj)
         })
       })
 
-      return this.groupConfig.variables
+      return variables
     },
     forceRerender() {
       this.componentKey += 1
     },
     reSetVariables() {
-      this.variables = this.computeVariables()
+      this.variables = this.computeVariables(true)
       this.$nextTick(() => {
         this.forceRerender()
         bus.$emit('variables-computed')

@@ -148,6 +148,7 @@ export default {
     setThemeInstance(themes, toReuse, widgetData) {
       let themeWithoutInstances = 0
       let tab
+      const themePromises = []
 
       themes.forEach((theme) => {
         if (!theme.instances.length) {
@@ -158,6 +159,7 @@ export default {
         setActiveTheme(theme)
         setThemeInstance(theme.instances[0])
 
+        let promise = Promise.resolve()
         // If there are old settings apply them to the new theme
         if (this.oldThemeSettings && this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
           // Migrate variable names
@@ -166,7 +168,7 @@ export default {
 
           // Save values from old theme to new theme
           this.dataToSave = this.oldThemeSettings
-          this.save()
+          promise = this.save()
         }
 
         // Check if there's a tab to be open
@@ -205,46 +207,49 @@ export default {
         this.isLoading = false
       })
 
-      // Automatically create a theme instance if one doesn't exist
-      if (themeWithoutInstances == themes.length) {
-        const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
+      Promise.all(themePromises)
+        .then(() => {
+          // Automatically create a theme instance if one doesn't exist
+          if (themeWithoutInstances == themes.length) {
+            const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
 
-        // Checks for older versions
-        ThemeModel.getAllVersions()
-          .then((result) => {
-            const allThemes = result.widgets
-            const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
+            // Checks for older versions
+            ThemeModel.getAllVersions()
+              .then((result) => {
+                const allThemes = result.widgets
+                const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
 
-            if (!versionOneTheme.instances.length) {
-              return
-            }
+                if (!versionOneTheme.instances.length) {
+                  return
+                }
 
-            // Save the old settings
-            this.oldThemeSettings = versionOneTheme.instances[0].settings
-            return versionOneTheme.instances[0].id
-          })
-          .then((id) => {
-            if (!id) {
-              return
-            }
+                // Save the old settings
+                this.oldThemeSettings = versionOneTheme.instances[0].settings
+                return versionOneTheme.instances[0].id
+              })
+              .then((id) => {
+                if (!id) {
+                  return
+                }
 
-            return ThemeModel.delete(id)
-          })
-          .then(() => {
-            return this.createDefaultInstance(flipletTheme.id, toReuse)
-          })
-          .then(() => {
-            this.initialize(widgetData)
-          })
-          .then(this.reloadPagePreview)
-          .then(() => {
-            bus.$emit('saved-fields-set')
-          })
-          .catch((err) => {
-            this.error = Fliplet.parseError(err)
-            console.error(err)
-          })
-      }
+                return ThemeModel.delete(id)
+              })
+              .then(() => {
+                return this.createDefaultInstance(flipletTheme.id, toReuse)
+              })
+              .then(() => {
+                return this.initialize(widgetData)
+              })
+              .then(this.reloadPagePreview)
+              .then(() => {
+                bus.$emit('saved-fields-set')
+              })
+              .catch((err) => {
+                this.error = Fliplet.parseError(err)
+                console.error(err)
+              })
+          }
+        })
     },
     createDefaultInstance(themeId, toReuse) {
       toReuse = typeof toReuse === 'undefined' ? true : toReuse
@@ -337,7 +342,7 @@ export default {
         type: 'savingNewStyles'
       })
 
-      this.updateInstance(this.dataToSave)
+      return this.updateInstance(this.dataToSave)
         .then((response) => {
           clearDataToSave()
           toggleSavingStatus(false)
@@ -353,7 +358,7 @@ export default {
             })
           }
 
-          return 
+          return
         })
         .catch((err) => {
           this.error = Fliplet.parseError(err)
