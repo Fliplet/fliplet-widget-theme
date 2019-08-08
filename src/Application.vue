@@ -171,6 +171,8 @@ export default {
           promise = this.save()
         }
 
+        themePromises.push(promise)
+
         // Check if there's a tab to be open
         if (typeof state.widgetData.activeTab !== 'undefined') {
           tab = this.tabs[state.widgetData.activeTab]
@@ -210,45 +212,47 @@ export default {
       Promise.all(themePromises)
         .then(() => {
           // Automatically create a theme instance if one doesn't exist
-          if (themeWithoutInstances == themes.length) {
-            const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
-
-            // Checks for older versions
-            ThemeModel.getAllVersions()
-              .then((result) => {
-                const allThemes = result.widgets
-                const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
-
-                if (!versionOneTheme.instances.length) {
-                  return
-                }
-
-                // Save the old settings
-                this.oldThemeSettings = versionOneTheme.instances[0].settings
-                return versionOneTheme.instances[0].id
-              })
-              .then((id) => {
-                if (!id) {
-                  return
-                }
-
-                return ThemeModel.delete(id)
-              })
-              .then(() => {
-                return this.createDefaultInstance(flipletTheme.id, toReuse)
-              })
-              .then(() => {
-                return this.initialize(widgetData)
-              })
-              .then(this.reloadPagePreview)
-              .then(() => {
-                bus.$emit('saved-fields-set')
-              })
-              .catch((err) => {
-                this.error = Fliplet.parseError(err)
-                console.error(err)
-              })
+          if (themeWithoutInstances != themes.length) {
+            return
           }
+
+          const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
+
+          // Checks for older versions
+          ThemeModel.getAllVersions()
+            .then((result) => {
+              const allThemes = result.widgets
+              const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
+
+              if (!versionOneTheme.instances.length) {
+                return
+              }
+
+              // Save the old settings
+              this.oldThemeSettings = versionOneTheme.instances[0].settings
+              return versionOneTheme.instances[0].id
+            })
+            .then((id) => {
+              if (!id) {
+                return
+              }
+
+              return ThemeModel.delete(id)
+            })
+            .then(() => {
+              return this.createDefaultInstance(flipletTheme.id, toReuse)
+            })
+            .then(() => {
+              return this.initialize(widgetData)
+            })
+            .then(this.reloadPagePreview)
+            .then(() => {
+              bus.$emit('saved-fields-set')
+            })
+            .catch((err) => {
+              this.error = Fliplet.parseError(err)
+              console.error(err)
+            })
         })
     },
     createDefaultInstance(themeId, toReuse) {
