@@ -99,6 +99,7 @@ export function resetStylesToTheme(widgetId, appearanceGroup) {
 */
 export function setComponentContext(context) {
   state.componentContext = context
+  bus.$emit('component-context-changed')
 }
 
 export function setActiveTab(tab) {
@@ -120,6 +121,8 @@ export function setThemeInstance(instance) {
   if (migration.migrated) {
     bus.$emit('values-migrated')
   }
+
+  bus.$emit('saved-fields-set')
 }
 
 /**

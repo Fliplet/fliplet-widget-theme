@@ -128,6 +128,9 @@ export default {
       this.updateActiveTab(tab)
       setComponentContext(tab.name)
       Fliplet.Studio.emit('select-device-tab', tab.type === 'desktop' ? 'web' : tab.type)
+      this.onContextSwitch()
+    },
+    onContextSwitch(){
       this.forceRerender()
       this.reSetVariables()
     },
@@ -388,6 +391,7 @@ export default {
     bus.$on('check-field-visibility', this.runFieldLogic)
     bus.$on('check-margin-field', this.runMarginFieldLogic)
     bus.$on('group-settings-changed', this.hideApplyReset)
+    bus.$on('component-context-changed', this.onContextSwitch)
 
     const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
     const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
@@ -402,6 +406,7 @@ export default {
     bus.$off('check-field-visibility', this.runFieldLogic)
     bus.$off('check-margin-field', this.runMarginFieldLogic)
     bus.$off('group-settings-changed', this.hideApplyReset)
+    bus.$off('component-context-changed', this.onContextSwitch)
   } 
 }
 </script>
