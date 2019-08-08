@@ -212,7 +212,7 @@ export default {
       Promise.all(themePromises)
         .then(() => {
           // Automatically create a theme instance if one doesn't exist
-          if (themeWithoutInstances != themes.length) {
+          if (themeWithoutInstances !== themes.length) {
             return
           }
 
