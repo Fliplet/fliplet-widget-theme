@@ -276,7 +276,7 @@ export default {
             widget.values[data.name] = data.value
 
             // For existing settings if UUID doesn't exist
-            if (!widget.uui) {
+            if (!widget.uuid) {
               state.widgetUUID
             }
           } else {
