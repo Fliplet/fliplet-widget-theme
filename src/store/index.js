@@ -116,10 +116,10 @@ export function setThemeInstance(instance) {
 
   // Run migration of old variables
   const migration = migrateOldVariables(state.themeInstance.settings.values)
-  state.themeInstance.settings.values = migration.data
 
   // If migration done save values
   if (migration.migrated) {
+    state.themeInstance.settings.values = migration.data
     bus.$emit('values-migrated')
   }
 
@@ -577,6 +577,7 @@ export function sendCssToFrame(value, currentField) {
 */
 export function migrateOldVariables(data) {
   let migrated = []
+  data = _.cloneDeep(data)
 
   _.forIn(data, (value, key) => {
     let preventDelete = false
