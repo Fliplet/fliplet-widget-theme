@@ -45,7 +45,7 @@ export default {
       colorSets: [
         {
           name: "Fliplet",
-          colors: ['#7d4b79', '#4bebff', '#ffd94b', '#f05865', '#36344c', '#474975', '#8d8ea6', '#f8f6f7']
+          colors: ['#7d4b79', '#00abd1', '#ffd94b', '#f05865', '#36344c', '#474975', '#8d8ea6', '#f8f6f7']
         },
         { 
           name: "Material",  
