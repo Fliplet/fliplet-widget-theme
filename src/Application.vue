@@ -35,7 +35,7 @@
 
 <script>
 import { state, setComponentContext, setActiveTab, migrateOldVariables,
-  setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId,
+  setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId, setWidgetUUID,
   setWebFonts, setCustomFonts, setSavedFields, handleWidgetData,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
   toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings } from './store'
@@ -179,8 +179,9 @@ export default {
         }
 
         // Checks to understand if the provider was called from a component
-        if (state.widgetData && state.widgetData.widgetInstanceId) {
+        if (state.widgetData && state.widgetData.widgetInstanceId && state.widgetData.widgetInstanceUUID) {
           setWidgetId(state.widgetData.widgetInstanceId)
+          setWidgetUUID(state.widgetData.widgetInstanceUUID)
 
           // Check if there's a package name to open its component settings
           if (typeof state.widgetData.widgetPackage !== 'undefined') {
@@ -273,9 +274,15 @@ export default {
           // If it is, check if settings of the same widget were previously saved
           if (widget) {
             widget.values[data.name] = data.value
+
+            // For existing settings if UUID doesn't exist
+            if (!widget.uuid) {
+              state.widgetUUID
+            }
           } else {
             widget = {
               id: state.widgetId,
+              uuid: state.widgetUUID,
               component: widgetsMap[state.widgetData.widgetPackage],
               values: {}
             }

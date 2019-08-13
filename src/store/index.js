@@ -11,6 +11,7 @@ export const state = {
   },
   widgetMode: false,
   widgetId: undefined,
+  widgetUUID: undefined,
   appearanceGroupOverlay: {},
   isSaving: false,
   dataToSave: [],
@@ -155,6 +156,14 @@ export function setCustomFonts(fonts) {
 */
 export function setWidgetId(id) {
   state.widgetId = parseInt(id, 10)
+}
+
+/**
+* Saves the widget uuid into the store
+* @param {String} String of the widget uuid
+*/
+export function setWidgetUUID(uuid) {
+  state.widgetUUID = uuid
 }
 
 /**
