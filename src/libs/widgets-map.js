@@ -42,7 +42,8 @@ const widgetsMap = {
   'com.fliplet.notificationinbox': 'notificationBox',
   'com.fliplet.photo-sharing': 'photoSharing',
   'com.fliplet.onboarding': 'onboarding',
-  'com.fliplet.slider': 'slider'
+  'com.fliplet.slider': 'slider',
+  'com.fliplet.container': 'container'
 }
 
 export default widgetsMap
