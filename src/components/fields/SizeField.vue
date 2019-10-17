@@ -247,7 +247,7 @@ export default {
         ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
         : this.value == 'initial' ? 'none' : this.value
 
-        this.prepareToSave()
+        this.$nextTick(this.prepareToSave)
       }
     },
     onKeyDown(e) {
