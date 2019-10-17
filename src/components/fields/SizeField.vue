@@ -75,7 +75,6 @@ export default {
       this.fromReset = false
     },
     valueToShow(newVal) {
-      debugger
       if (!this.fromCreated) {
         sendCssToFrame(newVal + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
       }
