@@ -75,6 +75,7 @@ export default {
       this.fromReset = false
     },
     valueToShow(newVal) {
+      debugger
       if (!this.fromCreated) {
         sendCssToFrame(newVal + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
       }
@@ -247,7 +248,7 @@ export default {
         ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
         : this.value == 'initial' ? 'none' : this.value
 
-        this.prepareToSave()
+        this.$nextTick(this.prepareToSave)
       }
     },
     onKeyDown(e) {
