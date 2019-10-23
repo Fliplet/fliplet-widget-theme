@@ -44,7 +44,7 @@ const widgetsMap = {
   'com.fliplet.onboarding': 'onboarding',
   'com.fliplet.slider': 'slider',
   'com.fliplet.container': 'container',
-  'com.fliplet.text': 'text',
+  'com.fliplet.text': 'text'
 }
 
 export default widgetsMap
