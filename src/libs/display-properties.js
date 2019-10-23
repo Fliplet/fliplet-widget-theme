@@ -1,10 +1,3 @@
-const normal = ['block', 'inline-block']
-
-const extended = ['none', 'block', 'inline-block', 'flex']
-
-const displayProperties = {
-  normalProperties: normal,
-  extendedProperties: extended
-}
+const displayProperties = ['block', 'inline-block']
 
 export default displayProperties

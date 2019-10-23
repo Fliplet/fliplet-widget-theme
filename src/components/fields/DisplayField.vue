@@ -18,7 +18,7 @@
 import { state, getCurrentFieldValue, getFieldName,
   saveFieldData, checkIsFieldChanged, checkLogic, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
-import displayProperties from '../../libs/display-properties'
+import positionProperties from '../../libs/display-properties'
 import { tooltips } from '../../libs/tooltips'
 import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
@@ -28,7 +28,7 @@ export default {
     return {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
-      properties: displayProperties.normalProperties,
+      properties: positionProperties,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
