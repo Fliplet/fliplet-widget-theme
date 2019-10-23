@@ -28,7 +28,7 @@ export default {
     return {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
-      properties: displayProperties.normalProperties,
+      properties: displayProperties.extendedProperties,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -68,11 +68,17 @@ export default {
   methods: {
     getTooltip(prop) {
       switch(prop) {
+        case 'none':
+          return 'Hide'
+          break;
         case 'block':
           return 'No row sharing'
           break;
         case 'inline-block':
           return 'Row sharing'
+          break;
+        case 'flex':
+          return 'Flexible box'
           break;
         default:
           return 'No row sharing'

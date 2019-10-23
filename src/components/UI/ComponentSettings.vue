@@ -63,6 +63,7 @@ import AlignField from '../fields/AlignField'
 import MarginAlignField from '../fields/MarginAlignField'
 import PositionField from '../fields/PositionField'
 import DisplayField from '../fields/DisplayField'
+import DisplayExtendedField from '../fields/DisplayExtendedField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -98,7 +99,8 @@ export default {
     AlignField,
     MarginAlignField,
     PositionField,
-    DisplayField
+    DisplayField,
+    DisplayExtendedField
   },
   computed: {
     transition() {

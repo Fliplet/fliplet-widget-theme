@@ -968,6 +968,10 @@ header {
           background-image: url("dist/icons/display-block.svg"); }
         .display-field-holder .display-field-container label .check-icon.check-display-inline-block {
           background-image: url("dist/icons/display-inline-block.svg"); }
+        .display-field-holder .display-field-container label .check-icon.check-display-none {
+          background-image: url("dist/icons/display-inline-block.svg"); }
+        .display-field-holder .display-field-container label .check-icon.check-display-flex {
+          background-image: url("dist/icons/display-inline-block.svg"); }
       .display-field-holder .display-field-container label:hover .check-icon {
         opacity: 0.7; }
     .display-field-holder .display-field-container .radio-holder.inline-boxed input[type="radio"]:checked + label .check-icon {
