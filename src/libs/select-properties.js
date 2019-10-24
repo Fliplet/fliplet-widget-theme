@@ -17,26 +17,6 @@ const selectProperties = {
     'scroll': 'Scroll',
     'hidden': 'Hidden',
     'auto': 'Auto'
-  },
-  'flex-direction': {
-    'row': 'In a row',
-    'row-reverse': 'In a row (reverse)',
-    'column': 'In a column',
-    'column-reverse': 'In a column (reverse)'
-  },
-  'flex-align': {
-    'stretch': 'Stretch to fit',
-    'center': 'Center',
-    'flex-start': 'At the beginning',
-    'flex-end': 'At the end',
-    'baseline': 'At the baseline'
-  },
-  'flex-justify': {
-    'center': 'Center',
-    'flex-start': 'At the beginning',
-    'flex-end': 'At the end',
-    'space-between': 'Space between content',
-    'space-around': 'Space around content'
   }
 }
 
