@@ -192,18 +192,6 @@ header {
     width: 36px;
     height: 18px;
     margin: 0; }
-    #theme-application .switch input {
-      display: none; }
-      #theme-application .switch input:checked + .slider {
-        background-color: #dcdae0;
-        border-color: transparent; }
-      #theme-application .switch input:checked + .slider:before {
-        -webkit-transform: translateX(14px);
-        -moz-transform: translateX(14px);
-        -ms-transform: translateX(14px);
-        -o-transform: translateX(14px);
-        transform: translateX(14px);
-        background-color: #333333; }
     #theme-application .switch .slider {
       position: absolute;
       cursor: pointer;
@@ -230,6 +218,18 @@ header {
         border-radius: 16px; }
         #theme-application .switch .slider.round:before {
           border-radius: 50%; }
+    #theme-application .switch input {
+      display: none; }
+      #theme-application .switch input:checked + .slider {
+        background-color: #dcdae0;
+        border-color: transparent; }
+      #theme-application .switch input:checked + .slider:before {
+        -webkit-transform: translateX(14px);
+        -moz-transform: translateX(14px);
+        -ms-transform: translateX(14px);
+        -o-transform: translateX(14px);
+        transform: translateX(14px);
+        background-color: #333333; }
   #theme-application .label-holder {
     position: relative;
     margin-left: 15px;
@@ -1088,3 +1088,8 @@ header {
     .flex-justify-field-holder .flex-field-container .radio-holder.inline-boxed input[type="radio"]:checked + label .check-icon,
     .flex-direction-field-holder .flex-field-container .radio-holder.inline-boxed input[type="radio"]:checked + label .check-icon {
       opacity: 1; }
+
+.flex-wrap-field-holder .switch .slider {
+  transition: 0.25s; }
+  .flex-wrap-field-holder .switch .slider:before {
+    transition: 0.25s; }

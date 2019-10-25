@@ -122,3 +122,15 @@
     }
   }
 }
+
+.flex-wrap-field-holder {
+  .switch {
+    .slider {
+      transition: 0.25s;
+
+      &:before {
+        transition: 0.25s;
+      }
+    }
+  }
+}
