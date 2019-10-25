@@ -283,7 +283,8 @@ header {
         top: 50%;
         margin-top: -10px;
         background-color: darken($highlight-gray, 10%);
-        @include transition(all 0.25s ease-out);
+        -webkit-transition: 0.25s;
+        transition: 0.25s;
       }
 
       &.round {

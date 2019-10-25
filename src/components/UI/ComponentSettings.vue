@@ -67,6 +67,7 @@ import DisplayExtendedField from '../fields/DisplayExtendedField'
 import FlexDirectionField from '../fields/FlexDirectionField'
 import FlexJustifyField from '../fields/FlexJustifyField'
 import FlexAlignField from '../fields/FlexAlignField'
+import ToggleField from '../fields/ToggleField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -106,7 +107,8 @@ export default {
     DisplayExtendedField,
     FlexDirectionField,
     FlexJustifyField,
-    FlexAlignField
+    FlexAlignField,
+    ToggleField
   },
   computed: {
     transition() {

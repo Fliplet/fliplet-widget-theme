@@ -1,0 +1,124 @@
+.flex-align-field-holder,
+.flex-justify-field-holder,
+.flex-direction-field-holder {
+  position: relative;
+
+  .wrapper {
+    position: relative;
+
+    .tooltip {
+      white-space: nowrap;
+    }
+  }
+
+  .flex-field-container {
+    display: flex !important;
+    align-items: center;
+
+    label {
+      overflow: hidden;
+      padding: 0;
+      min-width: 30px;
+      width: auto;
+      height: 30px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .check-icon {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+        width: 100%;
+        height: 100%;
+        opacity: 0.4;
+        background-size: 85%;
+        background-repeat: no-repeat;
+        background-position: center center;
+
+        &.check-flex-row {
+          background-image: url('dist/icons/flex-direction.svg');
+          transform: rotate(90deg);
+        }
+
+        &.check-flex-row-reverse {
+          background-image: url('dist/icons/flex-direction.svg');
+          transform: rotate(270deg);
+        }
+
+        &.check-flex-column {
+          background-image: url('dist/icons/flex-direction.svg');
+          transform: rotate(180deg);
+        }
+
+        &.check-flex-column-reverse {
+          background-image: url('dist/icons/flex-direction.svg');
+        }
+
+        &.check-flex-align-stretch {
+          background-image: url('dist/icons/flex-align/stretch.svg');
+        }
+
+        &.check-flex-align-center {
+          background-image: url('dist/icons/flex-align/center.svg');
+        }
+
+        &.check-flex-align-flex-start {
+          background-image: url('dist/icons/flex-align/start.svg');
+        }
+
+        &.check-flex-align-flex-end {
+          background-image: url('dist/icons/flex-align/end.svg');
+        }
+
+        &.check-flex-align-baseline {
+          background-image: url('dist/icons/flex-align/baseline.svg');
+        }
+
+        &.check-flex-justify-center {
+          background-image: url('dist/icons/flex-justify/center.svg');
+          transform: rotate(-90deg);
+        }
+
+        &.check-flex-justify-flex-end {
+          background-image: url('dist/icons/flex-justify/end.svg');
+          transform: rotate(-90deg);
+        }
+
+        &.check-flex-justify-flex-start {
+          background-image: url('dist/icons/flex-justify/start.svg');
+          transform: rotate(-90deg);
+        }
+
+        &.check-flex-justify-space-between {
+          background-image: url('dist/icons/flex-justify/space-between.svg');
+          transform: rotate(-90deg);
+        }
+
+        &.check-flex-justify-space-around {
+          background-image: url('dist/icons/flex-justify/space-around.svg');
+          transform: rotate(-90deg);
+        }
+      }
+
+      &:hover {
+        .check-icon {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    .radio-holder {
+      &.inline-boxed {
+        input[type="radio"] {
+          &:checked + label {
+            .check-icon {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}

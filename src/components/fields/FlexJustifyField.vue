@@ -1,16 +1,17 @@
 <template>
-  <div v-if="showField" :class="'display-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
+  <div v-if="showField" :class="'flex-justify-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
-      <div class="display-field-container">
+      <div class="flex-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + uuid" :name="'display-field-' + uuid" :value="prop" v-model="value">
+          <input type="radio" :id="'radio-' + prop + uuid" :name="'flex-field-' + uuid" :value="prop" v-model="value">
           <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
-            <span :class="'check-icon check-display-' + prop"></span>
+            <span :class="'check-icon check-flex-justify-' + prop"></span>
           </label>
         </div>        
       </div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
+    <div v-if="label" class="field-label">{{ label }}</div>
   </div>
 </template>
 
@@ -29,6 +30,7 @@ export default {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
       properties: displayProperties.flexJustify,
+      label: this.data.fieldConfig.label,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),

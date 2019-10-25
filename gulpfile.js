@@ -31,7 +31,7 @@ function copyFonts() {
 // Copy fonts from static folder
 function copyIcons() {
   return gulp
-  .src(['static/icons/*'])
+  .src(['static/icons/**'])
   .pipe(gulp.dest('dist/icons/'))
 }
 
