@@ -7,7 +7,7 @@
       </label>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div v-if="label" class="field-label">{{ label }} - {{ compValue }}</div>
+    <div class="field-label"><span v-if="label" >{{ label }} - </span>{{ compValue }}</div>
   </div>
 </template>
 

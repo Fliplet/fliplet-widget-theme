@@ -1093,3 +1093,24 @@ header {
   transition: 0.25s; }
   .flex-wrap-field-holder .switch .slider:before {
     transition: 0.25s; }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start {
+  background-image: url("dist/icons/flex-align/start-alt.svg"); }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-flex-end,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-flex-end {
+  background-image: url("dist/icons/flex-align/end-alt.svg"); }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-center,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-center {
+  background-image: url("dist/icons/flex-align/center.svg");
+  transform: rotate(0deg); }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-flex-end,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-flex-end {
+  transform: rotate(0deg); }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-flex-start,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-flex-start {
+  transform: rotate(0deg); }

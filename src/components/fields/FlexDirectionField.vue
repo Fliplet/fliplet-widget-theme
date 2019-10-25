@@ -50,6 +50,11 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal != oldVal && !this.fromReset) {
+        if (newVal === 'column' || newVal === 'column-reverse') {
+          bus.$emit('flex-direction-changed', true)
+        } else {
+          bus.$emit('flex-direction-changed', false)
+        }
         checkLogic(this.data.fieldConfig, newVal)
         sendCssToFrame(newVal, this.data.fieldConfig)
 

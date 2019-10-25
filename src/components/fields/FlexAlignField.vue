@@ -30,7 +30,7 @@ export default {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
       properties: displayProperties.flexAlign,
-      label: this.data.fieldConfig.label,
+      label: 'Vertical',
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -122,16 +122,26 @@ export default {
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
+    },
+    flexDirectionChanged(value) {
+      debugger
+      this.label = !!value ? 'Horizontal' : 'Vertical'
     }
+  },
+  created() {
+    var isFlexColumn = !!document.querySelector('#component-settings-overlay.flex-column')
+    this.flexDirectionChanged(isFlexColumn)
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
+    bus.$on('flex-direction-changed', this.flexDirectionChanged)
     checkLogic(this.data.fieldConfig, this.value)
     // Start Bootstrap tooltips
     tooltips()
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('flex-direction-changed', this.flexDirectionChanged)
   }
 }
 </script>

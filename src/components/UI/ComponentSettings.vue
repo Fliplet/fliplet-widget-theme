@@ -1,6 +1,6 @@
 <template>
   <transition :name="transition">
-    <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay">
+    <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay" ref="componentoverlay">
       <header>
         <p>{{ state.appearanceGroupOverlay.name }}</p>
         <span class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
@@ -393,6 +393,9 @@ export default {
     },
     hideApplyReset() {
       this.isChanged = false
+    },
+    flexDirectionFlag(value) {
+      this.$refs.componentoverlay.classList[value ? 'add' : 'remove']('flex-column')
     }
   },
   mounted() {
@@ -402,6 +405,7 @@ export default {
     bus.$on('check-margin-field', this.runMarginFieldLogic)
     bus.$on('group-settings-changed', this.hideApplyReset)
     bus.$on('component-context-changed', this.onContextSwitch)
+    bus.$on('flex-direction-changed', this.flexDirectionFlag)
 
     const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
     const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
@@ -417,6 +421,7 @@ export default {
     bus.$off('check-margin-field', this.runMarginFieldLogic)
     bus.$off('group-settings-changed', this.hideApplyReset)
     bus.$off('component-context-changed', this.onContextSwitch)
+    bus.$off('flex-direction-changed', this.flexDirectionFlag)
   } 
 }
 </script>
