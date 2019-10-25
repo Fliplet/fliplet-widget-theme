@@ -174,6 +174,14 @@ export default {
       return false
     },
     showVariable(variable) {
+      const show = _.find(variable.fields, (field) => {
+        return !!field.showField || typeof field.showField === 'undefined'
+      })
+
+      if (!show) {
+        return false
+      }
+
       // Function to hide the entire field's group if they aren't supposed to be shown on any of the device types
       const toHide = variable.hide
       const context = state.componentContext.toLowerCase()
