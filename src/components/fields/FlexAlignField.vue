@@ -124,7 +124,6 @@ export default {
         : true
     },
     flexDirectionChanged(value) {
-      debugger
       this.label = !!value ? 'Horizontal' : 'Vertical'
     }
   },
