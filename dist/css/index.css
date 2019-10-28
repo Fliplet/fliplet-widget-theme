@@ -1038,23 +1038,28 @@ header {
         .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-stretch,
         .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-stretch,
         .flex-direction-field-holder .flex-field-container label .check-icon.check-flex-align-stretch {
-          background-image: url("dist/icons/flex-align/stretch.svg"); }
+          background-image: url("dist/icons/flex-align/stretch.svg");
+          transform: rotate(-90deg); }
         .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-center,
         .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-center,
         .flex-direction-field-holder .flex-field-container label .check-icon.check-flex-align-center {
-          background-image: url("dist/icons/flex-align/center.svg"); }
+          background-image: url("dist/icons/flex-align/center.svg");
+          transform: rotate(-90deg); }
         .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start,
         .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start,
         .flex-direction-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start {
-          background-image: url("dist/icons/flex-align/start.svg"); }
+          background-image: url("dist/icons/flex-align/start.svg");
+          transform: rotate(-90deg); }
         .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-flex-end,
         .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-flex-end,
         .flex-direction-field-holder .flex-field-container label .check-icon.check-flex-align-flex-end {
-          background-image: url("dist/icons/flex-align/end.svg"); }
+          background-image: url("dist/icons/flex-align/end.svg");
+          transform: rotate(-90deg); }
         .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-baseline,
         .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-baseline,
         .flex-direction-field-holder .flex-field-container label .check-icon.check-flex-align-baseline {
-          background-image: url("dist/icons/flex-align/baseline.svg"); }
+          background-image: url("dist/icons/flex-align/baseline.svg");
+          transform: rotate(-90deg); }
         .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-center,
         .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-center,
         .flex-direction-field-holder .flex-field-container label .check-icon.check-flex-justify-center {
@@ -1097,17 +1102,24 @@ header {
     .toggle-field-holder .switch .slider:before {
       transition: 0.25s; }
 
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-stretch,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-stretch {
+  transform: rotate(0deg); }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-center,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-center {
+  transform: rotate(0deg); }
+
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start,
 .flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start {
-  background-image: url("dist/icons/flex-align/start-alt.svg"); }
+  transform: rotate(0deg); }
 
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-flex-end,
 .flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-flex-end {
-  background-image: url("dist/icons/flex-align/end-alt.svg"); }
+  transform: rotate(0deg); }
 
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-center,
 .flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-center {
-  background-image: url("dist/icons/flex-align/center.svg");
   transform: rotate(0deg); }
 
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-flex-end,
@@ -1116,4 +1128,12 @@ header {
 
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-flex-start,
 .flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-flex-start {
+  transform: rotate(0deg); }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-space-between,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-space-between {
+  transform: rotate(0deg); }
+
+.flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-justify-space-around,
+.flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-justify-space-around {
   transform: rotate(0deg); }

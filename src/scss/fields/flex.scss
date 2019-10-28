@@ -41,61 +41,52 @@
           background-image: url('dist/icons/flex-direction.svg');
           transform: rotate(90deg);
         }
-
         &.check-flex-row-reverse {
           background-image: url('dist/icons/flex-direction.svg');
           transform: rotate(270deg);
         }
-
         &.check-flex-column {
           background-image: url('dist/icons/flex-direction.svg');
           transform: rotate(180deg);
         }
-
         &.check-flex-column-reverse {
           background-image: url('dist/icons/flex-direction.svg');
         }
-
         &.check-flex-align-stretch {
           background-image: url('dist/icons/flex-align/stretch.svg');
         }
-
         &.check-flex-align-center {
           background-image: url('dist/icons/flex-align/center.svg');
+          transform: rotate(-90deg);
         }
-
         &.check-flex-align-flex-start {
           background-image: url('dist/icons/flex-align/start.svg');
+          transform: rotate(-90deg);
         }
-
         &.check-flex-align-flex-end {
           background-image: url('dist/icons/flex-align/end.svg');
+          transform: rotate(-90deg);
         }
-
         &.check-flex-align-baseline {
           background-image: url('dist/icons/flex-align/baseline.svg');
+          transform: rotate(-90deg);
         }
-
         &.check-flex-justify-center {
           background-image: url('dist/icons/flex-justify/center.svg');
           transform: rotate(-90deg);
         }
-
         &.check-flex-justify-flex-end {
           background-image: url('dist/icons/flex-justify/end.svg');
           transform: rotate(-90deg);
         }
-
         &.check-flex-justify-flex-start {
           background-image: url('dist/icons/flex-justify/start.svg');
           transform: rotate(-90deg);
         }
-
         &.check-flex-justify-space-between {
           background-image: url('dist/icons/flex-justify/space-between.svg');
           transform: rotate(-90deg);
         }
-
         &.check-flex-justify-space-around {
           background-image: url('dist/icons/flex-justify/space-around.svg');
           transform: rotate(-90deg);
@@ -144,22 +135,31 @@
     .flex-field-container {
       label {
         .check-icon {
-          &.check-flex-align-flex-start {
-            background-image: url('dist/icons/flex-align/start-alt.svg');
+          &.check-flex-align-stretch {
+            transform: rotate(0deg);
           }
-  
+          &.check-flex-align-center {
+            transform: rotate(0deg);
+          }
+          &.check-flex-align-flex-start {
+            transform: rotate(0deg);
+          }
           &.check-flex-align-flex-end {
-            background-image: url('dist/icons/flex-align/end-alt.svg');
+            transform: rotate(0deg);
           }
           &.check-flex-justify-center {
-            background-image: url('dist/icons/flex-align/center.svg');
             transform: rotate(0deg);
           }
           &.check-flex-justify-flex-end {
             transform: rotate(0deg);
           }
-  
           &.check-flex-justify-flex-start {
+            transform: rotate(0deg);
+          }
+          &.check-flex-justify-space-between {
+            transform: rotate(0deg);
+          }
+          &.check-flex-justify-space-around {
             transform: rotate(0deg);
           }
         }
