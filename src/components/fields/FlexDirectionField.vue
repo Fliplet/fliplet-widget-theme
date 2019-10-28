@@ -112,6 +112,12 @@ export default {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
     reCheckProps() {
+      if (this.value === 'column' || this.value === 'column-reverse') {
+        bus.$emit('flex-direction-changed', true)
+      } else {
+        bus.$emit('flex-direction-changed', false)
+      }
+
       this.isInheriting = this.checkInheritance()
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
 
