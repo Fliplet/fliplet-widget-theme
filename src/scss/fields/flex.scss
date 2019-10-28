@@ -54,6 +54,7 @@
         }
         &.check-flex-align-stretch {
           background-image: url('dist/icons/flex-align/stretch.svg');
+          transform: rotate(-90deg);
         }
         &.check-flex-align-center {
           background-image: url('dist/icons/flex-align/center.svg');
