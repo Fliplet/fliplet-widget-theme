@@ -1,10 +1,28 @@
 const toggleProperties = {
   'flex-wrap': [
     {
-      'wrap': true
+      'wrap': {
+        value: true,
+        label: 'On'
+      }
     },
     {
-      'nowrap': false
+      'nowrap': {
+        value: false,
+        label: 'Off'
+      }
+    }
+  ],
+  'display-flex': [
+    {
+      'none': {
+        value: false,
+        label: 'Hidden'
+      },
+      'flex': {
+        value: true,
+        label: 'Visible'
+      }
     }
   ]
 }

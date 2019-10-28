@@ -188,7 +188,7 @@ header {
         font-size: 2.5em; }
   #theme-application .switch {
     position: relative;
-    display: inline-block;
+    display: block;
     width: 36px;
     height: 18px;
     margin: 0; }
@@ -1089,10 +1089,13 @@ header {
     .flex-direction-field-holder .flex-field-container .radio-holder.inline-boxed input[type="radio"]:checked + label .check-icon {
       opacity: 1; }
 
-.flex-wrap-field-holder .switch .slider {
-  transition: 0.25s; }
-  .flex-wrap-field-holder .switch .slider:before {
+.toggle-field-holder {
+  display: flex;
+  align-items: center; }
+  .toggle-field-holder .switch .slider {
     transition: 0.25s; }
+    .toggle-field-holder .switch .slider:before {
+      transition: 0.25s; }
 
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start,
 .flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-flex-start {

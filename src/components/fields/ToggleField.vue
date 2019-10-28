@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showField" :class="'flex-wrap-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
+  <div v-if="showField" :class="'toggle-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <label class="switch">
         <input type="checkbox" v-model="valueToShow">
@@ -46,7 +46,7 @@ export default {
   },
   watch: {
     valueToShow(newValue) {
-      const valueProperty  = _.find(this.properties, { name: newValue })
+      const valueProperty  = _.find(this.properties, { valueToShow: newValue })
       this.value = valueProperty.value
     },
     value(newVal, oldVal) {
@@ -68,8 +68,8 @@ export default {
       return createClass(this.data.fieldConfig.columns)
     },
     compValue() {
-      const valueProperty = _.find(this.properties, { name: this.valueToShow })
-      return !!valueProperty.name ? 'On' : 'Off'
+      const valueProperty = _.find(this.properties, { valueToShow: this.valueToShow })
+      return valueProperty.label
     }
   },
   methods: {
@@ -81,7 +81,8 @@ export default {
         properties.forEach((prop) => {
           for (var key in prop) {
             var newObj = {
-              name: prop[key],
+              label: prop[key].label,
+              valueToShow: prop[key].value,
               value: key
             }
             propsArr.push(newObj)
@@ -93,7 +94,7 @@ export default {
     },
     setValues() {
       const valueProperty = _.find(this.properties, { value: this.value })
-      this.valueToShow = valueProperty.name
+      this.valueToShow = valueProperty.valueToShow
     },
     getValue() {
       return getCurrentFieldValue(this.data.fieldConfig)
