@@ -62,11 +62,11 @@
         }
         &.check-flex-align-flex-start {
           background-image: url('dist/icons/flex-align/start.svg');
-          transform: rotate(-90deg);
+          transform: rotate(90deg);
         }
         &.check-flex-align-flex-end {
           background-image: url('dist/icons/flex-align/end.svg');
-          transform: rotate(-90deg);
+          transform: rotate(90deg);
         }
         &.check-flex-align-baseline {
           background-image: url('dist/icons/flex-align/baseline.svg');
