@@ -2759,7 +2759,7 @@ eval("__webpack_require__.r(__webpack_exports__);\nvar sizeProperties = {\n  'wi
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar toggleProperties = {\n  'flex-wrap': [{\n    'wrap': {\n      value: true,\n      label: 'On'\n    }\n  }, {\n    'nowrap': {\n      value: false,\n      label: 'Off'\n    }\n  }],\n  'display-flex': [{\n    'none': {\n      value: false,\n      label: 'Hidden'\n    },\n    'flex': {\n      value: true,\n      label: 'Visible'\n    }\n  }]\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (toggleProperties);\n\n//# sourceURL=webpack:///./src/libs/toggle-properties.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar toggleProperties = {\n  'flex-wrap': [{\n    'wrap': {\n      value: true,\n      label: 'On'\n    }\n  }, {\n    'nowrap': {\n      value: false,\n      label: 'Off'\n    }\n  }],\n  'display-flex': [{\n    'none': {\n      value: false,\n      label: 'Hidden'\n    },\n    'flex': {\n      value: true,\n      label: 'Visible'\n    }\n  }],\n  'visibility': [{\n    'hidden': {\n      value: false,\n      label: 'Hidden'\n    },\n    'visible': {\n      value: true,\n      label: 'Visible'\n    }\n  }]\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (toggleProperties);\n\n//# sourceURL=webpack:///./src/libs/toggle-properties.js?");
 
 /***/ }),
 

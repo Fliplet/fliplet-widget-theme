@@ -24,6 +24,18 @@ const toggleProperties = {
         label: 'Visible'
       }
     }
+  ],
+  'visibility': [
+    {
+      'hidden': {
+        value: false,
+        label: 'Hidden'
+      },
+      'visible': {
+        value: true,
+        label: 'Visible'
+      }
+    }
   ]
 }
 
