@@ -2,6 +2,8 @@ import deviceTypes from '../libs/device-types'
 import migrationObject from '../libs/migration-object'
 import bus from '../libs/bus'
 
+const DEFAULT_INTERACT_VERSION = '2.0'
+
 export const state = {
   themeInstance: undefined,
   activeTheme: undefined,
@@ -635,6 +637,11 @@ export function migrateOldVariables(data) {
     migrated: migrated.indexOf(true) > -1,
     data: data
   }
+}
+
+export function appSupportsContainer() {
+  const appSettings = Fliplet.Env.get('appSettings')
+  return parseInt(_.get(appSettings, 'interactVersion', DEFAULT_INTERACT_VERSION), 10) > 2
 }
 
 // Private functions

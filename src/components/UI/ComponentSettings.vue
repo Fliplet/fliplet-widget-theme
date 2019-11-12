@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { state, closeAppearanceGroupSettings,
+import { state, closeAppearanceGroupSettings, appSupportsContainer,
   getInheritance, getSavedValue, setComponentContext, setActiveTab } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
@@ -88,7 +88,8 @@ export default {
       tabs: deviceTypes,
       componentKey: 0,
       groupedComponentKey: 0,
-      isChanged: false
+      isChanged: false,
+      appSupportsContainers: appSupportsContainer()
     }
   },
   components: {
@@ -173,7 +174,21 @@ export default {
 
       return false
     },
+    supportsContainers(configuration) {
+      // If not defined returns true to show
+      if (typeof configuration.appSupportsContainers === 'undefined') {
+        return true
+      }
+
+      return this.appSupportsContainers === configuration.appSupportsContainers
+    },
     showVariable(variable) {
+      const supportsContainers = this.supportsContainers(variable)
+
+      if (!supportsContainers) {
+        return false
+      }
+
       const show = _.find(variable.fields, (field) => {
         return !!field.showField || typeof field.showField === 'undefined'
       })
@@ -193,6 +208,12 @@ export default {
       return true
     },
     showField(field) {
+      const supportsContainers = this.supportsContainers(field)
+
+      if (!supportsContainers) {
+        return false
+      }
+
       // Function to hide fields if they aren't supposed to be shown on any of the device types
       const toHide = field.hide
       const context = state.componentContext.toLowerCase()
