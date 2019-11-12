@@ -76,12 +76,12 @@ export default {
     },
     valueToShow(newVal) {
       if (!this.fromCreated) {
-        sendCssToFrame(newVal + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
+        sendCssToFrame(newVal + (this.property !== 'x' && newVal !== 'index' ? this.property : ''), this.data.fieldConfig)
       }
     },
     property(newVal) {
       if (!this.fromCreated) {
-        sendCssToFrame(this.value + (newVal !== 'x' ? newVal : ''), this.data.fieldConfig)
+        sendCssToFrame(this.value + (newVal !== 'x' && newVal !== 'index' ? newVal : ''), this.data.fieldConfig)
       }
     }
   },
@@ -147,7 +147,7 @@ export default {
         return match[0]
       }
 
-      return 'x'
+      return this.data.fieldConfig.subtype === 'z-index' ? 'index' : 'x'
     },
     parseValue(value) {
       if (value == 'auto' || value == 'none' || value == 'initial') {
@@ -177,7 +177,7 @@ export default {
         }
 
         if (this.value == 'auto' || this.value == 'none' || this.value == 'initial') {
-          this.value = 100
+          this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
           this.prepareToSave()
           return
         }
@@ -189,7 +189,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting || this.value == 'auto' || this.value == 'none' || this.value == 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' ? this.property : '') : '0' + (this.property !== 'x' ? this.property : '')
+        value: isInheriting || this.value == 'auto' || this.value == 'none' || this.value == 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' && this.property !== 'index' ? this.property : '') : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
       }
 
       if (this.isAligned) {
@@ -224,7 +224,7 @@ export default {
 
       if (this.valueToShow != this.value) {
         if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
-          this.value = 100
+          this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
         }
 
         this.valueToShow = this.checkIfIsInheriting(this.value)
@@ -240,7 +240,7 @@ export default {
 
       if (this.valueToShow != this.value) {
         if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
-          this.value = 100
+          this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
         }
 
         this.valueToShow = this.checkIfIsInheriting(this.value)
@@ -313,7 +313,7 @@ export default {
 
       if (this.fromReset) {
         this.value = this.getValueToShow()
-        sendCssToFrame(this.value + (this.property !== 'x' ? this.property : ''), this.data.fieldConfig)
+        sendCssToFrame(this.value + (this.property !== 'x' && this.property !== 'index' ? this.property : ''), this.data.fieldConfig)
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
