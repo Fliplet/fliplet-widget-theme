@@ -2735,7 +2735,7 @@ eval("__webpack_require__.r(__webpack_exports__);\nvar positionProperties = ['re
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar selectProperties = {\n  'border-sides': {\n    'all': 'All sides',\n    'top': 'Top',\n    'right': 'Right',\n    'bottom': 'Bottom',\n    'left': 'Left',\n    'none': 'None'\n  },\n  'shadow-style': {\n    'outset': 'Outwards',\n    'inset': 'Inset',\n    'none': 'None'\n  },\n  'overflow': {\n    'visible': 'Visible',\n    'scroll': 'Scroll',\n    'hidden': 'Hidden',\n    'auto': 'Auto'\n  }\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (selectProperties);\n\n//# sourceURL=webpack:///./src/libs/select-properties.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar selectProperties = {\n  'border-sides': {\n    'all': 'All sides',\n    'top': 'Top',\n    'right': 'Right',\n    'bottom': 'Bottom',\n    'left': 'Left',\n    'none': 'None'\n  },\n  'shadow-style': {\n    'outset': 'Outwards',\n    'inset': 'Inset',\n    'none': 'None'\n  },\n  'overflow': {\n    'visible': 'Visible',\n    'auto': 'Scroll',\n    'hidden': 'Hidden'\n  }\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (selectProperties);\n\n//# sourceURL=webpack:///./src/libs/select-properties.js?");
 
 /***/ }),
 

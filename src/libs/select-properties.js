@@ -14,9 +14,8 @@ const selectProperties = {
   },
   'overflow': {
     'visible': 'Visible',
-    'scroll': 'Scroll',
-    'hidden': 'Hidden',
-    'auto': 'Auto'
+    'auto': 'Scroll',
+    'hidden': 'Hidden'
   }
 }
 
