@@ -23,7 +23,8 @@ export const state = {
     values: [],
     widgetInstances: []
   },
-  widgetData: undefined
+  widgetData: undefined,
+  widgetIsFlexChild: false
 }
 
 // Public functions
@@ -166,6 +167,16 @@ export function setWidgetId(id) {
 */
 export function setWidgetUUID(uuid) {
   state.widgetUUID = uuid
+}
+
+/**
+* Sets a state to flag if the widget is a child of a flexbox container
+* @param {Boolean}
+*/
+export function setParentFlex(value) {
+  state.widgetIsFlexChild = typeof value !== 'undefined'
+    ? value
+    : state.widgetData.parentIsFlex
 }
 
 /**

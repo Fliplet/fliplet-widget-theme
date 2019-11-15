@@ -36,7 +36,7 @@
 <script>
 import { state, setComponentContext, setActiveTab, migrateOldVariables,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId, setWidgetUUID,
-  setWebFonts, setCustomFonts, setSavedFields, handleWidgetData,
+  setWebFonts, setCustomFonts, setSavedFields, handleWidgetData, setParentFlex,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave, appSupportsContainer,
   toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings } from './store'
 import WidgetHeader from './components/UI/WidgetHeader'
@@ -205,6 +205,9 @@ export default {
               return config.packages && config.packages.indexOf(state.widgetData.widgetPackage) > -1
             })
 
+
+            // Set state to flag if widget has a flexbox parent
+            setParentFlex()
             // Set state in widget mode
             setWidgetMode(!!this.appearanceGroup)
           }
@@ -217,6 +220,8 @@ export default {
           return
         }
 
+        // Set state to flag if widget has a flexbox parent to false
+        setParentFlex(false)
         // Set state in widget mode to false
         setWidgetMode(false)
         if (state.appearanceGroupOverlay.isOpen) {
