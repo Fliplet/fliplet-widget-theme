@@ -13,18 +13,6 @@ const toggleProperties = {
       }
     }
   ],
-  'display-flex': [
-    {
-      'none': {
-        value: false,
-        label: 'Hidden'
-      },
-      'flex': {
-        value: true,
-        label: 'Visible'
-      }
-    }
-  ],
   'visibility': [
     {
       'hidden': {
@@ -34,6 +22,18 @@ const toggleProperties = {
       'visible': {
         value: true,
         label: 'Visible'
+      }
+    }
+  ],
+  'toggle': [
+    {
+      'off': {
+        value: false,
+        label: 'Off'
+      },
+      'on': {
+        value: true,
+        label: 'On'
       }
     }
   ]

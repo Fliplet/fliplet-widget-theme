@@ -94,7 +94,7 @@ export default {
     },
     setValues() {
       const valueProperty = _.find(this.properties, { value: this.value })
-      this.valueToShow = valueProperty.valueToShow
+      this.valueToShow = valueProperty ? valueProperty.valueToShow : true
     },
     getValue() {
       return getCurrentFieldValue(this.data.fieldConfig)
