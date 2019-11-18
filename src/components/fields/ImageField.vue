@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     hasImage() {
-      if (this.valueToShow) {
+      if (this.valueToShow && this.valueToShow !== 'none') {
         return true
       }
 

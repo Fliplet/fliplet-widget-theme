@@ -71,7 +71,7 @@ export default {
       tabs: deviceTypes,
       error: undefined,
       dataToSave: {},
-      debouncedSave: _.debounce(this.save, 500, { leading: true }),
+      debouncedSave: _.debounce(this.save, 500),
       oldThemeSettings: undefined,
       appSupportsContainers: appSupportsContainer()
     }

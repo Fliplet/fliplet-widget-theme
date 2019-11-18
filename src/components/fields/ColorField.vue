@@ -41,7 +41,7 @@ export default {
         name: undefined,
         value: undefined
       },
-      debouncedSave: _.debounce(this.saveColor, 250, { leading: true }),
+      debouncedSave: _.debounce(this.saveColor, 250),
       colorSets: [
         {
           name: "Fliplet",
