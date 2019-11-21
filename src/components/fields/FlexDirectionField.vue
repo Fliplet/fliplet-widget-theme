@@ -1,19 +1,17 @@
 <template>
-  <div v-if="showField" :class="'display-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
+  <div v-if="showField" :class="'flex-direction-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
-      <div class="display-field-container" :class="{ 'disabled': state.widgetIsFlexChild }">
+      <div class="flex-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + uuid" :name="'display-field-' + uuid" :value="prop" v-model="value">
+          <input type="radio" :id="'radio-' + prop + uuid" :name="'flex-field-' + uuid" :value="prop" v-model="value">
           <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
-            <span :class="'check-icon check-display-' + prop"></span>
+            <span :class="'check-icon check-flex-' + prop"></span>
           </label>
-        </div>
+        </div>        
       </div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div v-if="state.widgetIsFlexChild" class="parent-flex-helper" data-toggle="tooltip" data-placement="bottom" title="Row set by the container">
-      <i class="fa fa-question-circle-o"></i>
-    </div>
+    <div v-if="label" class="field-label">{{ label }}</div>
   </div>
 </template>
 
@@ -31,7 +29,8 @@ export default {
     return {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
-      properties: displayProperties.normalProperties,
+      properties: displayProperties.flexDirection,
+      label: this.data.fieldConfig.label,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -51,6 +50,11 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
+        if (newVal === 'column' || newVal === 'column-reverse') {
+          bus.$emit('flex-direction-changed', true)
+        } else {
+          bus.$emit('flex-direction-changed', false)
+        }
         checkLogic(this.data.fieldConfig, newVal)
         sendCssToFrame(newVal, this.data.fieldConfig)
 
@@ -71,14 +75,20 @@ export default {
   methods: {
     getTooltip(prop) {
       switch(prop) {
-        case 'block':
-          return 'No row sharing'
+        case 'row':
+          return 'Left to right'
           break;
-        case 'inline-block':
-          return 'Row sharing'
+        case 'row-reverse':
+          return 'Right to left'
+          break;
+        case 'column':
+          return 'Top to bottom'
+          break;
+        case 'column-reverse':
+          return 'Bottom to top'
           break;
         default:
-          return 'No row sharing'
+          return 'Left to right'
       }
     },
     getValue() {
@@ -102,6 +112,12 @@ export default {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
     },
     reCheckProps() {
+      if (this.value === 'column' || this.value === 'column-reverse') {
+        bus.$emit('flex-direction-changed', true)
+      } else {
+        bus.$emit('flex-direction-changed', false)
+      }
+
       this.isInheriting = this.checkInheritance()
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
 

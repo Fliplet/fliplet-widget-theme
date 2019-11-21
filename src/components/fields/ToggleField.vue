@@ -1,19 +1,13 @@
 <template>
-  <div v-if="showField" :class="'display-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
+  <div v-if="showField" :class="'toggle-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
-      <div class="display-field-container" :class="{ 'disabled': state.widgetIsFlexChild }">
-        <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + uuid" :name="'display-field-' + uuid" :value="prop" v-model="value">
-          <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
-            <span :class="'check-icon check-display-' + prop"></span>
-          </label>
-        </div>
-      </div>
+      <label class="switch">
+        <input type="checkbox" v-model="valueToShow">
+        <span class="slider round"></span>
+      </label>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div v-if="state.widgetIsFlexChild" class="parent-flex-helper" data-toggle="tooltip" data-placement="bottom" title="Row set by the container">
-      <i class="fa fa-question-circle-o"></i>
-    </div>
+    <div class="field-label"><span v-if="label" >{{ label }} - </span>{{ compValue }}</div>
   </div>
 </template>
 
@@ -21,7 +15,7 @@
 import { state, getCurrentFieldValue, getFieldName,
   saveFieldData, checkIsFieldChanged, checkLogic, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
-import displayProperties from '../../libs/display-properties'
+import toggleProperties from '../../libs/toggle-properties'
 import { tooltips } from '../../libs/tooltips'
 import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
@@ -31,7 +25,9 @@ export default {
     return {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
-      properties: displayProperties.normalProperties,
+      valueToShow: undefined,
+      properties: this.parseProperties(toggleProperties[this.data.fieldConfig.subtype]),
+      label: this.data.fieldConfig.label,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -49,6 +45,10 @@ export default {
     data: Object
   },
   watch: {
+    valueToShow(newValue) {
+      const valueProperty  = _.find(this.properties, { valueToShow: newValue })
+      this.value = valueProperty.value
+    },
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
         checkLogic(this.data.fieldConfig, newVal)
@@ -66,20 +66,35 @@ export default {
   computed: {
     columnClass() {
       return createClass(this.data.fieldConfig.columns)
+    },
+    compValue() {
+      const valueProperty = _.find(this.properties, { valueToShow: this.valueToShow })
+      return valueProperty.label
     }
   },
   methods: {
-    getTooltip(prop) {
-      switch(prop) {
-        case 'block':
-          return 'No row sharing'
-          break;
-        case 'inline-block':
-          return 'Row sharing'
-          break;
-        default:
-          return 'No row sharing'
+    parseProperties(properties) {
+      const propsArr = []
+
+      if (Array.isArray(properties)) {
+        // Checks if it is an Array
+        properties.forEach((prop) => {
+          for (var key in prop) {
+            var newObj = {
+              label: prop[key].label,
+              valueToShow: prop[key].value,
+              value: key
+            }
+            propsArr.push(newObj)
+          }
+        })
       }
+
+      return propsArr
+    },
+    setValues() {
+      const valueProperty = _.find(this.properties, { value: this.value })
+      this.valueToShow = valueProperty ? valueProperty.valueToShow : true
     },
     getValue() {
       return getCurrentFieldValue(this.data.fieldConfig)
@@ -116,11 +131,12 @@ export default {
         : true
     }
   },
+  created() {
+    this.setValues()
+  },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
     checkLogic(this.data.fieldConfig, this.value)
-    // Start Bootstrap tooltips
-    tooltips()
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps)

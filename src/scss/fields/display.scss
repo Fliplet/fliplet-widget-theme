@@ -42,6 +42,14 @@
         &.check-display-inline-block {
           background-image: url('dist/icons/display-inline-block.svg');
         }
+
+        &.check-display-none {
+          background-image: url('dist/icons/display-inline-block.svg');
+        }
+
+        &.check-display-flex {
+          background-image: url('dist/icons/display-inline-block.svg');
+        }
       }
 
       &:hover {
@@ -61,6 +69,41 @@
           }
         }
       }
+    }
+
+    &.disabled {
+      label {
+        cursor: default;
+        pointer-events: none;
+        opacity: 0.5;
+      }
+
+      .radio-holder {
+        &.inline-boxed {
+          input[type="radio"] {
+            &:checked + label {
+              background-color: transparent;
+
+              .check-icon {
+                opacity: 0.4;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .parent-flex-helper {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    i {
+      font-size: 14px;
     }
   }
 }

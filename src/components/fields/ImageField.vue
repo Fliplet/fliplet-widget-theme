@@ -7,7 +7,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="btn btn-default has-image" :style="'background-image: url(' + valueToShow.url + ')'" @click.prevent="openFilePicker"></div>
+        <div class="btn btn-default has-image" :style="'background-image: url(' + valueToShow + ')'" @click.prevent="openFilePicker"></div>
       </template>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
@@ -44,9 +44,9 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal) {
+      if (newVal !== oldVal) {
         checkLogic(this.data.fieldConfig, newVal)
-        sendCssToFrame(`url('${newVal.url}')`, this.data.fieldConfig)
+        sendCssToFrame(`url('${newVal}')`, this.data.fieldConfig)
 
         this.$nextTick(() => {
           this.prepareToSave()
@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     hasImage() {
-      if (typeof this.valueToShow === 'object' && this.valueToShow.url) {
+      if (this.valueToShow && this.valueToShow !== 'none') {
         return true
       }
 
@@ -123,9 +123,8 @@ export default {
           imageUrl += (params.length > 1 ? '&' : '?') + 'size=large'
         }
 
-        result.data[0].url = imageUrl
-        this.valueToShow = result.data[0]
-        this.value = result.data[0]
+        this.valueToShow = imageUrl
+        this.value = imageUrl
 
         window.filePickerProvider = null
 

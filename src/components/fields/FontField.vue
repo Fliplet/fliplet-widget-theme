@@ -2,7 +2,7 @@
   <div v-if="showField" :class="'font-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="font-name" :style="'font-family:' + getFontFamily(valueToShow) + ';'">{{ valueToShow }}</span>
           <span class="caret"></span>
         </button>
@@ -59,7 +59,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal) {
+      if (newVal !== oldVal) {
         sendCssToFrame(newVal, this.data.fieldConfig)
 
         this.$nextTick(() => {
@@ -123,7 +123,7 @@ export default {
     toggleDropdown(event) {
       event.preventDefault()
       event.stopPropagation()
-      $(this.$refs.dropdowntoggle).dropdown('toggle')
+      $(this.$refs.dropdownToggle).dropdown('toggle')
     },
     onValueChange(value) {
       if (typeof value === 'string') {

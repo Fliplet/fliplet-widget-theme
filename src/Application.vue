@@ -12,7 +12,7 @@
       </div>
       <QuickSettings v-if="!state.widgetMode" :group-config="getQuickSettings()"></QuickSettings>
       <div class="components-buttons-holder">
-        <SettingsButtons v-for="(configuration, index) in state.activeTheme.settings.configuration" :key="index" v-if="!configuration.quickSettings && !state.widgetMode" :group-config="configuration"></SettingsButtons>
+        <SettingsButtons v-for="(configuration, index) in themeConfigurations" :key="index" :group-config="configuration"></SettingsButtons>
       </div>
       <div v-if="state.themeInstance && state.themeInstance.id" class="buttons-holder">
         <div class="btn btn-primary" @click.prevent="resetTheme">Reset theme to Fliplet default</div>
@@ -36,8 +36,8 @@
 <script>
 import { state, setComponentContext, setActiveTab, migrateOldVariables,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId, setWidgetUUID,
-  setWebFonts, setCustomFonts, setSavedFields, handleWidgetData,
-  resetStylesToTheme, prepareSettingsForTheme, clearDataToSave,
+  setWebFonts, setCustomFonts, setSavedFields, handleWidgetData, setParentFlex,
+  resetStylesToTheme, prepareSettingsForTheme, clearDataToSave, appSupportsContainer,
   toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings } from './store'
 import WidgetHeader from './components/UI/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
@@ -71,8 +71,9 @@ export default {
       tabs: deviceTypes,
       error: undefined,
       dataToSave: {},
-      debouncedSave: _.debounce(this.save, 500, { leading: true }),
-      oldThemeSettings: undefined
+      debouncedSave: _.debounce(this.save, 500),
+      oldThemeSettings: undefined,
+      appSupportsContainers: appSupportsContainer()
     }
   },
   components: {
@@ -82,10 +83,22 @@ export default {
     QuickSettings,
     ComponentSettings
   },
-  watch: {
+  computed: {
+    themeConfigurations() {
+      const configurations = _.filter(state.activeTheme.settings.configuration, (configuration) => {
+        return !configuration.quickSettings
+          && !state.widgetMode
+          && this.supportsContainers(configuration)
+      })
 
+      return configurations
+    }
   },
   methods: {
+    supportsContainers(configuration) {
+      return typeof configuration.appSupportsContainers === 'undefined'
+        || this.appSupportsContainers === configuration.appSupportsContainers
+    },
     getQuickSettings() {
       return _.find(state.activeTheme.settings.configuration, { quickSettings: true })
     },
@@ -189,6 +202,9 @@ export default {
               return config.packages && config.packages.indexOf(state.widgetData.widgetPackage) > -1
             })
 
+
+            // Set state to flag if widget has a flexbox parent
+            setParentFlex()
             // Set state in widget mode
             setWidgetMode(!!this.appearanceGroup)
           }
@@ -201,6 +217,8 @@ export default {
           return
         }
 
+        // Set state to flag if widget has a flexbox parent to false
+        setParentFlex(false)
         // Set state in widget mode to false
         setWidgetMode(false)
         if (state.appearanceGroupOverlay.isOpen) {

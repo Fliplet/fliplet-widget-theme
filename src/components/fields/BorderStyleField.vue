@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <template v-if="valueToShow == 'none'">
+          <template v-if="valueToShow === 'none'">
             None
           </template>
           <span v-else class="border-style" :style="'border-style: ' + valueToShow"></span>
@@ -12,7 +12,7 @@
         <ul class="dropdown-menu dropdown-menu-left">
           <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop === valueToShow }">
             <a href="#" @click.prevent="onValueChange(prop)">
-              <template v-if="prop == 'none'">
+              <template v-if="prop === 'none'">
                 None
               </template>
               <span v-else class="border-style" :style="'border-style: ' + prop"></span>
@@ -58,7 +58,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal) {
+      if (newVal !== oldVal) {
         sendCssToFrame(newVal, this.data.fieldConfig)
         this.$nextTick(() => {
           this.prepareToSave()

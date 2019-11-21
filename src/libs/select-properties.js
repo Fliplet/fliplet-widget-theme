@@ -11,6 +11,11 @@ const selectProperties = {
     'outset': 'Outwards',
     'inset': 'Inset',
     'none': 'None'
+  },
+  'overflow': {
+    'visible': 'Visible',
+    'auto': 'Scroll',
+    'hidden': 'Hidden'
   }
 }
 

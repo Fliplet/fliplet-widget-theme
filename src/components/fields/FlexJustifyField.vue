@@ -1,19 +1,17 @@
 <template>
-  <div v-if="showField" :class="'display-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
+  <div v-if="showField" :class="'flex-justify-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
-      <div class="display-field-container" :class="{ 'disabled': state.widgetIsFlexChild }">
+      <div class="flex-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
-          <input type="radio" :id="'radio-' + prop + uuid" :name="'display-field-' + uuid" :value="prop" v-model="value">
+          <input type="radio" :id="'radio-' + prop + uuid" :name="'flex-field-' + uuid" :value="prop" v-model="value">
           <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
-            <span :class="'check-icon check-display-' + prop"></span>
+            <span :class="'check-icon check-flex-justify-' + prop"></span>
           </label>
-        </div>
+        </div>        
       </div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div v-if="state.widgetIsFlexChild" class="parent-flex-helper" data-toggle="tooltip" data-placement="bottom" title="Row set by the container">
-      <i class="fa fa-question-circle-o"></i>
-    </div>
+    <div v-if="label" class="field-label">{{ label }}</div>
   </div>
 </template>
 
@@ -31,7 +29,8 @@ export default {
     return {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
-      properties: displayProperties.normalProperties,
+      properties: displayProperties.flexJustify,
+      label: 'Horizontal',
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -71,14 +70,23 @@ export default {
   methods: {
     getTooltip(prop) {
       switch(prop) {
-        case 'block':
-          return 'No row sharing'
+        case 'flex-start':
+          return 'At the beginning'
           break;
-        case 'inline-block':
-          return 'Row sharing'
+        case 'center':
+          return 'Center'
+          break;
+        case 'flex-end':
+          return 'At the end'
+          break;
+        case 'space-between':
+          return 'Space between items'
+          break;
+        case 'space-around':
+          return 'Space around items'
           break;
         default:
-          return 'No row sharing'
+          return 'At the beginning'
       }
     },
     getValue() {
@@ -114,16 +122,25 @@ export default {
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
+    },
+    flexDirectionChanged(value) {
+      this.label = !!value ? 'Vertical' : 'Horizontal'
     }
+  },
+  created() {
+    var isFlexColumn = !!document.querySelector('#component-settings-overlay.flex-column')
+    this.flexDirectionChanged(isFlexColumn)
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
+    bus.$on('flex-direction-changed', this.flexDirectionChanged)
     checkLogic(this.data.fieldConfig, this.value)
     // Start Bootstrap tooltips
     tooltips()
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('flex-direction-changed', this.flexDirectionChanged)
   }
 }
 </script>

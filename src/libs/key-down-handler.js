@@ -7,9 +7,9 @@ export default {
     const value = isNaN(parsedValue) ? 0 : parsedValue
 
     // Resets up and down keys when pressing Command
-    if (keyMap[91] && e.keyCode == 38 && e.metaKey) {
+    if (keyMap[91] && e.keyCode === 38 && e.metaKey) {
       keyMap[40] = false
-    } else if (keyMap[91] && e.keyCode == 40 && e.metaKey) {
+    } else if (keyMap[91] && e.keyCode === 40 && e.metaKey) {
       keyMap[38] = false
     }
 
@@ -77,7 +77,7 @@ export default {
     keyMap[e.keyCode] = false
 
     // If used Command key resets Up and Down keys 
-    if (e.keyCode == 91) {
+    if (e.keyCode === 91) {
       keyMap[40] = false
       keyMap[38] = false
     }

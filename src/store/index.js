@@ -2,6 +2,8 @@ import deviceTypes from '../libs/device-types'
 import migrationObject from '../libs/migration-object'
 import bus from '../libs/bus'
 
+const DEFAULT_INTERACT_VERSION = '2.0'
+
 export const state = {
   themeInstance: undefined,
   activeTheme: undefined,
@@ -21,7 +23,8 @@ export const state = {
     values: [],
     widgetInstances: []
   },
-  widgetData: undefined
+  widgetData: undefined,
+  widgetIsFlexChild: false
 }
 
 // Public functions
@@ -167,6 +170,16 @@ export function setWidgetUUID(uuid) {
 }
 
 /**
+* Sets a state to flag if the widget is a child of a flexbox container
+* @param {Boolean}
+*/
+export function setParentFlex(value) {
+  state.widgetIsFlexChild = typeof value !== 'undefined'
+    ? value
+    : state.widgetData.parentIsFlex
+}
+
+/**
 * Sets a state to flag if the UI is from a specific widget
 * @param {Boolean}
 */
@@ -261,7 +274,7 @@ export function checkIsFieldChanged(field) {
       if (widget) {
         let foundValue = false
         for (const key in widget.values) {
-          if (key == field.name) {
+          if (key === field.name) {
             foundValue = true
             continue
           }
@@ -277,7 +290,7 @@ export function checkIsFieldChanged(field) {
         if (widget) {
           let foundValue = false
           for (const key in widget.values) {
-            if (key == field.name) {
+            if (key === field.name) {
               foundValue = true
               continue
             }
@@ -293,7 +306,7 @@ export function checkIsFieldChanged(field) {
 
     if (!fieldIndex || fieldIndex < 0) {
       for (const key in state.themeInstance.settings.values) {
-        if (key == field.name) {
+        if (key === field.name) {
           fieldIndex = 1
           continue
         }
@@ -407,9 +420,9 @@ export function checkLogic(fieldConfig, value) {
 export function checkMarginLogic(fieldConfig, value, fromLoad) {
   if (fieldConfig.hasOwnProperty('logic')) {
     const fieldsArray = []
-    const notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+    const notMobile = state.componentContext === 'Tablet' || state.componentContext === 'Desktop' ? true : false
 
-    if (value == 'custom') {
+    if (value === 'custom') {
       fieldConfig.logic[value].forEach((fieldName) => {
         fieldsArray.push(fieldName)
       })
@@ -637,6 +650,11 @@ export function migrateOldVariables(data) {
   }
 }
 
+export function appSupportsContainer() {
+  const appSettings = Fliplet.Env.get('appSettings')
+  return parseInt(_.get(appSettings, 'interactVersion', DEFAULT_INTERACT_VERSION), 10) > 2
+}
+
 // Private functions
 function emitSavedData() {
   bus.$emit('field-saved', state.dataToSave)
@@ -702,7 +720,7 @@ function compileShadowValues(styles, value, currentField) {
     return false
   }
 
-  if (value == 'none') {
+  if (value === 'none') {
     return value
   }
 

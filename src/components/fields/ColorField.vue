@@ -2,7 +2,7 @@
   <div v-if="showField" :class="'color-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
-        <div id="color-picker-container" class="color-holder" ref="colorsquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
+        <div id="color-picker-container" class="color-holder" ref="colorSquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
       </div>
       <div v-if="label" class="field-label" @click.prevent="toggleColorPicker">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
@@ -41,7 +41,7 @@ export default {
         name: undefined,
         value: undefined
       },
-      debouncedSave: _.debounce(this.saveColor, 250, { leading: true }),
+      debouncedSave: _.debounce(this.saveColor, 250),
       colorSets: [
         {
           name: "Fliplet",
@@ -96,7 +96,7 @@ export default {
       this.prepareToSave(this.value)
     },
     toggleColorPicker() {
-      const target = this.$refs.colorsquare.getBoundingClientRect()
+      const target = this.$refs.colorSquare.getBoundingClientRect()
 
       this.colorpicker.show({
         left: target.left,
@@ -114,7 +114,7 @@ export default {
       this.colorSets[2].colors = cookieSavedColors
       this.colorpicker.setUserPalette(this.colorSets)
 
-      if (this.valueToShow != color) {
+      if (this.valueToShow !== color) {
         this.prepareToSave(color)
       }
     },

@@ -2,12 +2,12 @@
   <div v-if="showField" :class="'select-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ valueToShow }}
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
-          <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop.value == value }">
+          <li v-for="(prop, index) in properties" :key="index" :class="{ active: prop.value === value }">
             <a href="#" @click.prevent="onValueChange(prop.value)">{{ prop.name }}</a>
           </li>
         </ul>
@@ -52,7 +52,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal) {
+      if (newVal !== oldVal) {
         checkLogic(this.data.fieldConfig, newVal)
         sendCssToFrame(newVal, this.data.fieldConfig)
 
@@ -89,7 +89,7 @@ export default {
       // Checks if it is an Array
       if (Array.isArray(properties)) {
         const propIndex = _.findIndex(properties, (prop) => {
-          return prop == value
+          return prop === value
         });
         return properties[propIndex]
       }
@@ -122,7 +122,7 @@ export default {
     toggleDropdown(event) {
       event.preventDefault()
       event.stopPropagation()
-      $(this.$refs.dropdowntoggle).dropdown('toggle')
+      $(this.$refs.dropdownToggle).dropdown('toggle')
     },
     onValueChange(value) {
       this.valueToShow = this.parseValueToShow(value)

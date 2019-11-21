@@ -62,6 +62,7 @@
     .multi-field {
       > * {
         display: flex;
+        align-items: center;
         margin: 0 15px 8px;
       }
     }

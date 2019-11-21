@@ -3,7 +3,8 @@ const sizeProperties = {
   'lineHeight': ['x', 'px', 'em', 'rem', '%'],
   'withAuto': ['px', 'em', 'rem', '%', 'auto', { name: 'none', value: 'initial' }],
   'withNone': ['px', 'em', 'rem', '%', 'none'],
-  'full': ['px', 'em', 'rem', '%', 'vw', 'vh', 'auto']
+  'full': ['px', 'em', 'rem', '%', 'vw', 'vh', 'auto'],
+  'zIndex': ['auto', 'index']
 }
 
 const subtypes = {
@@ -18,7 +19,8 @@ const subtypes = {
   'position': 'withAuto',
   'border': 'withoutAuto',
   'shadow': 'withoutAuto',
-  'line-height': 'lineHeight'
+  'line-height': 'lineHeight',
+  'z-index': 'zIndex'
 }
 
 const propertiesMap = {

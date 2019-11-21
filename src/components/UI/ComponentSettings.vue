@@ -1,13 +1,13 @@
 <template>
   <transition :name="transition">
-    <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay">
+    <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay" ref="componentOverlay">
       <header>
         <p>{{ state.appearanceGroupOverlay.name }}</p>
         <span class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
-        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: state.activeTab == index }" :ref="index">
+        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: state.activeTab === index }" :ref="index">
           <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
         </li>
       </ul>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { state, closeAppearanceGroupSettings,
+import { state, closeAppearanceGroupSettings, appSupportsContainer,
   getInheritance, getSavedValue, setComponentContext, setActiveTab } from '../../store'
 import SizeField from '../fields/SizeField'
 import FontStyleField from '../fields/FontStyleField'
@@ -63,6 +63,11 @@ import AlignField from '../fields/AlignField'
 import MarginAlignField from '../fields/MarginAlignField'
 import PositionField from '../fields/PositionField'
 import DisplayField from '../fields/DisplayField'
+import DisplayExtendedField from '../fields/DisplayExtendedField'
+import FlexDirectionField from '../fields/FlexDirectionField'
+import FlexJustifyField from '../fields/FlexJustifyField'
+import FlexAlignField from '../fields/FlexAlignField'
+import ToggleField from '../fields/ToggleField'
 import deviceTypes from '../../libs/device-types'
 import bus from '../../libs/bus'
 
@@ -83,7 +88,8 @@ export default {
       tabs: deviceTypes,
       componentKey: 0,
       groupedComponentKey: 0,
-      isChanged: false
+      isChanged: false,
+      appSupportsContainers: appSupportsContainer()
     }
   },
   components: {
@@ -98,7 +104,12 @@ export default {
     AlignField,
     MarginAlignField,
     PositionField,
-    DisplayField
+    DisplayField,
+    DisplayExtendedField,
+    FlexDirectionField,
+    FlexJustifyField,
+    FlexAlignField,
+    ToggleField
   },
   computed: {
     transition() {
@@ -163,7 +174,25 @@ export default {
 
       return false
     },
+    supportsContainers(configuration) {
+      return typeof configuration.appSupportsContainers === 'undefined'
+        || this.appSupportsContainers === configuration.appSupportsContainers
+    },
     showVariable(variable) {
+      const supportsContainers = this.supportsContainers(variable)
+
+      if (!supportsContainers) {
+        return false
+      }
+
+      const show = _.find(variable.fields, (field) => {
+        return !!field.showField || typeof field.showField === 'undefined'
+      })
+
+      if (!show) {
+        return false
+      }
+
       // Function to hide the entire field's group if they aren't supposed to be shown on any of the device types
       const toHide = variable.hide
       const context = state.componentContext.toLowerCase()
@@ -175,6 +204,12 @@ export default {
       return true
     },
     showField(field) {
+      const supportsContainers = this.supportsContainers(field)
+
+      if (!supportsContainers) {
+        return false
+      }
+
       // Function to hide fields if they aren't supposed to be shown on any of the device types
       const toHide = field.hide
       const context = state.componentContext.toLowerCase()
@@ -193,9 +228,9 @@ export default {
       if (this.variables) {
         this.forceRerender()
       }
-      this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+      this.notMobile = state.componentContext === 'Tablet' || state.componentContext === 'Desktop' ? true : false
       this.variables = this.computeVariables(toRecompute)
-      this.context = state.appearanceGroupOverlay.context == 'Mobile' ? '' : state.appearanceGroupOverlay.context
+      this.context = state.appearanceGroupOverlay.context === 'Mobile' ? '' : state.appearanceGroupOverlay.context
       this.showNotInheritingInfo = this.areNotInheriting()
       this.currentContext = state.componentContext.toLowerCase()
       this.inheritingFrom = getInheritance(this.variables)
@@ -360,7 +395,7 @@ export default {
         variable.fields.forEach((field, idx) => {
           if (fields.indexOf(field.name) > -1) {
             const field = variable.fields[idx]
-            field.isAligned = value == 'custom' ? false : true
+            field.isAligned = value === 'custom' ? false : true
             Vue.set(variable.fields, idx, field)
             Vue.set(this.variables, index, variable)
           }
@@ -383,6 +418,9 @@ export default {
     },
     hideApplyReset() {
       this.isChanged = false
+    },
+    flexDirectionFlag(value) {
+      this.$refs.componentOverlay.classList[value ? 'add' : 'remove']('flex-column')
     }
   },
   mounted() {
@@ -392,6 +430,7 @@ export default {
     bus.$on('check-margin-field', this.runMarginFieldLogic)
     bus.$on('group-settings-changed', this.hideApplyReset)
     bus.$on('component-context-changed', this.onContextSwitch)
+    bus.$on('flex-direction-changed', this.flexDirectionFlag)
 
     const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
     const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
@@ -407,6 +446,7 @@ export default {
     bus.$off('check-margin-field', this.runMarginFieldLogic)
     bus.$off('group-settings-changed', this.hideApplyReset)
     bus.$off('component-context-changed', this.onContextSwitch)
+    bus.$off('flex-direction-changed', this.flexDirectionFlag)
   } 
 }
 </script>

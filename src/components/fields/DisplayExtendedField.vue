@@ -1,18 +1,15 @@
 <template>
   <div v-if="showField" :class="'display-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
-      <div class="display-field-container" :class="{ 'disabled': state.widgetIsFlexChild }">
+      <div class="display-field-container">
         <div class="radio-holder inline-boxed" v-for="(prop, idx) in properties" :key="idx">
           <input type="radio" :id="'radio-' + prop + uuid" :name="'display-field-' + uuid" :value="prop" v-model="value">
           <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
             <span :class="'check-icon check-display-' + prop"></span>
           </label>
-        </div>
+        </div>        
       </div>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
-    </div>
-    <div v-if="state.widgetIsFlexChild" class="parent-flex-helper" data-toggle="tooltip" data-placement="bottom" title="Row set by the container">
-      <i class="fa fa-question-circle-o"></i>
     </div>
   </div>
 </template>
@@ -31,7 +28,7 @@ export default {
     return {
       state,
       value: getCurrentFieldValue(this.data.fieldConfig),
-      properties: displayProperties.normalProperties,
+      properties: displayProperties.extendedProperties,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -71,11 +68,17 @@ export default {
   methods: {
     getTooltip(prop) {
       switch(prop) {
+        case 'none':
+          return 'Hide'
+          break;
         case 'block':
           return 'No row sharing'
           break;
         case 'inline-block':
           return 'Row sharing'
+          break;
+        case 'flex':
+          return 'Flexible box'
           break;
         default:
           return 'No row sharing'

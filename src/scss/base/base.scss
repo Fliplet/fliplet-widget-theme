@@ -243,24 +243,10 @@ header {
 
   .switch {
     position: relative;
-    display: inline-block;
+    display: block;
     width: 36px;
     height: 18px;
     margin: 0;
-
-    input {
-      display:none;
-
-      &:checked + .slider {
-        background-color: $highlight-gray;
-        border-color: transparent;
-      }
-
-      &:checked + .slider:before {
-        @include transform(translateX(14px));
-        background-color: $text-color;
-      }
-    }
 
     .slider {
       position: absolute;
@@ -283,7 +269,8 @@ header {
         top: 50%;
         margin-top: -10px;
         background-color: darken($highlight-gray, 10%);
-        @include transition(all 0.25s ease-out);
+        -webkit-transition: 0.25s;
+        transition: 0.25s;
       }
 
       &.round {
@@ -292,6 +279,20 @@ header {
         &:before {
           border-radius: 50%;
         }
+      }
+    }
+
+    input {
+      display:none;
+
+      &:checked + .slider {
+        background-color: $highlight-gray;
+        border-color: transparent;
+      }
+
+      &:checked + .slider:before {
+        @include transform(translateX(14px));
+        background-color: $text-color;
       }
     }
   }
