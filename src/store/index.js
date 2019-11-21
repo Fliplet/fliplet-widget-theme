@@ -274,7 +274,7 @@ export function checkIsFieldChanged(field) {
       if (widget) {
         let foundValue = false
         for (const key in widget.values) {
-          if (key == field.name) {
+          if (key === field.name) {
             foundValue = true
             continue
           }
@@ -290,7 +290,7 @@ export function checkIsFieldChanged(field) {
         if (widget) {
           let foundValue = false
           for (const key in widget.values) {
-            if (key == field.name) {
+            if (key === field.name) {
               foundValue = true
               continue
             }
@@ -306,7 +306,7 @@ export function checkIsFieldChanged(field) {
 
     if (!fieldIndex || fieldIndex < 0) {
       for (const key in state.themeInstance.settings.values) {
-        if (key == field.name) {
+        if (key === field.name) {
           fieldIndex = 1
           continue
         }
@@ -420,9 +420,9 @@ export function checkLogic(fieldConfig, value) {
 export function checkMarginLogic(fieldConfig, value, fromLoad) {
   if (fieldConfig.hasOwnProperty('logic')) {
     const fieldsArray = []
-    const notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+    const notMobile = state.componentContext === 'Tablet' || state.componentContext === 'Desktop' ? true : false
 
-    if (value == 'custom') {
+    if (value === 'custom') {
       fieldConfig.logic[value].forEach((fieldName) => {
         fieldsArray.push(fieldName)
       })
@@ -720,7 +720,7 @@ function compileShadowValues(styles, value, currentField) {
     return false
   }
 
-  if (value == 'none') {
+  if (value === 'none') {
     return value
   }
 

@@ -1,10 +1,10 @@
 <template>
   <div v-show="showField" :class="'size-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="interactive-holder">
-      <span ref="ondrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property == 'auto' || property == 'none' || property == 'initial' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
+      <span ref="onDrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property === 'auto' || property === 'none' || property === 'initial' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdowntoggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <template v-if="property == 'initial'">none</template>
+        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <template v-if="property === 'initial'">none</template>
           <template v-else>{{ property }}</template>
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
@@ -18,7 +18,7 @@
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
     <div class="input-holder" v-show="inputIsActive">
-      <input type="text" class="form-control" ref="inputfield" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
+      <input type="text" class="form-control" ref="inputField" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
     </div>
   </div>
 </template>
@@ -67,7 +67,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal && !this.fromReset && !this.inputIsActive) {
+      if (newVal !== oldVal && !this.fromReset && !this.inputIsActive) {
         this.prepareToSave()
         return
       }
@@ -93,7 +93,7 @@ export default {
   methods: {
     setValues() {
       // Set the value
-      this.valueToShow = this.value == 'initial' ? 'none' : this.value
+      this.valueToShow = this.value === 'initial' ? 'none' : this.value
       // Set property
       this.property = this.getProperty(getCurrentFieldValue(this.data.fieldConfig))
       this.$nextTick(() => {
@@ -107,7 +107,7 @@ export default {
         return parsedValue
       }
 
-      const value = parsedValue == 'initial' ? 'none' : parsedValue
+      const value = parsedValue === 'initial' ? 'none' : parsedValue
       return value
     },
     getProperties() {
@@ -137,7 +137,7 @@ export default {
       return inherit || variableName ? true : false
     },
     getProperty(value) {
-      if (value == 'auto' || value == 'none' || value == 'initial') {
+      if (value === 'auto' || value === 'none' || value === 'initial') {
         return value
       }
 
@@ -150,16 +150,16 @@ export default {
       return this.data.fieldConfig.subtype === 'z-index' ? 'index' : 'x'
     },
     parseValue(value) {
-      if (value == 'auto' || value == 'none' || value == 'initial') {
+      if (value === 'auto' || value === 'none' || value === 'initial') {
         return value
       }
 
-      if (typeof value != 'string') {
+      if (typeof value !== 'string') {
         value = value.toString()
       }
 
       let parsedValue = value.replace(new RegExp(this.getProperties().join('$|') + '$'), '')
-      if (parsedValue == '') {
+      if (parsedValue === '') {
         parsedValue = 0
       }
       const parsedFloatVal = parseFloat(parsedValue, 10)
@@ -170,13 +170,13 @@ export default {
       this.property = value
 
       this.$nextTick(() => {
-        if (this.property == 'auto' || this.property == 'none' || this.property == 'initial') {
+        if (this.property === 'auto' || this.property === 'none' || this.property === 'initial') {
           this.value = this.property
           this.prepareToSave()
           return
         }
 
-        if (this.value == 'auto' || this.value == 'none' || this.value == 'initial') {
+        if (this.value === 'auto' || this.value === 'none' || this.value === 'initial') {
           this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
           this.prepareToSave()
           return
@@ -189,7 +189,7 @@ export default {
       const isInheriting = this.checkIfIsInheriting(this.value)
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting || this.value == 'auto' || this.value == 'none' || this.value == 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' && this.property !== 'index' ? this.property : '') : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
+        value: isInheriting || this.value === 'auto' || this.value === 'none' || this.value === 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' && this.property !== 'index' ? this.property : '') : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
       }
 
       if (this.isAligned) {
@@ -203,10 +203,10 @@ export default {
       this.inputIsActive = this.enterPressedToClose ? this.inputIsActive : !this.inputIsActive
     },
     manualEdit(event) {
-      if (this.value == 'auto' || this.value == 'none' || this.value == 'initial') {
+      if (this.value === 'auto' || this.value === 'none' || this.value === 'initial') {
         event.preventDefault()
         event.stopPropagation()
-        $(this.$refs.dropdowntoggle).dropdown('toggle')
+        $(this.$refs.dropdownToggle).dropdown('toggle')
         return
       }
 
@@ -214,7 +214,7 @@ export default {
 
       if (this.inputIsActive) {
         this.$nextTick(() => {
-          this.$refs.inputfield.focus()
+          this.$refs.inputField.focus()
         })
       }
     },
@@ -222,14 +222,14 @@ export default {
       this.editToggle()
       this.enterPressedToClose = false
 
-      if (this.valueToShow != this.value) {
-        if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
+      if (this.valueToShow !== this.value) {
+        if (isNaN(this.value) && this.value !== 'auto' && this.value !== 'none' && this.value !== 'initial') {
           this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
         }
 
         this.valueToShow = this.checkIfIsInheriting(this.value)
-        ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
-        : this.value == 'initial' ? 'none' : this.value
+        ? this.valueToShow === 'initial' ? 'none' : this.valueToShow
+        : this.value === 'initial' ? 'none' : this.value
 
         this.prepareToSave()
       }
@@ -238,14 +238,14 @@ export default {
       this.editToggle()
       this.enterPressedToClose = true
 
-      if (this.valueToShow != this.value) {
-        if (isNaN(this.value) && this.value != 'auto' && this.value != 'none' && this.value != 'initial') {
+      if (this.valueToShow !== this.value) {
+        if (isNaN(this.value) && this.value !== 'auto' && this.value !== 'none' && this.value !== 'initial') {
           this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
         }
 
         this.valueToShow = this.checkIfIsInheriting(this.value)
-        ? this.valueToShow == 'initial' ? 'none' : this.valueToShow
-        : this.value == 'initial' ? 'none' : this.value
+        ? this.valueToShow === 'initial' ? 'none' : this.valueToShow
+        : this.value === 'initial' ? 'none' : this.value
 
         this.$nextTick(this.prepareToSave)
       }
@@ -257,7 +257,7 @@ export default {
       keyHandler.resetKeyMap(e)
     },
     onHammerInput(e) {
-      if (e.distance == 0 && e.isFinal) {
+      if (e.distance === 0 && e.isFinal) {
         // Click
         return
       }
@@ -328,7 +328,7 @@ export default {
     this.setValues()
   },
   mounted() {
-    this.hammerInstance = new Hammer.Manager(this.$refs.ondrag)
+    this.hammerInstance = new Hammer.Manager(this.$refs.onDrag)
     this.hammerInstance.on('hammer.input', this.onHammerInput)
 
     bus.$on('variables-computed', this.reCheckProps)

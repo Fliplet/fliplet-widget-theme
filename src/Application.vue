@@ -96,11 +96,8 @@ export default {
   },
   methods: {
     supportsContainers(configuration) {
-      if (typeof configuration.appSupportsContainers === 'undefined') {
-        return true
-      }
-
-      return this.appSupportsContainers === configuration.appSupportsContainers
+      return typeof configuration.appSupportsContainers === 'undefined'
+        || this.appSupportsContainers === configuration.appSupportsContainers
     },
     getQuickSettings() {
       return _.find(state.activeTheme.settings.configuration, { quickSettings: true })

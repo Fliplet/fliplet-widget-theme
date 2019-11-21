@@ -1,13 +1,13 @@
 <template>
   <transition :name="transition">
-    <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay" ref="componentoverlay">
+    <div v-if="state.appearanceGroupOverlay && state.appearanceGroupOverlay.isOpen" id="component-settings-overlay" ref="componentOverlay">
       <header>
         <p>{{ state.appearanceGroupOverlay.name }}</p>
         <span class="close-component-settings" @click.prevent="closeGroup"><i class="fa fa-times-thin fa-2x"></i></span>
       </header>
       <!-- Nav tabs -->
       <ul class="nav nav-tabs breakpoint-tabs">
-        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: state.activeTab == index }" :ref="index">
+        <li v-for="(tab, index) in tabs" :id="tab.type" :class="{ active: state.activeTab === index }" :ref="index">
           <a :href="'#tab-' + tab.type" data-toggle="tab" @click="handleContextSwitch(tab)"><i :class="tab.icon"></i></a>
         </li>
       </ul>
@@ -175,12 +175,8 @@ export default {
       return false
     },
     supportsContainers(configuration) {
-      // If not defined returns true to show
-      if (typeof configuration.appSupportsContainers === 'undefined') {
-        return true
-      }
-
-      return this.appSupportsContainers === configuration.appSupportsContainers
+      return typeof configuration.appSupportsContainers === 'undefined'
+        || this.appSupportsContainers === configuration.appSupportsContainers
     },
     showVariable(variable) {
       const supportsContainers = this.supportsContainers(variable)
@@ -232,9 +228,9 @@ export default {
       if (this.variables) {
         this.forceRerender()
       }
-      this.notMobile = state.componentContext == 'Tablet' || state.componentContext == 'Desktop' ? true : false
+      this.notMobile = state.componentContext === 'Tablet' || state.componentContext === 'Desktop' ? true : false
       this.variables = this.computeVariables(toRecompute)
-      this.context = state.appearanceGroupOverlay.context == 'Mobile' ? '' : state.appearanceGroupOverlay.context
+      this.context = state.appearanceGroupOverlay.context === 'Mobile' ? '' : state.appearanceGroupOverlay.context
       this.showNotInheritingInfo = this.areNotInheriting()
       this.currentContext = state.componentContext.toLowerCase()
       this.inheritingFrom = getInheritance(this.variables)
@@ -399,7 +395,7 @@ export default {
         variable.fields.forEach((field, idx) => {
           if (fields.indexOf(field.name) > -1) {
             const field = variable.fields[idx]
-            field.isAligned = value == 'custom' ? false : true
+            field.isAligned = value === 'custom' ? false : true
             Vue.set(variable.fields, idx, field)
             Vue.set(this.variables, index, variable)
           }
@@ -424,7 +420,7 @@ export default {
       this.isChanged = false
     },
     flexDirectionFlag(value) {
-      this.$refs.componentoverlay.classList[value ? 'add' : 'remove']('flex-column')
+      this.$refs.componentOverlay.classList[value ? 'add' : 'remove']('flex-column')
     }
   },
   mounted() {

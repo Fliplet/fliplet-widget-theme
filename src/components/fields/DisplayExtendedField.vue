@@ -47,7 +47,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal && !this.fromReset) {
+      if (newVal !== oldVal && !this.fromReset) {
         checkLogic(this.data.fieldConfig, newVal)
         sendCssToFrame(newVal, this.data.fieldConfig)
 

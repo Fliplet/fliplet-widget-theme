@@ -93,11 +93,11 @@ export default {
       // Clean of everything else other than the possible options
       if (Array.isArray(newVal)) {
         newVal.forEach((value, index) => {
-          if (value != 'normal'
-            && value != 'bold'
-            && value != 'lighter'
-            && value != 'underline'
-            && value != 'italic') {
+          if (value !== 'normal'
+            && value !== 'bold'
+            && value !== 'lighter'
+            && value !== 'underline'
+            && value !== 'italic') {
             newVal.splice(index, 1)
           }
         })

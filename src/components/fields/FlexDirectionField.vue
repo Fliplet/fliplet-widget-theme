@@ -49,7 +49,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal && !this.fromReset) {
+      if (newVal !== oldVal && !this.fromReset) {
         if (newVal === 'column' || newVal === 'column-reverse') {
           bus.$emit('flex-direction-changed', true)
         } else {

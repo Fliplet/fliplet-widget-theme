@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div class="align-field-container">
         <template v-for="(prop, idx) in properties">
-          <div v-if="prop != 'custom'" class="radio-holder inline-boxed">
+          <div v-if="prop !== 'custom'" class="radio-holder inline-boxed">
             <input type="radio" :id="'radio-' + prop + uuid" :name="'margin-align-' + uuid" :value="prop" v-model="value">
             <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
               <span :class="'check-icon check-align-' + prop"></span>
@@ -57,7 +57,7 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      if (newVal != oldVal && !this.fromReset) {
+      if (newVal !== oldVal && !this.fromReset) {
         checkMarginLogic(this.data.fieldConfig, newVal)
         sendCssToFrame(newVal, this.data.fieldConfig)
         this.prepareToSave()
