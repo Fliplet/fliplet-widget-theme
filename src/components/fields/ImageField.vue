@@ -1,6 +1,6 @@
 <template>
   <div v-if="showField" :class="'image-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
-    <div class="wrapper">
+    <div class="wrapper" data-toggle="tooltip" data-placement="bottom" :title="!hasImage ? 'Add image' : 'Change image'">
       <template v-if="!hasImage">
         <div class="btn btn-default" @click.prevent="openFilePicker">
           <i class="fa fa-plus"></i>
@@ -17,6 +17,7 @@
 <script>
 import { state, getCurrentFieldValue, getFieldName,
   saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
+import { tooltips } from '../../libs/tooltips'
 import InheritDot from '../UI/InheritDot'
 import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
@@ -151,6 +152,8 @@ export default {
   mounted() {
     bus.$on('variables-computed', this.reCheckProps)
     checkLogic(this.data.fieldConfig, this.value)
+    // Start Bootstrap tooltips
+    tooltips()
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps)
