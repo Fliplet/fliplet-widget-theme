@@ -1116,10 +1116,12 @@ header {
 .toggle-field-holder {
   display: flex;
   align-items: center; }
-  .toggle-field-holder .switch .slider {
-    transition: 0.25s; }
-    .toggle-field-holder .switch .slider:before {
+  .toggle-field-holder .wrapper {
+    position: relative; }
+    .toggle-field-holder .wrapper .switch .slider {
       transition: 0.25s; }
+      .toggle-field-holder .wrapper .switch .slider:before {
+        transition: 0.25s; }
 
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-stretch,
 .flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-stretch {

@@ -119,12 +119,16 @@
   display: flex;
   align-items: center;
 
-  .switch {
-    .slider {
-      transition: 0.25s;
+  .wrapper {
+    position: relative;
 
-      &:before {
+    .switch {
+      .slider {
         transition: 0.25s;
+
+        &:before {
+          transition: 0.25s;
+        }
       }
     }
   }
