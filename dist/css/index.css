@@ -1122,8 +1122,6 @@ header {
       transition: 0.25s; }
       .toggle-field-holder .wrapper .switch .slider:before {
         transition: 0.25s; }
-  .toggle-field-holder .field-label {
-    position: relative; }
 
 .flex-column .flex-align-field-holder .flex-field-container label .check-icon.check-flex-align-stretch,
 .flex-column .flex-justify-field-holder .flex-field-container label .check-icon.check-flex-align-stretch {

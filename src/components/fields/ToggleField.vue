@@ -5,11 +5,9 @@
         <input type="checkbox" v-model="valueToShow">
         <span class="slider round"></span>
       </label>
-    </div>
-    <div class="field-label">
-      <span v-if="label" >{{ label }} - </span>{{ compValue }}
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
+    <div class="field-label"><span v-if="label" >{{ label }} - </span>{{ compValue }}</div>
   </div>
 </template>
 
