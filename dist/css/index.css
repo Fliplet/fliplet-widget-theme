@@ -338,6 +338,9 @@ header {
       .inheritance-holder .inheritance-dropdown .inherit-action:hover {
         background-color: #efebed; }
 
+.inheritance-holder-left {
+  left: 29px !important; }
+
 .slide-in-enter-active {
   transition: all .25s ease-out; }
 

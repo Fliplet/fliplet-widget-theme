@@ -5,7 +5,7 @@
         <div id="color-picker-container" class="color-holder" ref="colorSquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
       </div>
       <div v-if="label" class="field-label" @click.prevent="toggleColorPicker">{{ label }}</div>
-      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :color-picker="true" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
 </template>
@@ -47,13 +47,13 @@ export default {
           name: "Fliplet",
           colors: ['#7d4b79', '#00abd1', '#ffd94b', '#f05865', '#36344c', '#474975', '#8d8ea6', '#f8f6f7']
         },
-        { 
-          name: "Material",  
-          colors: [ 
-            '#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',  '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',  '#795548', '#9E9E9E', '#607D8B' 
+        {
+          name: "Material",
+          colors: [
+            '#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',  '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',  '#795548', '#9E9E9E', '#607D8B'
           ]
         },
-        { 
+        {
           name: "Last used",
           colors: cookieSavedColors
         }

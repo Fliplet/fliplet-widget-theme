@@ -1,5 +1,5 @@
 <template>
-  <div class="inheritance-holder">
+  <div class="inheritance-holder" :class="{ 'inheritance-holder-left': colorPicker }">
     <div class="inheritance-warn" ref="dot" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" data-toggle="tooltip" data-placement="bottom" title="Inherit"></div>
     <div v-show="showDropdown" ref="dropdown" class="inheritance-dropdown" v-click-outside="closeDropDown">
       <div>Style not inherited. Do you want to inherit from the {{ inheritingFrom }} view?</div>
@@ -20,6 +20,7 @@ export default {
   },
   props: {
     inheritingFrom: String,
+    colorPicker: Boolean,
     moveLeft: Boolean
   },
   computed: {
@@ -35,7 +36,7 @@ export default {
           const compName = vNode.context.name
           let warn = `[Vue-click-outside:] provided expression '${binding.expression}' is not a function, but has to be`
           if (compName) { warn += `Found in component '${compName}'` }
-          
+
           console.warn(warn)
         }
         // Define Handler and cache it on the element
@@ -50,7 +51,7 @@ export default {
         // add Event Listeners
         document.addEventListener('click', handler)
       },
-      
+
       unbind: function(el, binding) {
         // Remove Event Listeners
         document.removeEventListener('click', el.__vueClickOutside__)

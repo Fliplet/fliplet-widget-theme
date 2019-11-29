@@ -25,7 +25,7 @@
                 </template>
               </div>
             </template>
-            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 0 }">
+            <div class="col-xs-12" :class="{ 'multi-field': variable.fields.length > 1 }">
               <template v-for="(field, idx) in groupFontStyleFields(variable.fields)">
                 <template v-if="Array.isArray(field)">
                   <div class="field-group">
