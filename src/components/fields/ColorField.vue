@@ -5,7 +5,7 @@
         <div id="color-picker-container" class="color-holder" ref="colorSquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
       </div>
       <div v-if="label" class="field-label" @click.prevent="toggleColorPicker">{{ label }}</div>
-      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :color-picker="true" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
+      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :position="'left'" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
 </template>

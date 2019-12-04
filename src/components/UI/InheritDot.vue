@@ -1,5 +1,5 @@
 <template>
-  <div class="inheritance-holder" :class="{ 'inheritance-holder-left': colorPicker }">
+  <div class="inheritance-holder" :class="{ 'inheritance-holder-left': position === 'left' }">
     <div class="inheritance-warn" ref="dot" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" data-toggle="tooltip" data-placement="bottom" title="Inherit"></div>
     <div v-show="showDropdown" ref="dropdown" class="inheritance-dropdown" v-click-outside="closeDropDown">
       <div>Style not inherited. Do you want to inherit from the {{ inheritingFrom }} view?</div>
@@ -20,7 +20,7 @@ export default {
   },
   props: {
     inheritingFrom: String,
-    colorPicker: Boolean,
+    position: String,
     moveLeft: Boolean
   },
   computed: {
