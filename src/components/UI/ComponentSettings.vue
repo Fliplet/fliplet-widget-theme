@@ -447,6 +447,6 @@ export default {
     bus.$off('group-settings-changed', this.hideApplyReset)
     bus.$off('component-context-changed', this.onContextSwitch)
     bus.$off('flex-direction-changed', this.flexDirectionFlag)
-  } 
+  }
 }
 </script>
