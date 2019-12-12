@@ -311,7 +311,7 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    z-index: 1000;
+    z-index: 1070;
     min-width: 200px;
     max-width: 200px;
     margin-top: 5px;
