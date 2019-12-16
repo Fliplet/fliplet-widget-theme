@@ -7,7 +7,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="btn btn-default has-image" :style="'background-image: url(' + valueToShow.url + ')'" @click.prevent="openFilePicker"></div>
+        <div class="btn btn-default has-image" :style="'background-image: url(' + valueToShow + ')'" @click.prevent="openFilePicker"></div>
       </template>
       <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     hasImage() {
-      if (typeof this.valueToShow === 'object' && this.valueToShow.url) {
+      if (this.valueToShow && this.valueToShow !== 'none') {
         return true
       }
 
@@ -69,7 +69,9 @@ export default {
   },
   methods: {
     setValues() {
-      this.valueToShow = this.value
+      this.valueToShow = typeof this.value === 'object'
+        ? this.value.url
+        : this.value
     },
     getValueToShow() {
       return getCurrentFieldValue(this.data.fieldConfig)
@@ -127,7 +129,7 @@ export default {
         result.data[0].url = imageUrl
 
         const media = _.pick(result.data[0], ['id', 'url', 'path'])
-        this.valueToShow = media
+        this.valueToShow = media.url
         this.value = media
 
         window.filePickerProvider = null
