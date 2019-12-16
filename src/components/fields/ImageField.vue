@@ -45,7 +45,6 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      debugger
       if (newVal !== oldVal) {
         checkLogic(this.data.fieldConfig, newVal)
         sendCssToFrame(`url('${newVal.url}')`, this.data.fieldConfig)
@@ -58,7 +57,6 @@ export default {
   },
   computed: {
     hasImage() {
-      debugger
       if (typeof this.valueToShow === 'object' && this.valueToShow.url) {
         return true
       }
