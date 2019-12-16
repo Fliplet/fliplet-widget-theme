@@ -47,7 +47,7 @@ export default {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
         checkLogic(this.data.fieldConfig, newVal)
-        sendCssToFrame(`url('${newVal}')`, this.data.fieldConfig)
+        sendCssToFrame(`url('${newVal.url}')`, this.data.fieldConfig)
 
         this.$nextTick(() => {
           this.prepareToSave()
@@ -69,7 +69,9 @@ export default {
   },
   methods: {
     setValues() {
-      this.valueToShow = this.value
+      this.valueToShow = typeof this.value === 'object'
+        ? this.value.url
+        : this.value
     },
     getValueToShow() {
       return getCurrentFieldValue(this.data.fieldConfig)
@@ -124,8 +126,11 @@ export default {
           imageUrl += (params.length > 1 ? '&' : '?') + 'size=large'
         }
 
-        this.valueToShow = imageUrl
-        this.value = imageUrl
+        result.data[0].url = imageUrl
+
+        const media = _.pick(result.data[0], ['id', 'url', 'path'])
+        this.valueToShow = media.url
+        this.value = media
 
         window.filePickerProvider = null
 
