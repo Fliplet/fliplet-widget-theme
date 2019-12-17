@@ -170,7 +170,9 @@ export default {
         }
 
         setActiveTheme(theme)
-        setThemeInstance(theme.instances[0])
+        setThemeInstance({
+          widgetInstance: theme.instances[0]
+        })
 
         let promise = Promise.resolve()
         // If there are old settings apply them to the new theme
@@ -377,7 +379,10 @@ export default {
           toggleSavingStatus(false)
 
           if (response && response.widgetInstance) {
-            setThemeInstance(response.widgetInstance)
+            setThemeInstance({
+              widgetInstance: response.widgetInstance,
+              fromSave: true
+            })
             // Reloads CSS files without reloading
             const settings = response.widgetInstance.settings.assets[0]
             Fliplet.Studio.emit('page-preview-send-event', {
