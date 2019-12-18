@@ -128,7 +128,7 @@ export function setThemeInstance(options) {
   }
 
   if (options.preventRecompute) {
-    return;
+    return
   }
 
   // Forces all fields to be recomputed with the latest saved values
