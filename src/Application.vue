@@ -381,7 +381,7 @@ export default {
           if (response && response.widgetInstance) {
             setThemeInstance({
               widgetInstance: response.widgetInstance,
-              fromSave: true
+              preventRecompute: true
             })
             // Reloads CSS files without reloading
             const settings = response.widgetInstance.settings.assets[0]
