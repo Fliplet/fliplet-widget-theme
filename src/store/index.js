@@ -114,8 +114,9 @@ export function setActiveTab(tab) {
 * Saves the theme instance into the store
 * @param {Object} Object of the theme instance
 */
-export function setThemeInstance(instance) {
-  state.themeInstance = instance
+export function setThemeInstance(options) {
+  options = options || {}
+  state.themeInstance = options.widgetInstance
 
   // Run migration of old variables
   const migration = migrateOldVariables(state.themeInstance.settings.values)
@@ -126,7 +127,9 @@ export function setThemeInstance(instance) {
     bus.$emit('values-migrated')
   }
 
-  bus.$emit('saved-fields-set')
+  if (!options.fromSave) {
+    bus.$emit('saved-fields-set')
+  }
 }
 
 /**
