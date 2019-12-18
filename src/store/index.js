@@ -127,9 +127,12 @@ export function setThemeInstance(options) {
     bus.$emit('values-migrated')
   }
 
-  if (!options.fromSave) {
-    bus.$emit('saved-fields-set')
+  if (options.preventRecompute) {
+    return
   }
+
+  // Forces all fields to be recomputed with the latest saved values
+  bus.$emit('saved-fields-set')
 }
 
 /**
