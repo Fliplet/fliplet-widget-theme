@@ -290,7 +290,9 @@ export default {
         // Checks if provider is in "widget mode"
         // (Widget mode is on when provider is initialized from a widget instance)
         if (state.widgetMode) {
-          let widget = _.find(this.savedFields.widgetInstances, { id: state.widgetId })
+          let widget = _.find(this.savedFields.widgetInstances, (widgetInstance) => {
+            return widgetInstance.id === state.widgetId || widgetInstance.uuid === state.widgetUUID
+          })
           // If it is, check if settings of the same widget were previously saved
           if (widget) {
             widget.values[data.name] = data.value
@@ -330,7 +332,11 @@ export default {
 
       // Checks if comes from a reset to theme styles
       if (fromStyleReset) {
-        resetStylesToTheme(state.widgetId, this.appearanceGroup)
+        resetStylesToTheme({
+          id: state.widgetId,
+          uuid: state.widgeetUUID,
+          group: this.appearanceGroup
+        })
       }
 
       // General settings values
@@ -429,7 +435,11 @@ export default {
           label: state.appearanceGroupOverlay ? state.appearanceGroupOverlay.name : ''
         })
 
-        prepareSettingsForTheme(state.widgetId)
+        prepareSettingsForTheme({
+          id: state.widgetId,
+          uuid: state.widgetUUID
+        })
+
         this.prepareToSave()
       })
     },

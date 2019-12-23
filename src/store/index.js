@@ -58,11 +58,17 @@ export function setSavedFields(data) {
 * Prepares data from widget styles to be added to the general styles
 * @param {Number} Widget id
 */
-export function prepareSettingsForTheme(id) {
+export function prepareSettingsForTheme(options) {
+  options = options || {}
+
   // Find the saved values
-  const localSavedWidget = _.find(state.savedFields.widgetInstances, { id: id })
+  const localSavedWidget = _.find(state.savedFields.widgetInstances, (widgetInstance) => {
+    return widgetInstance.uuid === options.uuid || widgetInstance.id === options.id
+  })
   const localValues = localSavedWidget ? localSavedWidget.values : []
-  const instaceSavedWidget = _.find(state.themeInstance.settings.widgetInstances, { id: id })
+  const instaceSavedWidget = _.find(state.themeInstance.settings.widgetInstances, (widgetInstance) => {
+    return widgetInstance.uuid === options.uuid || widgetInstance.id === options.id
+  })
   const instanceValues = instaceSavedWidget ? instaceSavedWidget.values : []
   const foundValues = _.merge(instanceValues, localValues)
 
@@ -87,13 +93,22 @@ export function prepareSettingsForTheme(id) {
 * @param {Number} Widget id
 * @param {Object} The appearance group of fields
 */
-export function resetStylesToTheme(widgetId, appearanceGroup) {
-  _.remove(state.savedFields.widgetInstances, { id: widgetId })
-  removeWidgetFromInstance(widgetId)
+export function resetStylesToTheme(options, widgetId) {
+  options = options || {}
+
+  _.remove(state.savedFields.widgetInstances, (widgetInstance) => {
+    return widgetInstance.uuid === options.uuid || widgetInstance.id === options.id
+  })
+
+  removeWidgetFromInstance({
+    id: options.id,
+    uuid: options.uuid
+  })
   updateWidgetData({
-    appearanceGroup: appearanceGroup,
+    appearanceGroup: options.group,
     instance: state.themeInstance
   })
+
   bus.$emit('variables-computed')
 }
 
@@ -343,8 +358,12 @@ export function getSavedValue(field, returnAll, context) {
     && state.themeInstance.settings.values[fieldName]
   const savedLocalField = _.find(state.savedFields.values, { name: fieldName })
 
-  const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
-  const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
+  const widgetFound = _.find(state.themeInstance.settings.widgetInstances, (widgetInstance) => {
+    return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+  })
+  const localWidgetFound = _.find(state.savedFields.widgetInstances, (widgetInstance) => {
+    return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+  })
   const widgetSavedValue = widgetFound ? widgetFound.values[fieldName] : undefined
   const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
 
@@ -666,8 +685,12 @@ function emitSavedData() {
   bus.$emit('field-saved', state.dataToSave)
 }
 
-function removeWidgetFromInstance(id) {
-  _.remove(state.themeInstance.settings.widgetInstances, { id: id })
+function removeWidgetFromInstance(options) {
+  options = options || {}
+
+  _.remove(state.themeInstance.settings.widgetInstances, (widgetInstance) => {
+    return widgetInstance.uuid === options.uuid || widgetInstance.id === options.id
+  })
 }
 
 function updateWidgetData(data) {
@@ -1231,14 +1254,18 @@ function checkFieldValue(value, field) {
   if (variableName) {
     if (state.widgetMode) {
       // Try to find the value in the local saved widget values
-      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
+      const foundWidgetValue = _.find(state.savedFields.widgetInstances, (widgetInstance) => {
+        return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+      })
       foundValue = foundWidgetValue ? foundWidgetValue.values[variableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
       }
 
       // Try to find the value in the theme instance saved widget values
-      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
+      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, (widgetInstance) => {
+        return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+      })
       foundValue = foundWidget ? foundWidget.values[variableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
@@ -1251,14 +1278,18 @@ function checkFieldValue(value, field) {
 
     if (tempVariableName) {
       // Try to find the value in the local saved widget values
-      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
+      const foundWidgetValue = _.find(state.savedFields.widgetInstances, (widgetInstance) => {
+        return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+      })
       foundValue = foundWidgetValue ? foundWidgetValue.values[tempVariableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
       }
 
       // Try to find the value in the theme instance saved widget values
-      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
+      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, (widgetInstance) => {
+        return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+      })
       foundValue = foundWidget ? foundWidget.values[tempVariableName] : undefined
       if (foundValue) {
         return checkFieldValue(foundValue, field)
@@ -1328,14 +1359,18 @@ function checkFieldValue(value, field) {
 
   if (state.widgetMode) {
     // Try to find the value in the local saved widget values
-    const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
+    const foundWidgetValue = _.find(state.savedFields.widgetInstances, (widgetInstance) => {
+      return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+    })
     foundValue = foundWidgetValue ? foundWidgetValue.values[inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name] : undefined
     if (foundValue) {
       return checkFieldValue(foundValue, field)
     }
 
     // Try to find the value in the theme instance saved widgets
-    const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
+    const foundWidget = _.find(state.themeInstance.settings.widgetInstances, (widgetInstance) => {
+      return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+    })
     foundValue = foundWidget ? foundWidget.values[inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name] : undefined
     if (foundValue) {
       return checkFieldValue(foundValue, field)

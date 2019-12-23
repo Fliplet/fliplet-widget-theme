@@ -432,8 +432,12 @@ export default {
     bus.$on('component-context-changed', this.onContextSwitch)
     bus.$on('flex-direction-changed', this.flexDirectionFlag)
 
-    const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
-    const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
+    const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, (widgetInstance) => {
+      return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+    })
+    const savedWidgetSettings = _.find(state.savedFields.widgetInstances, (widgetInstance) => {
+      return widgetInstance.uuid === state.widgetUUID || widgetInstance.id === state.widgetId
+    })
 
     if (instanceWidgetSettings || savedWidgetSettings) {
       this.isChanged = true
