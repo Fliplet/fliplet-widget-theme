@@ -35,6 +35,7 @@ export default {
         ? this.data.fieldConfig.showField
         : true,
       fromReset: false,
+      fromCreated: true,
       uuid: Fliplet.guid()
     }
   },
@@ -50,7 +51,7 @@ export default {
       this.value = valueProperty.value
     },
     value(newVal, oldVal) {
-      if (newVal !== oldVal && !this.fromReset) {
+      if (newVal !== oldVal && !this.fromReset && !this.fromCreated) {
         checkLogic(this.data.fieldConfig, newVal)
         sendCssToFrame(newVal, this.data.fieldConfig)
 
@@ -95,6 +96,10 @@ export default {
     setValues() {
       const valueProperty = _.find(this.properties, { value: this.value })
       this.valueToShow = valueProperty ? valueProperty.valueToShow : true
+
+      this.$nextTick(() => {
+        this.fromCreated = false
+      })
     },
     getValue() {
       return getCurrentFieldValue(this.data.fieldConfig)
