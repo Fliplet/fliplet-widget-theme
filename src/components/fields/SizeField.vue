@@ -203,6 +203,11 @@ export default {
       this.inputIsActive = this.enterPressedToClose ? this.inputIsActive : !this.inputIsActive
     },
     manualEdit(event) {
+      // Editing field flag is turned on
+      Fliplet.Studio.emit('editing-theme-field', {
+        value: true
+      })
+
       if (this.value === 'auto' || this.value === 'none' || this.value === 'initial') {
         event.preventDefault()
         event.stopPropagation()
@@ -222,17 +227,27 @@ export default {
       this.editToggle()
       this.enterPressedToClose = false
 
-      if (this.valueToShow !== this.value) {
-        if (isNaN(this.value) && this.value !== 'auto' && this.value !== 'none' && this.value !== 'initial') {
-          this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
-        }
+      if (this.valueToShow === this.value) {
+        // Make sure flag is only turned off after the check in "onClickOutside" in Studio
+        // $nextTick is not enough
+        setTimeout(() => {
+          Fliplet.Studio.emit('editing-theme-field', {
+            value: false
+          })
+        }, 500)
 
-        this.valueToShow = this.checkIfIsInheriting(this.value)
+        return
+      }
+
+      if (isNaN(this.value) && this.value !== 'auto' && this.value !== 'none' && this.value !== 'initial') {
+        this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
+      }
+
+      this.valueToShow = this.checkIfIsInheriting(this.value)
         ? this.valueToShow === 'initial' ? 'none' : this.valueToShow
         : this.value === 'initial' ? 'none' : this.value
 
-        this.prepareToSave()
-      }
+      this.prepareToSave()
     },
     onInputEnter() {
       this.editToggle()
