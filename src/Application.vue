@@ -362,6 +362,10 @@ export default {
       this.debouncedSave()
     },
     updateInstance(dataObj) {
+      dataObj = dataObj || {}
+
+      dataObj.async = true
+
       return ThemeModel.update(dataObj)
     },
     save() {

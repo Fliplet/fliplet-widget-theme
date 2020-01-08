@@ -4,7 +4,7 @@ export default {
   create(themeId, toReuse) {
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       method: 'POST',
-      url: 'v1/widget-instances?appId=' + Fliplet.Env.get('appId'),
+      url: `v1/widget-instances?appId=${Fliplet.Env.get('appId')}`,
       data: {
         widgetId: themeId,
         reuse: toReuse
@@ -22,8 +22,10 @@ export default {
     })
   },
   update(data) {
+    const params = data.async ? '?async' : ''
+
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
-      url: 'v1/widget-instances/' + state.themeInstance.id,
+      url: `v1/widget-instances/${state.themeInstance.id}${params}`,
       method: 'PUT',
       data: {
         package: state.activeTheme.package,
@@ -36,7 +38,7 @@ export default {
     const themeId = id || state.themeInstance.id
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       method: 'DELETE',
-      url: 'v1/widget-instances/' + themeId
+      url: `v1/widget-instances/${themeId}`
     })
   }
 }
