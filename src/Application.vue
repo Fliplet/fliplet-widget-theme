@@ -396,6 +396,11 @@ export default {
             })
           }
 
+          // Editing field flag is turned off
+          Fliplet.Studio.emit('editing-theme-field', {
+            value: false
+          })
+
           return
         })
         .catch((err) => {

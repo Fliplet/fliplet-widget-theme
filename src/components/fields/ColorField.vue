@@ -102,21 +102,40 @@ export default {
         left: target.left,
         top: target.bottom
       }, this.valueToShow, this.onColorChange, this.onColorChanged)
+
+      Fliplet.Studio.emit('editing-theme-field', {
+        value: true
+      })
     },
     onColorChanged(color) {
       // Save last used colors to Cookie
       cookieSavedColors.unshift(color)
+
       if (cookieSavedColors.length > 7) {
         cookieSavedColors.pop()
       }
+
       const json = JSON.stringify(cookieSavedColors)
+
       Cookies.set(COLOR_PALETTE_COOKIE, json, { expires: 30 })
+
       this.colorSets[2].colors = cookieSavedColors
+
       this.colorpicker.setUserPalette(this.colorSets)
 
       if (this.valueToShow !== color) {
         this.prepareToSave(color)
+
+        return
       }
+
+      // Make sure flag is only turned off after the check in "onClickOutside" in Studio
+      // $nextTick is not enough
+      setTimeout(() => {
+        Fliplet.Studio.emit('editing-theme-field', {
+          value: false
+        })
+      }, 500)
     },
     onColorChange(color) {
       if (color === this.valueToShow) {
