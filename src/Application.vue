@@ -362,6 +362,10 @@ export default {
       this.debouncedSave()
     },
     updateInstance(dataObj) {
+      dataObj = dataObj || {}
+
+      dataObj.async = true
+
       return ThemeModel.update(dataObj)
     },
     save() {
@@ -383,14 +387,12 @@ export default {
               widgetInstance: response.widgetInstance,
               preventRecompute: true
             })
-            // Reloads CSS files without reloading
-            const settings = response.widgetInstance.settings.assets[0]
-            Fliplet.Studio.emit('page-preview-send-event', {
-              type: 'reloadCssAsset',
-              path: settings.path,
-              url: settings.url
-            })
           }
+
+          // Editing field flag is turned off
+          Fliplet.Studio.emit('editing-theme-field', {
+            value: false
+          })
 
           return
         })
