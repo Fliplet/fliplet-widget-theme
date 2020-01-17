@@ -103,9 +103,12 @@ export default {
         top: target.bottom
       }, this.valueToShow, this.onColorChange, this.onColorChanged)
 
+      this.checkTransparency()
+
       Fliplet.Studio.emit('editing-theme-field', {
         value: true
       })
+
     },
     onColorChanged(color) {
       // Save last used colors to Cookie
@@ -138,11 +141,23 @@ export default {
       }, 500)
     },
     onColorChange(color) {
+      this.checkTransparency()
+
       if (color === this.valueToShow) {
         return
       }
 
       sendCssToFrame(color, this.data.fieldConfig)
+    },
+    checkTransparency() {
+      let informationChange = document.querySelector('.codemirror-colorpicker .information .information-change')
+      let color = this.colorpicker.getColor('rgba')
+
+      informationChange.removeAttribute('title')
+
+      if (color.a < 1) {
+        informationChange.setAttribute('title', 'Change the A value to 1 to use HEX code')
+      }
     },
     checkInheritance() {
       return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
