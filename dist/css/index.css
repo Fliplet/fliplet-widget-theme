@@ -1,3 +1,7 @@
+input.error, input.error:hover, input.error:active, input.error:focus {
+  border: 1px solid #eb4034 !important;
+  outline-color: #eb4034; }
+
 html {
   height: 100%; }
 

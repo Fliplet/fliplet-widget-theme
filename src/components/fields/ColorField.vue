@@ -31,6 +31,7 @@ export default {
       label: this.data.fieldConfig.label,
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId(),
+      isValid: true,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
       isChanged: checkIsFieldChanged(this.data.fieldConfig),
@@ -111,6 +112,10 @@ export default {
 
     },
     onColorChanged(color) {
+      if (!this.isValid) {
+        return
+      }
+
       // Save last used colors to Cookie
       cookieSavedColors.unshift(color)
 
@@ -141,13 +146,56 @@ export default {
       }, 500)
     },
     onColorChange(color) {
+      this.validateColor()
       this.checkTransparency()
 
-      if (color === this.valueToShow) {
+      if (color === this.valueToShow || !this.isValid) {
         return
       }
 
       sendCssToFrame(color, this.data.fieldConfig)
+    },
+    validateColor() {
+      let errorsFields = document.querySelectorAll('input.error')
+      const validationErrorClass = 'error'
+
+      // Reset error fields
+      for (let i = 0; i < errorsFields.length; i++) {
+        errorsFields[i].classList.remove(validationErrorClass)
+      }
+
+      this.isValid = true
+      let colorFormat = document.querySelector('.codemirror-colorpicker .colorpicker-body .information').getAttribute('class').split(' ')[1]
+      let validatedFields = { 
+        hsl: ['.hsl-h input', '.hsl-s input', '.hsl-l input', '.hsl-a input'],
+        rgb: ['.rgb-r input', '.rgb-g input', '.rgb-b input', '.rgb-a input']
+      }
+
+      // When a color format is 'hex' library won't let us save the incorrect value
+      if ( colorFormat === 'hex' ) {
+        return
+      }
+
+      let selectedColor = this.colorpicker.getColor(colorFormat)
+
+      // When we first time set an empty value in the RGB info tab we will receive this kind of answer from the color-picker
+      // rgba(0,0,0,0) which we should consider as an error because it will hide selected element from the screen for the user
+      if (/0, 0, 0, 0|NaN/g.test(selectedColor)) {
+        validatedFields[colorFormat].forEach((selector) => {
+          let field = document.querySelector(selector)
+
+          if (field.value.trim().length === 0) {
+            field.classList.add(validationErrorClass)
+          }
+        })
+
+        this.isValid = false
+      }
+      
+      // If we got an error we show a toast message to a user in case he didn't notice highlighted field
+      if (!this.isValid) {
+        Fliplet.Modal.alert({ message: 'Your color wasn\'t saved, please set the correct color values'})
+      }
     },
     checkTransparency() {
       let informationChange = document.querySelector('.codemirror-colorpicker .information .information-change')
