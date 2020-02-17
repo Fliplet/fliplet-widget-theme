@@ -156,7 +156,7 @@ export default {
       sendCssToFrame(color, this.data.fieldConfig)
     },
     validateColor() {
-      let errorsFields = document.querySelectorAll('input.error')
+      const errorsFields = document.querySelectorAll('input.error')
       const validationErrorClass = 'error'
 
       // Reset error fields
