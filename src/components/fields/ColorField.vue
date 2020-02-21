@@ -58,7 +58,12 @@ export default {
           name: "Last used",
           colors: cookieSavedColors
         }
-      ]
+      ],
+      colorPickerFields: { 
+        hsl: ['.hsl-h input', '.hsl-s input', '.hsl-l input', '.hsl-a input'],
+        rgb: ['.rgb-r input', '.rgb-g input', '.rgb-b input', '.rgb-a input']
+      },
+      defaultColorValues: [0, 0, 0, 1]
     }
   },
   components: {
@@ -104,6 +109,8 @@ export default {
         top: target.bottom
       }, this.valueToShow, this.onColorChange, this.onColorChanged)
 
+
+      this.attachOnBlurEvent()
       this.checkTransparency()
 
       Fliplet.Studio.emit('editing-theme-field', {
@@ -146,7 +153,6 @@ export default {
       }, 500)
     },
     onColorChange(color) {
-      this.validateColor()
       this.checkTransparency()
 
       if (color === this.valueToShow || !this.isValid) {
@@ -155,9 +161,23 @@ export default {
 
       sendCssToFrame(color, this.data.fieldConfig)
     },
+    attachOnBlurEvent(type) {
+      this.colorPickerFields.rgb.forEach((selector) => {
+        let field = document.querySelector(selector)
+
+        field.addEventListener('blur', this.validateColor)
+      })
+
+      this.colorPickerFields.hsl.forEach((selector) => {
+        let field = document.querySelector(selector)
+
+        field.addEventListener('blur', this.validateColor)
+      })
+    },
     validateColor() {
       const errorsFields = document.querySelectorAll('input.error')
       const validationErrorClass = 'error'
+      const colorFormat = document.querySelector('.codemirror-colorpicker .colorpicker-body .information').getAttribute('class').split(' ')[1]
 
       // Reset error fields
       for (let i = 0; i < errorsFields.length; i++) {
@@ -165,11 +185,6 @@ export default {
       }
 
       this.isValid = true
-      let colorFormat = document.querySelector('.codemirror-colorpicker .colorpicker-body .information').getAttribute('class').split(' ')[1]
-      let validatedFields = { 
-        hsl: ['.hsl-h input', '.hsl-s input', '.hsl-l input', '.hsl-a input'],
-        rgb: ['.rgb-r input', '.rgb-g input', '.rgb-b input', '.rgb-a input']
-      }
 
       // When a color format is 'hex' library won't let us save the incorrect value
       if ( colorFormat === 'hex' ) {
@@ -181,11 +196,18 @@ export default {
       // When we first time set an empty value in the RGB info tab we will receive this kind of answer from the color-picker
       // rgba(0,0,0,0) which we should consider as an error because it will hide selected element from the screen for the user
       if (/0, 0, 0, 0|NaN/g.test(selectedColor)) {
-        validatedFields[colorFormat].forEach((selector) => {
+        // Reciving previous saved value, first array element is a newest value, or using a default values
+        let prevColor = cookieSavedColors[0].match(/[0-9]{1,3}/g) || this.defaultColorValues
+        this.colorPickerFields[colorFormat].forEach((selector, i) => {
           let field = document.querySelector(selector)
 
           if (field.value.trim().length === 0) {
             field.classList.add(validationErrorClass)
+            // Set previous or default field value so user won't be able to save wrong value
+            // if there is no valid value in the preValue[i] we will set the field value to 1 
+            // this may occur when the previous value is RGB(255, 255, 255) but user 
+            // removed alfa value, in this case, we will place 1 instead of the undefined
+            field.value = prevColor[i] || 1
           }
         })
 
@@ -195,6 +217,10 @@ export default {
       // If we got an error we show a toast message to a user in case he didn't notice highlighted field
       if (!this.isValid) {
         Fliplet.Modal.alert({ message: 'Your color wasn\'t saved, please set the correct color values'})
+          .then(() => {
+            // After user close alert message call the color picker so that user may change it values
+            this.toggleColorPicker()
+          })
       }
     },
     checkTransparency() {
