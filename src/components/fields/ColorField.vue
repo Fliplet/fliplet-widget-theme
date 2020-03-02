@@ -196,7 +196,7 @@ export default {
       // When we first time set an empty value in the RGB info tab we will receive this kind of answer from the color-picker
       // rgba(0,0,0,0) which we should consider as an error because it will hide selected element from the screen for the user
       if (/0, 0, 0, 0|NaN/g.test(selectedColor)) {
-        // Reciving previous saved value, first array element is a newest value, or using a default values
+        // Receiving previous saved value, first array element is a newest value, or using a default values
         let prevColor = cookieSavedColors[0].match(/[0-9]{1,3}/g) || this.defaultColorValues
         this.colorPickerFields[colorFormat].forEach((selector, i) => {
           let field = document.querySelector(selector)
