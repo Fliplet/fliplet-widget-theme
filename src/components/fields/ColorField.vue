@@ -101,7 +101,8 @@ export default {
 
       this.colorpicker.show({
         left: target.left,
-        top: target.bottom
+        top: target.bottom,
+        hideDelay: 300000
       }, this.valueToShow, this.onColorChange, this.onColorChanged)
 
       this.checkTransparency()
