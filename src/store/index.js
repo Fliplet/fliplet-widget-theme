@@ -228,7 +228,14 @@ export function closeAppearanceGroupSettings() {
 * @param {Object} Name and Value of the field the user changed
 */
 export function saveFieldData(data) {
-  state.dataToSave.push(_.pick(data, ['name', 'value']))
+  if (Array.isArray(data)) {
+    _.forEach(data, (dataObject) => {
+      state.dataToSave.push(_.pick(dataObject, ['name', 'value']))
+    })
+  } else {
+    state.dataToSave.push(_.pick(data, ['name', 'value']))
+  }
+
   emitSavedData()
 }
 
@@ -262,6 +269,25 @@ export function getFieldName(field) {
   const fieldName = state.componentContext === 'Mobile' || field.isQuickSetting
     ? field.name
     : field.breakpoints[state.componentContext.toLowerCase()].name
+
+  return fieldName
+}
+
+/**
+* Gets the field names given the context
+* @param {Object} Object containing the field JSON configuration and the context
+* @return {String} CSS variable name
+*/
+
+export function getFieldNameByContext(options) {
+  options = options || {
+    field: {},
+    context: ''
+  }
+
+  const fieldName = options.context.toLowerCase() === 'mobile' || options.field.isQuickSetting
+    ? options.field.name
+    : options.field.breakpoints[options.context.toLowerCase()].name
 
   return fieldName
 }

@@ -3,13 +3,13 @@
     <div class="wrapper">
       <div class="align-field-container">
         <template v-for="(prop, idx) in properties">
-          <div v-if="prop !== 'custom'" class="radio-holder inline-boxed">
+          <div v-if="prop !== 'custom'" class="radio-holder inline-boxed" :key="idx">
             <input type="radio" :id="'radio-' + prop + uuid" :name="'margin-align-' + uuid" :value="prop" v-model="value">
             <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
               <span :class="'check-icon check-align-' + prop"></span>
             </label>
           </div>
-          <div v-else class="radio-holder-custom">
+          <div v-else class="radio-holder-custom" :key="idx">
             <input type="radio" :id="'radio-' + prop + uuid" name="margin-align" :value="prop" v-model="value">
             <label :for="'radio-' + prop + uuid">
               <span class="check-icon">Custom</span>
@@ -18,13 +18,13 @@
         </template>
       </div>
       <div v-if="label" class="field-label">{{ label }}</div>
-      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
+      <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
 </template>
 
 <script>
-import { state, getCurrentFieldValue, getFieldName, sendCssToFrame,
+import { state, getCurrentFieldValue, getFieldName, getFieldNameByContext, sendCssToFrame,
   checkMarginLogic, saveFieldData, checkIsFieldChanged } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import marginAlignProperties from '../../libs/margin-align-properties'
@@ -91,14 +91,8 @@ export default {
     getValueToShow() {
       return getCurrentFieldValue(this.data.fieldConfig)
     },
-    inheritValue(value) {
-      this.value = value
-      this.$nextTick(() => {
-        this.fromReset = true
-      })
-    },
-    prepareToSave() {
-      const data = {
+    prepareToSave(data) {
+      data = data || {
         name: getFieldName(this.data.fieldConfig),
         value: this.value 
       }
@@ -120,6 +114,68 @@ export default {
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
+    },
+    updateAll() {
+      const mobileFieldName = this.data.fieldConfig.name
+      const currentFieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: state.componentContext.toLowerCase()
+      })
+
+      // This function can only be run when the user is either
+      // in the tablet or desktop context, so it is safe to assume
+      // that if it's not one is the other
+      const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
+        ? 'desktop'
+        : 'tablet'
+      const remainingFieldInheritance = remainingFieldContext === 'desktop'
+        ? 'tablet'
+        : 'mobile'
+      const remainingFieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: remainingFieldContext
+      })
+
+      const dataToSave = [
+        {
+          name: mobileFieldName,
+          value: this.value
+        },
+        {
+          name: currentFieldName,
+          value: 'inherit-' + this.inheritingFrom
+        },
+        {
+          name: remainingFieldName,
+          value: 'inherit-' + remainingFieldInheritance
+        }
+      ]
+
+      this.prepareToSave(dataToSave)
+    },
+    updatePreviousContext() {
+      const fieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: this.inheritingFrom
+      })
+      const dataToSave = [
+        {
+          name: fieldName,
+          value: this.value
+        },
+        {
+          name: getFieldName(this.data.fieldConfig),
+          value: 'inherit-' + this.inheritingFrom
+        }
+      ]
+
+      this.prepareToSave(dataToSave)
+    },
+    inheritValue(value) {
+      this.value = value
+      this.$nextTick(() => {
+        this.fromReset = true
+      })
     }
   },
   mounted() {

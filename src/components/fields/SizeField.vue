@@ -15,7 +15,7 @@
         </ul>
       </div>
       <div v-if="label" class="field-label" @click.prevent="manualEdit">{{ label }}</div>
-      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
+      <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
     <div class="input-holder" v-show="inputIsActive">
       <input type="text" class="form-control" ref="inputField" v-model="value" v-on:blur="onInputBlur" @keydown.enter="onInputEnter" @keydown="onKeyDown" @keyup="onKeyUp">
@@ -25,7 +25,7 @@
 
 <script>
 import { state, saveFieldData, getCurrentFieldValue,
-  getFieldName, checkIsFieldChanged, checkSizeLogic, sendCssToFrame } from '../../store'
+  getFieldName, getFieldNameByContext, checkIsFieldChanged, checkSizeLogic, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import propertiesMap from '../../libs/size-field-properties'
 import keyHandler from '../../libs/key-down-handler'
@@ -118,12 +118,6 @@ export default {
 
       return properties
     },
-    inheritValue(value) {
-      this.value = value
-      this.$nextTick(() => {
-        this.fromReset = true
-      })
-    },
     checkIfIsInheriting(value) {
       // Checks if the value matches a variable name
       const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
@@ -185,18 +179,22 @@ export default {
         this.prepareToSave()
       })
     },
-    prepareToSave() {
+    processValue() {
       const isInheriting = this.checkIfIsInheriting(this.value)
-      const data = {
+
+      return isInheriting || this.value === 'auto' || this.value === 'none' || this.value === 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' && this.property !== 'index' ? this.property : '') : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
+    },
+    prepareToSave(data) {
+      data = data || {
         name: getFieldName(this.data.fieldConfig),
-        value: isInheriting || this.value === 'auto' || this.value === 'none' || this.value === 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' && this.property !== 'index' ? this.property : '') : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
+        value: this.processValue()
       }
 
       if (this.isAligned) {
         this.isAligned = false
         checkSizeLogic(this.data.fieldConfig)
       }
-        
+
       saveFieldData(data)
     },
     editToggle() {
@@ -337,6 +335,68 @@ export default {
       this.isAligned = typeof this.data.fieldConfig.isAligned !== 'undefined'
         ? this.data.fieldConfig.isAligned
         : false
+    },
+    updateAll() {
+      const mobileFieldName = this.data.fieldConfig.name
+      const currentFieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: state.componentContext.toLowerCase()
+      })
+
+      // This function can only be run when the user is either
+      // in the tablet or desktop context, so it is safe to assume
+      // that if it's not one is the other
+      const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
+        ? 'desktop'
+        : 'tablet'
+      const remainingFieldInheritance = remainingFieldContext === 'desktop'
+        ? 'tablet'
+        : 'mobile'
+      const remainingFieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: remainingFieldContext
+      })
+
+      const dataToSave = [
+        {
+          name: mobileFieldName,
+          value: this.processValue()
+        },
+        {
+          name: currentFieldName,
+          value: 'inherit-' + this.inheritingFrom
+        },
+        {
+          name: remainingFieldName,
+          value: 'inherit-' + remainingFieldInheritance
+        }
+      ]
+
+      this.prepareToSave(dataToSave)
+    },
+    updatePreviousContext() {
+      const fieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: this.inheritingFrom
+      })
+      const dataToSave = [
+        {
+          name: fieldName,
+          value: this.processValue()
+        },
+        {
+          name: getFieldName(this.data.fieldConfig),
+          value: 'inherit-' + this.inheritingFrom
+        }
+      ]
+
+      this.prepareToSave(dataToSave)
+    },
+    inheritValue(value) {
+      this.value = value
+      this.$nextTick(() => {
+        this.fromReset = true
+      })
     }
   },
   created() {

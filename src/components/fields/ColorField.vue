@@ -5,14 +5,14 @@
         <div id="color-picker-container" class="color-holder" ref="colorSquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
       </div>
       <div v-if="label" class="field-label" @click.prevent="toggleColorPicker">{{ label }}</div>
-      <inherit-dot v-if="!isInheriting" @trigger-inherit="inheritValue" :position="'left'" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
+      <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :position="'left'" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
 </template>
 
 <script>
 import { state, saveFieldData, getCurrentFieldValue,
-  getFieldName, checkIsFieldChanged, sendCssToFrame } from '../../store'
+  getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store'
 import InheritDot from '../UI/InheritDot'
 import createClass from '../../libs/column-class'
 import bus from '../../libs/bus'
@@ -81,11 +81,16 @@ export default {
     }
   },
   methods: {
-    prepareToSave(color) {
-      this.value = color
-      this.valueToShow = this.value
-      this.dataToSave.name = getFieldName(this.data.fieldConfig),
-      this.dataToSave.value = color
+    prepareToSave(data) {
+      if (Array.isArray(data)) {
+        this.dataToSave = data
+      } else {
+        this.value = data
+        this.valueToShow = this.value
+        this.dataToSave.name = getFieldName(this.data.fieldConfig),
+        this.dataToSave.value = data
+      }
+
       this.debouncedSave()
     },
     saveColor() {
@@ -96,10 +101,6 @@ export default {
     },
     getValueToShow() {
       return getCurrentFieldValue(this.data.fieldConfig)
-    },
-    inheritValue(value) {
-      this.value = value
-      this.prepareToSave(this.value)
     },
     toggleColorPicker() {
       const target = this.$refs.colorSquare.getBoundingClientRect()
@@ -244,6 +245,66 @@ export default {
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
+    },
+    updateAll() {
+      const mobileFieldName = this.data.fieldConfig.name
+      const currentFieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: state.componentContext.toLowerCase()
+      })
+
+      // This function can only be run when the user is either
+      // in the tablet or desktop context, so it is safe to assume
+      // that if it's not one is the other
+      const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
+        ? 'desktop'
+        : 'tablet'
+      const remainingFieldInheritance = remainingFieldContext === 'desktop'
+        ? 'tablet'
+        : 'mobile'
+      const remainingFieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: remainingFieldContext
+      })
+
+      const dataToSave = [
+        {
+          name: mobileFieldName,
+          value: this.value
+        },
+        {
+          name: currentFieldName,
+          value: 'inherit-' + this.inheritingFrom
+        },
+        {
+          name: remainingFieldName,
+          value: 'inherit-' + remainingFieldInheritance
+        }
+      ]
+
+      this.prepareToSave(dataToSave)
+    },
+    updatePreviousContext() {
+      const fieldName = getFieldNameByContext({
+        field: this.data.fieldConfig,
+        context: this.inheritingFrom
+      })
+      const dataToSave = [
+        {
+          name: fieldName,
+          value: this.value
+        },
+        {
+          name: getFieldName(this.data.fieldConfig),
+          value: 'inherit-' + this.inheritingFrom
+        }
+      ]
+
+      this.prepareToSave(dataToSave)
+    },
+    inheritValue(value) {
+      this.value = value
+      this.prepareToSave(this.value)
     }
   },
   created() {

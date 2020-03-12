@@ -111,15 +111,17 @@ header {
     border-radius: 45px;
     line-height: 2.4;
     color: rgba(51, 51, 51, 0.5); }
-    .buttons-holder .btn-primary:hover {
-      color: #333333; }
+    .buttons-holder .btn-primary:focus, .buttons-holder .btn-primary:hover, .buttons-holder .btn-primary:active, .buttons-holder .btn-primary:active:focus, .buttons-holder .btn-primary:active:hover {
+      color: #333333;
+      background: transparent;
+      border-color: rgba(51, 51, 51, 0.5); }
   .buttons-holder .btn-default {
     background: transparent;
     line-height: 2.4;
     color: rgba(51, 51, 51, 0.5); }
-    .buttons-holder .btn-default:hover {
-      color: #333333; }
-    .buttons-holder .btn-default:active {
+    .buttons-holder .btn-default:focus, .buttons-holder .btn-default:hover, .buttons-holder .btn-default:active, .buttons-holder .btn-default:active:focus, .buttons-holder .btn-default:active:hover {
+      color: #333333;
+      background: transparent;
       box-shadow: none; }
 
 .danger-circle {
@@ -316,8 +318,8 @@ header {
     flex-direction: column;
     justify-content: center;
     z-index: 1070;
-    min-width: 200px;
-    max-width: 200px;
+    min-width: 220px;
+    max-width: 220px;
     margin-top: 5px;
     margin-bottom: 5px;
     padding: 13px 20px 9px;
@@ -341,6 +343,8 @@ header {
       cursor: pointer; }
       .inheritance-holder .inheritance-dropdown .inherit-action:hover {
         background-color: #efebed; }
+      .inheritance-holder .inheritance-dropdown .inherit-action + .inherit-action {
+        margin-top: 8px; }
 
 .inheritance-holder-left {
   left: 29px !important; }
