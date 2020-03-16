@@ -114,8 +114,14 @@ header {
     line-height: 2.4;
     color: rgba($text-color, 0.5);
 
-    &:hover {
+    &:focus,
+    &:hover,
+    &:active,
+    &:active:focus,
+    &:active:hover {
       color: #333333;
+      background: transparent;
+      border-color: rgba($text-color, 0.5);
     }
   }
 
@@ -124,11 +130,13 @@ header {
     line-height: 2.4;
     color: rgba($text-color, 0.5);
 
-    &:hover {
+    &:focus,
+    &:hover,
+    &:active,
+    &:active:focus,
+    &:active:hover {
       color: $text-color;
-    }
-
-    &:active {
+      background: transparent;
       box-shadow: none;
     }
   }
@@ -409,11 +417,11 @@ header {
     flex-direction: column;
     justify-content: center;
     z-index: 1070;
-    min-width: 200px;
-    max-width: 200px;
+    min-width: 220px;
+    max-width: 220px;
     margin-top: 5px;
     margin-bottom: 5px;
-    padding: 13px 20px 9px;
+    padding: 13px 20px 13px;
     color: rgba(51, 51, 51, 0.8);
     box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.15);
     background-color: #ffffff;
@@ -435,11 +443,14 @@ header {
       margin-left: -20px;
       margin-right: -20px;
       padding: 4px 20px;
-      text-align: center;
       cursor: pointer;
 
       &:hover {
         background-color: $highlight-gray-hover;
+      }
+
+      + .inherit-action {
+        margin-top: 8px;
       }
     }
   }
