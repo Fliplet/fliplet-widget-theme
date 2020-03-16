@@ -339,7 +339,6 @@ header {
       margin-left: -20px;
       margin-right: -20px;
       padding: 4px 20px;
-      text-align: center;
       cursor: pointer; }
       .inheritance-holder .inheritance-dropdown .inherit-action:hover {
         background-color: #efebed; }
