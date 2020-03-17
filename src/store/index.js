@@ -1255,57 +1255,6 @@ function checkFieldValue(value, field) {
 
   // If value is a variable name
   if (variableName) {
-    if (state.widgetMode) {
-      // Try to find the value in the local saved widget values
-      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
-      foundValue = foundWidgetValue ? foundWidgetValue.values[variableName] : undefined
-      if (foundValue) {
-        return checkFieldValue(foundValue, field)
-      }
-
-      // Try to find the value in the theme instance saved widget values
-      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
-      foundValue = foundWidget ? foundWidget.values[variableName] : undefined
-      if (foundValue) {
-        return checkFieldValue(foundValue, field)
-      }
-
-      // If variableName is from another field
-      // we assign the field name to proceed to search for it in the saved general values
-      tempVariableName = field.name
-    }
-
-    if (tempVariableName) {
-      // Try to find the value in the local saved widget values
-      const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
-      foundValue = foundWidgetValue ? foundWidgetValue.values[tempVariableName] : undefined
-      if (foundValue) {
-        return checkFieldValue(foundValue, field)
-      }
-
-      // Try to find the value in the theme instance saved widget values
-      const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
-      foundValue = foundWidget ? foundWidget.values[tempVariableName] : undefined
-      if (foundValue) {
-        return checkFieldValue(foundValue, field)
-      }
-
-      // Try to find the value in the local saved values
-      foundValue = _.find(state.savedFields.values, { name: tempVariableName })
-      if (foundValue) {
-        return checkFieldValue(foundValue.value, field)
-      }
-
-      // Try to find the value in the theme instance saved values
-      const savedValues = state.themeInstance.settings.values
-      if (savedValues) {
-        foundValue = savedValues[tempVariableName]
-      }
-      if (foundValue) {
-        return checkFieldValue(foundValue, field)
-      }
-    }
-
     // Try to find the value in the local saved values
     foundValue = _.find(state.savedFields.values, { name: variableName })
     if (foundValue) {
