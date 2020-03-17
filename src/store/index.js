@@ -1235,16 +1235,16 @@ function checkFieldValue(value, field) {
   }
 
   let foundValue
-  let defaultValue
-  let tempVariableName
-  // Checks if the UI tab selected is Mobile or not
-  const isMobile = state.componentContext === 'Mobile'
+
   // Checks if the value matches a variable name
   const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
+
   // If the value matches to a variable get the name of the variable
   let variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+
   // Checks if the value matches the 'inherit-x' reserved key
   const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
+
   // If the value matches the 'inherit-x' reserved key get the inheritance key
   const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined
 
