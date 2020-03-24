@@ -225,6 +225,18 @@ export default {
       this.editToggle()
       this.enterPressedToClose = false
 
+      // Make sure that users can't enter auto value for max-width and max-height
+      // When they try we shall show an error and return previous value
+      if (this.data.fieldConfig.subtype === 'max-width' || this.data.fieldConfig.subtype === 'max-height') {
+        if (this.value === 'auto') {
+          Fliplet.Modal.alert({
+            message:`${this.data.fieldConfig.subtype} can't be set to auto.`
+          })
+          // Use parseInt because the this.data.fieldConfig.value may be '100px' and for this.value valid input is 100
+          this.value = parseInt(this.data.fieldConfig.value) || this.data.fieldConfig.default
+        }
+      }
+
       if (this.valueToShow === this.value) {
         // Make sure flag is only turned off after the check in "onClickOutside" in Studio
         // $nextTick is not enough
