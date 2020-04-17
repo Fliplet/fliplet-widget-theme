@@ -2,7 +2,6 @@
   <div class="inheritance-holder" :class="{ 'inheritance-holder-left': position === 'left' }">
     <div class="inheritance-warn" ref="dot" :class="{ 'closer': moveLeft }" @click.prevent="toggleDropdown" data-toggle="tooltip" data-placement="bottom" title="Inherit"></div>
     <div v-show="showDropdown" ref="dropdown" class="inheritance-dropdown" v-click-outside="closeDropDown">
-      <div>Style not inherited. Align styles across device sizes?</div>
       <div class="inherit-action" @click="$emit('update-all')">Update all devices to match</div>
       <div class="inherit-action" @click="$emit('update-previous-context')">Update {{ inheritingFrom }} to match</div>
       <div class="inherit-action" @click="$emit('trigger-inherit', value)">Inherit from {{ inheritingFrom }}</div>
