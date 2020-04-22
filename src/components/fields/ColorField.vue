@@ -157,6 +157,14 @@ export default {
     onColorChange(color) {
       this.checkTransparency()
 
+      if (this.isValid) {
+        Fliplet.Studio.emit('page-preview-send-event', {
+          type: 'colorChange',
+          color: color,
+          label: this.label
+        });
+      }
+
       if (color === this.valueToShow || !this.isValid) {
         return
       }
