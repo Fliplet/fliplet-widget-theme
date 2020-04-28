@@ -318,11 +318,11 @@ header {
     flex-direction: column;
     justify-content: center;
     z-index: 1070;
-    min-width: 180px;
-    max-width: 180px;
+    min-width: 220px;
+    max-width: 220px;
     margin-top: 5px;
     margin-bottom: 5px;
-    padding: 4px;
+    padding: 13px 20px 13px;
     color: rgba(51, 51, 51, 0.8);
     box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.15);
     background-color: #ffffff;
@@ -335,10 +335,10 @@ header {
       bottom: 100%; }
     .inheritance-holder .inheritance-dropdown .inherit-action {
       color: #00abd1;
-      margin-top: 4px;
-      margin-left: -8px;
-      margin-right: -8px;
-      padding: 4px 5px;
+      margin-top: 20px;
+      margin-left: -20px;
+      margin-right: -20px;
+      padding: 4px 20px;
       cursor: pointer; }
       .inheritance-holder .inheritance-dropdown .inherit-action:hover {
         background-color: #efebed; }
