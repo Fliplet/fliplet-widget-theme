@@ -38,6 +38,11 @@ export const state = {
 export function handleWidgetData(data) {
   state.widgetData = data
 
+  if (/:/.test(data.widgetPackage)) {
+    state.widgetData.widgetLayout = Fliplet.Widget.getAttributes(data.widgetId)
+    state.widgetData.widgetPackage = data.widgetPackage.split(':')[0]
+  }
+  
   if (typeof data.activeTab !== 'undefined') {
     setActiveTab(data.activeTab)
     deviceTypes[data.activeTab]
