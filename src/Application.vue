@@ -200,8 +200,11 @@ export default {
 
           // Check if there's a package name to open its component settings
           if (typeof state.widgetData.widgetPackage !== 'undefined') {
+            let widgetPackage = state.widgetData.widgetLayout 
+              ? `${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`
+              : state.widgetData.widgetPackage
             this.appearanceGroup = _.find(state.activeTheme.settings.configuration, (config) => {
-              return config.packages && config.packages.indexOf(state.widgetData.widgetPackage) > -1
+              return config.packages && config.packages.indexOf(widgetPackage) > -1
             })
 
 
