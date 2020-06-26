@@ -37,7 +37,12 @@ export const state = {
 */
 export function handleWidgetData(data) {
   state.widgetData = data
-  state.widgetData.widgetLayout = Fliplet.Widget.getAttributes(data.widgetId)
+
+  if (data.widgetInstanceId) {
+    Fliplet.Widget.getAttributes(data.widgetInstanceId).then(function(attributes) {
+      state.widgetData.widgetLayout = attributes.layout;
+    });
+  }
   
   if (typeof data.activeTab !== 'undefined') {
     setActiveTab(data.activeTab)
