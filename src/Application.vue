@@ -144,9 +144,10 @@ export default {
       const widgetData = widgetInstanceData || Fliplet.Widget.getData(widgetId) || {}
 
       handleWidgetData(widgetData)
-
-      // Get themes and fonts simultaneously
-      return Promise.all([this.getThemes(), this.getFonts()])
+        .then(() => {
+          // Get themes and fonts simultaneously
+          return Promise.all([this.getThemes(), this.getFonts()])
+        })
         .then((response) => {
           this.fonts = response[1]
           this.storeFonts()
