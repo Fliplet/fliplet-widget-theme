@@ -36,19 +36,24 @@ export const state = {
 *   Widget styles: Contains the same as above, plus "widgetInstanceId", "widgetPackage"
 */
 export function handleWidgetData(data) {
+  let getWidgetAttributes = Promise.resolve()
+
   state.widgetData = data
 
   if (data.widgetInstanceId) {
-    Fliplet.Widget.getAttributes(data.widgetInstanceId).then(function(attributes) {
-      state.widgetData.widgetLayout = attributes.layout;
-    });
+    getWidgetAttributes = Fliplet.Widget.getAttributes(data.widgetInstanceId)
+      .then(function(attributes) {
+        state.widgetData.widgetLayout = attributes.layout
+      })
   }
-  
+
   if (typeof data.activeTab !== 'undefined') {
     setActiveTab(data.activeTab)
     deviceTypes[data.activeTab]
     setComponentContext(deviceTypes[data.activeTab].name)
   }
+
+  return getWidgetAttributes
 }
 
 /**
