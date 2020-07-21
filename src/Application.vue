@@ -307,7 +307,9 @@ export default {
             widget = {
               id: state.widgetId,
               uuid: state.widgetUUID,
-              component: widgetsMap[state.widgetData.widgetPackage],
+              component: state.widgetData.widgetLayout
+                ? widgetsMap[`${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`]
+                : widgetsMap[state.widgetData.widgetPackage],
               values: {}
             }
             widget.values[data.name] = data.value
