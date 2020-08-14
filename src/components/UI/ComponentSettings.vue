@@ -252,8 +252,10 @@ export default {
           const isDefaultInheriting = this.isInheriting(values.defaultValue)
           const isSavedValueInheriting = this.isInheriting(values.generalSavedValue)
           const isLocalSavedValueInheriting = this.isInheriting(values.generalLocalSavedValue)
-          const isWidgetSavedValueInheriting = this.isInheriting(values.widgetSavedValue)
-          const isLocalWidgetSavedValueInheriting = this.isInheriting(values.widgetLocalSavedValue)
+          const isWidgetSavedValueInheriting =
+            this.isInheriting(values.widgetSavedValue, values.widgetSavedValueInheriting)
+          const isLocalWidgetSavedValueInheriting =
+            this.isInheriting(values.widgetLocalSavedValue, values.widgetLocalSavedValueInheriting)
 
           const isInheritingFrom = this.isInheritingFrom(values.fieldValue, field)
 
@@ -338,10 +340,15 @@ export default {
 
       return result
     },
-    isInheriting(value) {
+    isInheriting(value, forceInheriting) {
+      if (!!forceInheriting) {
+        return true
+      }
+
       if (!value) {
         return false
       }
+
       // Checks if the value matches a variable name
       const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
       // If the value matches to a variable get the name of the variable

@@ -360,6 +360,33 @@ export function checkIsFieldChanged(field) {
   return widgetIndex > -1 || fieldIndex > -1
 }
 
+export function getWidgetSavedValue(options) {
+  options = options || {}
+  options.inheriting = !!options.inheriting
+
+  switch (options.context) {
+    case 'desktop':
+    case 'tablet':
+      if (!options.savedValues[options.fieldName]) {
+        options.context = options.context === 'desktop' ? 'tablet' : 'mobile'
+        options.fieldName = options.field.name
+        options.inheriting = true
+
+        return getWidgetSavedValue(options)
+      }
+
+      return {
+        value: options.savedValues[options.fieldName],
+        inheriting: options.inheriting
+      }
+    default:
+      return {
+        value: options.savedValues[options.fieldName],
+        inheriting: options.inheriting
+      }
+  }
+}
+
 /**
 * Gets the value saved for the specific field
 * @param {Object} Object of the field JSON configuration
@@ -382,18 +409,33 @@ export function getSavedValue(field, returnAll, context) {
 
   const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
   const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
-  const widgetSavedValue = widgetFound ? widgetFound.values[fieldName] : undefined
-  const widgetLocalSavedValue = localWidgetFound ? localWidgetFound.values[fieldName] : undefined
+
+  const widgetSavedData = widgetFound
+    ? getWidgetSavedValue({
+      savedValues: widgetFound.values,
+      field,
+      context,
+      fieldName
+    })
+    : undefined
+  const widgetLocalSavedData = localWidgetFound
+    ? getWidgetSavedValue({
+      savedValues: localWidgetFound.values,
+      field,
+      context,
+      fieldName
+    })
+    : undefined
 
   const defaultValue = context === 'mobile' || field.isQuickSetting
     ? field.default
     : field.breakpoints[context].default
 
   const value = state.widgetMode
-    ? widgetLocalSavedValue
-      ? widgetLocalSavedValue
-      : widgetSavedValue
-        ? widgetSavedValue
+    ? widgetLocalSavedData && widgetLocalSavedData.value
+      ? widgetLocalSavedData.value
+      : widgetSavedData && widgetSavedData.value
+        ? widgetSavedData.value
         : savedLocalField
           ? savedLocalField.value
           : generalSavedValue || defaultValue
@@ -407,8 +449,10 @@ export function getSavedValue(field, returnAll, context) {
     fieldValue: value,
     generalSavedValue: generalSavedValue,
     generalLocalSavedValue: savedLocalField ? savedLocalField.value : undefined,
-    widgetSavedValue: widgetSavedValue,
-    widgetLocalSavedValue: widgetLocalSavedValue,
+    widgetSavedValue: widgetSavedData && widgetSavedData.value,
+    widgetSavedValueInheriting: widgetSavedData && widgetSavedData.inheriting,
+    widgetLocalSavedValue: widgetLocalSavedData && widgetLocalSavedData.value,
+    widgetLocalSavedValueInheriting: widgetLocalSavedData && widgetLocalSavedData.inheriting,
     defaultValue: defaultValue
   }
 }
