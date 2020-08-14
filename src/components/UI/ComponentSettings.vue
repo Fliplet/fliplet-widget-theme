@@ -342,7 +342,7 @@ export default {
     },
     isInheriting(value, forceInheriting) {
       if (!!forceInheriting) {
-        return !!forceInheriting
+        return true
       }
 
       if (!value) {

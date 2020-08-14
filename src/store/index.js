@@ -366,22 +366,9 @@ export function getWidgetSavedValue(options) {
 
   switch (options.context) {
     case 'desktop':
-      if (!options.savedValues[options.fieldName]) {
-        options.context = 'tablet'
-        options.fieldName = options.field.breakpoints[options.context].name
-        options.inheriting = true
-
-        return getWidgetSavedValue(options)
-      }
-
-      return {
-        value: options.savedValues[options.fieldName],
-        inheriting: options.inheriting
-      }
-
     case 'tablet':
       if (!options.savedValues[options.fieldName]) {
-        options.context = 'mobile'
+        options.context = options.context === 'desktop' ? 'tablet' : 'mobile'
         options.fieldName = options.field.name
         options.inheriting = true
 
