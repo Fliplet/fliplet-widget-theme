@@ -362,28 +362,42 @@ export function checkIsFieldChanged(field) {
 
 export function getWidgetSavedValue(options) {
   options = options || {}
+
+  if ((options.type === 'settings' && !options.savedValues)
+    || (options.type === 'local' && !options.localSavedValues)) {
+    return false
+  }
+
   options.inheriting = !!options.inheriting
 
   switch (options.context) {
     case 'desktop':
     case 'tablet':
-      if (!options.savedValues[options.fieldName]) {
+      if (
+        (options.type === 'settings' && !options.savedValues[options.fieldName])
+        || (options.type === 'local'
+          && !options.localSavedValues[options.fieldName]
+          && !options.savedValues[options.fieldName])
+      ) {
         options.context = options.context === 'desktop' ? 'tablet' : 'mobile'
-        options.fieldName = options.field.name
+        options.fieldName = options.context === 'mobile'
+          ? options.field.name
+          : options.field.breakpoints[options.context].name
         options.inheriting = true
 
         return getWidgetSavedValue(options)
       }
 
-      return {
-        value: options.savedValues[options.fieldName],
-        inheriting: options.inheriting
-      }
+      break
     default:
-      return {
-        value: options.savedValues[options.fieldName],
-        inheriting: options.inheriting
-      }
+      break
+  }
+
+  return {
+    value: options[options.type === 'settings'
+      ? 'savedValues'
+      : 'localSavedValues'][options.fieldName],
+    inheriting: options.inheriting
   }
 }
 
@@ -410,22 +424,22 @@ export function getSavedValue(field, returnAll, context) {
   const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId })
   const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId })
 
-  const widgetSavedData = widgetFound
-    ? getWidgetSavedValue({
-      savedValues: widgetFound.values,
-      field,
-      context,
-      fieldName
-    })
-    : undefined
-  const widgetLocalSavedData = localWidgetFound
-    ? getWidgetSavedValue({
-      savedValues: localWidgetFound.values,
-      field,
-      context,
-      fieldName
-    })
-    : undefined
+  const widgetSavedData = getWidgetSavedValue({
+    type: 'settings',
+    savedValues: _.get(widgetFound, 'values', {}),
+    localSavedValues: _.get(localWidgetFound, 'values', {}),
+    field,
+    context,
+    fieldName
+  })
+  const widgetLocalSavedData = getWidgetSavedValue({
+    type: 'local',
+    savedValues: _.get(widgetFound, 'values', {}),
+    localSavedValues: _.get(localWidgetFound, 'values', {}),
+    field,
+    context,
+    fieldName
+  })
 
   const defaultValue = context === 'mobile' || field.isQuickSetting
     ? field.default
