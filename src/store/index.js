@@ -380,7 +380,7 @@ export function getWidgetSavedValue(options) {
           && !options.savedValues[options.fieldName])
       ) {
         options.context = options.context === 'desktop' ? 'tablet' : 'mobile'
-        options.fieldName = options.context === 'mobile'
+        options.fieldName = options.context === 'mobile' || options.field.isQuickSetting
           ? options.field.name
           : options.field.breakpoints[options.context].name
         options.inheriting = true
