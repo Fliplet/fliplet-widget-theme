@@ -36,7 +36,6 @@ export const state = {
 *   Widget styles: Contains the same as above, plus "widgetInstanceId", "widgetPackage"
 */
 export function handleWidgetData(data) {
-  debugger
   let getWidgetAttributes = Promise.resolve()
 
   state.widgetData = data

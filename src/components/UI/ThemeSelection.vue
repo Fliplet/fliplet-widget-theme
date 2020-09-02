@@ -48,6 +48,9 @@ export default {
           .then(() => {
             return bus.$emit('initialize-widget', { themeInstanceId: id })
           })
+          .then(() => {
+            return bus.$emit('reload-page-preview')
+          })
           .catch((err) => {
             const error = Fliplet.parseError(err)
             console.error(error)

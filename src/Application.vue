@@ -138,17 +138,6 @@ export default {
       const customFonts = _.filter(this.fonts, (font) => { return font.url })
       setCustomFonts(customFonts)
     },
-    saveThemeProviderData(options = {}) {
-      const widgetData = _.assignIn(
-        {},
-        options.widgetData,
-        {
-          selectThemeId: options.selectedThemeId
-        }
-      )
-
-      return Fliplet.Widget.save(widgetData)
-    },
     initialize(options = {}) {
       this.isLoading = true
       const widgetId = Fliplet.Widget.getDefaultId()
@@ -160,29 +149,27 @@ export default {
           return Promise.all([this.getThemes(), this.getFonts()])
         })
         .then((response) => {
-          debugger
+          let selectedTheme
+
           this.fonts = response[1]
+
           this.storeFonts()
+
           this.themes = response[0]
 
-          const selectedTheme = _.find(this.themes, (theme) => {
-            return options.themeInstanceId
-              ? theme.id === options.themeInstanceId
-              : theme.name === FLIPLET_THEME
+          selectedTheme = _.find(this.themes, (theme) => {
+            return theme.instances.length
           })
 
-          this.saveThemeProviderData({
-            selectedThemeId: selectedTheme.id,
+          if (!selectedTheme) {
+            selectedTheme = _.find(this.themes, { name: FLIPLET_THEME })
+          }
+
+          this.setThemeInstance({
+            selectedTheme,
+            toReuse: options.toReuse,
             widgetData
           })
-            .then(() => {
-              this.setThemeInstance({
-                selectedTheme,
-                toReuse: options.toReuse,
-                widgetData,
-                refreshPreview: !!options.themeInstanceId
-              })
-            })
         })
         .catch((err) => {
           this.error = Fliplet.parseError(err)
@@ -265,13 +252,6 @@ export default {
           this.handleContextSwitch(tab)
 
           this.isLoading = false
-        })
-        .then(() => {
-          if (!options.refreshPreview) {
-            return
-          }
-
-          this.reloadPagePreview()
         })
     },
     prepareToCreateDefaultInstance(options = {}) {
@@ -540,6 +520,7 @@ export default {
     bus.$on('reset-to-theme', this.resetSettingsTheme)
     bus.$on('on-error', this.setError)
     bus.$on('values-migrated', this.prepareToSave)
+    bus.$on('reload-page-preview', this.reloadPagePreview)
 
     // Save Request from Image Picker
     Fliplet.Widget.onSaveRequest(() => {
@@ -574,6 +555,7 @@ export default {
     bus.$off('reset-to-theme', this.resetSettingsTheme)
     bus.$off('on-error', this.setError)
     bus.$off('values-migrated', this.prepareToSave)
+    bus.$off('reload-page-preview', this.reloadPagePreview)
   }
 }
 </script>
