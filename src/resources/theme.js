@@ -1,13 +1,13 @@
 import { state } from '../store'
 
 export default {
-  create(themeId, toReuse) {
+  create(data = {}) {
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       method: 'POST',
       url: `v1/widget-instances?appId=${Fliplet.Env.get('appId')}`,
       data: {
-        widgetId: themeId,
-        reuse: toReuse
+        widgetId: data.themeId,
+        reuse: data.toReuse
       }
     })
   },

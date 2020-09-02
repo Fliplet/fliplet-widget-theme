@@ -46,7 +46,10 @@ export default {
             return this.createInstance(id)
           })
           .then(() => {
-            return bus.$emit('initialize-widget')
+            return bus.$emit('initialize-widget', { themeInstanceId: id })
+          })
+          .then(() => {
+            return bus.$emit('reload-page-preview')
           })
           .catch((err) => {
             const error = Fliplet.parseError(err)
@@ -59,7 +62,10 @@ export default {
       return ThemeModel.delete()
     },
     createInstance(themeId) {
-      return ThemeModel.create(themeId, true)
+      return ThemeModel.create({
+        themeId,
+        toReuse: true
+      })
     }
   }
 }

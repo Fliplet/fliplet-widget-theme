@@ -138,10 +138,10 @@ export default {
       const customFonts = _.filter(this.fonts, (font) => { return font.url })
       setCustomFonts(customFonts)
     },
-    initialize(widgetInstanceData, toReuse) {
+    initialize(options = {}) {
       this.isLoading = true
       const widgetId = Fliplet.Widget.getDefaultId()
-      const widgetData = widgetInstanceData || Fliplet.Widget.getData(widgetId) || {}
+      const widgetData = options.widgetInstanceData || Fliplet.Widget.getData(widgetId) || {}
 
       handleWidgetData(widgetData)
         .then(() => {
@@ -149,140 +149,150 @@ export default {
           return Promise.all([this.getThemes(), this.getFonts()])
         })
         .then((response) => {
+          let selectedTheme
+
           this.fonts = response[1]
+
           this.storeFonts()
+
           this.themes = response[0]
-          this.setThemeInstance(response[0], toReuse, widgetData)
+
+          selectedTheme = _.find(this.themes, (theme) => {
+            return theme.instances.length
+          })
+
+          if (!selectedTheme) {
+            selectedTheme = _.find(this.themes, { name: FLIPLET_THEME })
+          }
+
+          this.setThemeInstance({
+            selectedTheme,
+            toReuse: options.toReuse,
+            widgetData
+          })
         })
         .catch((err) => {
           this.error = Fliplet.parseError(err)
           console.error(err)
         })
     },
-    setThemeInstance(themes, toReuse, widgetData) {
-      let themeWithoutInstances = 0
+    setThemeInstance(options = {}) {
       let tab
-      const themePromises = []
 
-      themes.forEach((theme) => {
-        if (!theme.instances.length) {
-          themeWithoutInstances++
-          return
-        }
+      if (!options.selectedTheme.instances.length) {
+        this.createDefaultInstance(options)
 
-        setActiveTheme(theme)
-        setThemeInstance({
-          widgetInstance: theme.instances[0]
-        })
+        return
+      }
 
-        let promise = Promise.resolve()
-        // If there are old settings apply them to the new theme
-        if (this.oldThemeSettings && this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
-          // Migrate variable names
-          const migration = migrateOldVariables(this.oldThemeSettings.values)
-          this.oldThemeSettings.values = migration.data
-
-          // Save values from old theme to new theme
-          this.dataToSave = this.oldThemeSettings
-          promise = this.save()
-        }
-
-        themePromises.push(promise)
-
-        // Check if there's a tab to be open
-        if (typeof state.widgetData.activeTab !== 'undefined') {
-          tab = this.tabs[state.widgetData.activeTab]
-        }
-
-        // Checks to understand if the provider was called from a component
-        if (state.widgetData && state.widgetData.widgetInstanceId && state.widgetData.widgetInstanceUUID) {
-          setWidgetId(state.widgetData.widgetInstanceId)
-          setWidgetUUID(state.widgetData.widgetInstanceUUID)
-
-          // Check if there's a package name to open its component settings
-          if (typeof state.widgetData.widgetPackage !== 'undefined') {
-            let widgetPackage = state.widgetData.widgetLayout 
-              ? `${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`
-              : state.widgetData.widgetPackage
-            this.appearanceGroup = _.find(state.activeTheme.settings.configuration, (config) => {
-              return config.packages && config.packages.indexOf(widgetPackage) > -1
-            })
-
-
-            // Set state to flag if widget has a flexbox parent
-            setParentFlex()
-            // Set state in widget mode
-            setWidgetMode(!!this.appearanceGroup)
-          }
-
-          // Set the active tab from widget data
-          this.isLoading = false
-          this.handleContextSwitch(tab)
-          this.handleAppearanceGroup(this.appearanceGroup)
-
-          return
-        }
-
-        // Set state to flag if widget has a flexbox parent to false
-        setParentFlex(false)
-        // Set state in widget mode to false
-        setWidgetMode(false)
-        if (state.appearanceGroupOverlay.isOpen) {
-          closeAppearanceGroupSettings()
-        }
-        this.handleContextSwitch(tab)
-        this.isLoading = false
+      setActiveTheme(options.selectedTheme)
+      setThemeInstance({
+        widgetInstance: options.selectedTheme.instances[0]
       })
 
-      Promise.all(themePromises)
+      let promise = Promise.resolve()
+
+      // If there are old settings apply them to the new theme
+      if (this.oldThemeSettings && this.oldThemeSettings.values && Object.keys(this.oldThemeSettings.values).length) {
+        // Migrate variable names
+        const migration = migrateOldVariables(this.oldThemeSettings.values)
+        this.oldThemeSettings.values = migration.data
+
+        // Save values from old theme to new theme
+        this.dataToSave = this.oldThemeSettings
+        promise = this.save()
+      }
+
+      promise
         .then(() => {
-          // Automatically create a theme instance if one doesn't exist
-          if (themeWithoutInstances !== themes.length) {
+          // Check if there's a tab to be open
+          if (typeof state.widgetData.activeTab !== 'undefined') {
+            tab = this.tabs[state.widgetData.activeTab]
+          }
+
+          // Checks to understand if the provider was called from a component
+          if (state.widgetData && state.widgetData.widgetInstanceId && state.widgetData.widgetInstanceUUID) {
+            setWidgetId(state.widgetData.widgetInstanceId)
+            setWidgetUUID(state.widgetData.widgetInstanceUUID)
+
+            // Check if there's a package name to open its component settings
+            if (typeof state.widgetData.widgetPackage !== 'undefined') {
+              let widgetPackage = state.widgetData.widgetLayout 
+                ? `${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`
+                : state.widgetData.widgetPackage
+              this.appearanceGroup = _.find(state.activeTheme.settings.configuration, (config) => {
+                return config.packages && config.packages.indexOf(widgetPackage) > -1
+              })
+
+              // Set state to flag if widget has a flexbox parent
+              setParentFlex()
+
+              // Set state in widget mode
+              setWidgetMode(!!this.appearanceGroup)
+            }
+
+            // Set the active tab from widget data
+            this.isLoading = false
+            this.handleContextSwitch(tab)
+            this.handleAppearanceGroup(this.appearanceGroup)
+
             return
           }
 
-          const flipletTheme = _.find(themes, { name: FLIPLET_THEME })
+          // Set state to flag if widget has a flexbox parent to false
+          setParentFlex(false)
 
-          // Checks for older versions
-          ThemeModel.getAllVersions()
-            .then((result) => {
-              const allThemes = result.widgets
-              const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
+          // Set state in widget mode to false
+          setWidgetMode(false)
 
-              if (!versionOneTheme.instances.length) {
-                return
-              }
+          if (state.appearanceGroupOverlay.isOpen) {
+            closeAppearanceGroupSettings()
+          }
 
-              // Save the old settings
-              this.oldThemeSettings = versionOneTheme.instances[0].settings
-              return versionOneTheme.instances[0].id
-            })
-            .then((id) => {
-              if (!id) {
-                return
-              }
+          this.handleContextSwitch(tab)
 
-              return ThemeModel.delete(id)
-            })
-            .then(() => {
-              return this.createDefaultInstance(flipletTheme.id, toReuse)
-            })
-            .then(() => {
-              return this.initialize(widgetData)
-            })
-            .then(this.reloadPagePreview)
-            .then(() => {
-              bus.$emit('saved-fields-set')
-            })
-            .catch((err) => {
-              this.error = Fliplet.parseError(err)
-              console.error(err)
-            })
+          this.isLoading = false
         })
     },
-    createDefaultInstance(themeId, toReuse) {
-      toReuse = typeof toReuse === 'undefined' ? true : toReuse
-      return ThemeModel.create(themeId, toReuse)
+    createDefaultInstance(options = {}) {
+      // Checks for older versions
+      ThemeModel.getAllVersions()
+        .then((result) => {
+          const allThemes = result.widgets
+          const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' })
+
+          if (!versionOneTheme.instances.length) {
+            return
+          }
+
+          // Save the old settings
+          this.oldThemeSettings = versionOneTheme.instances[0].settings
+          return versionOneTheme.instances[0].id
+        })
+        .then((id) => {
+          if (!id) {
+            return
+          }
+
+          return ThemeModel.delete(id)
+        })
+        .then(() => {
+          return ThemeModel.create({
+            themeId: options.selectedTheme.id,
+            toReuse: typeof options.toReuse === 'undefined' ? true : options.toReuse
+          })
+        })
+        .then(() => {
+          return this.initialize({ widgetInstanceData: options.widgetData })
+        })
+        .then(this.reloadPagePreview)
+        .then(() => {
+          bus.$emit('saved-fields-set')
+        })
+        .catch((err) => {
+          this.error = Fliplet.parseError(err)
+          console.error(err)
+        })
     },
     reloadPagePreview() {
       return Fliplet.Studio.emit('reload-page-preview')
@@ -487,7 +497,9 @@ export default {
           return ThemeModel.delete()
         })
         .then(() => {
-          this.initialize(undefined, false)
+          this.initialize({
+            toReuse: false
+          })
         })
     }
   },
@@ -500,6 +512,7 @@ export default {
     bus.$on('reset-to-theme', this.resetSettingsTheme)
     bus.$on('on-error', this.setError)
     bus.$on('values-migrated', this.prepareToSave)
+    bus.$on('reload-page-preview', this.reloadPagePreview)
 
     // Save Request from Image Picker
     Fliplet.Widget.onSaveRequest(() => {
@@ -511,7 +524,7 @@ export default {
 
     Fliplet.Studio.onMessage((eventData) => {
       if (eventData && eventData.data && eventData.data.type === 'theme-set-current-widget-instance') {
-        bus.$emit('initialize-widget', eventData.data.widgetData)
+        bus.$emit('initialize-widget', { widgetInstanceData: eventData.data.widgetData })
       }
       if (eventData && eventData.data && eventData.data.type === 'device-tab-changed') {
         handleWidgetData(eventData.data.widgetData)
@@ -534,6 +547,7 @@ export default {
     bus.$off('reset-to-theme', this.resetSettingsTheme)
     bus.$off('on-error', this.setError)
     bus.$off('values-migrated', this.prepareToSave)
+    bus.$off('reload-page-preview', this.reloadPagePreview)
   }
 }
 </script>
