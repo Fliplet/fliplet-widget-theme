@@ -180,7 +180,7 @@ export default {
       let tab
 
       if (!options.selectedTheme.instances.length) {
-        this.prepareToCreateDefaultInstance(options)
+        this.createDefaultInstance(options)
 
         return
       }
@@ -254,7 +254,7 @@ export default {
           this.isLoading = false
         })
     },
-    prepareToCreateDefaultInstance(options = {}) {
+    createDefaultInstance(options = {}) {
       // Checks for older versions
       ThemeModel.getAllVersions()
         .then((result) => {
@@ -277,9 +277,9 @@ export default {
           return ThemeModel.delete(id)
         })
         .then(() => {
-          return this.createDefaultInstance({
+          return ThemeModel.create({
             themeId: options.selectedTheme.id,
-            toReuse: options.toReuse
+            toReuse: typeof options.toReuse === 'undefined' ? true : options.toReuse
           })
         })
         .then(() => {
@@ -293,14 +293,6 @@ export default {
           this.error = Fliplet.parseError(err)
           console.error(err)
         })
-    },
-    createDefaultInstance(options = {}) {
-      const toReuse = typeof options.toReuse === 'undefined' ? true : options.toReuse
-
-      return ThemeModel.create({
-        themeId: options.themeId,
-        toReuse
-      })
     },
     reloadPagePreview() {
       return Fliplet.Studio.emit('reload-page-preview')
