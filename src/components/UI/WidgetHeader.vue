@@ -1,7 +1,11 @@
 <template>
   <header>
-    <p>Theme appearance</p>
-    <a href="#" class="closeSideView" @click.prevent="closeSideView"><i class="fa fa-times-thin fa-2x"></i></a>
+    <p>
+      Theme appearance
+      <a href="https://help.fliplet.com/appearance-settings/" class="help-icon" @click.prevent="closeSideView" target="_blank">
+        <i class="fa fa-question-circle-o"></i>
+      </a>
+    </p>
   </header>
 </template>
 
