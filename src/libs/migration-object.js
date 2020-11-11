@@ -4,6 +4,9 @@
 */
 
 export default {
+  bodyFontFamily: 'quickTextFontFamily',
+  bodyBackground: 'quickBackground',
+  bodyTextColor: 'quickTextColor',
   headingOneFont: 'headingOneFontFamily',
   headingTwoFont: 'headingTwoFontFamily',
   headingThreeFont: 'headingThreeFontFamily',
@@ -14,214 +17,214 @@ export default {
     'menuTopNavBorderColor',
     'menuPushTopNavBorderColor',
     'menuSlideTopNavBorderColor',
-    'menuSwipeTopNavBorderColor'
+    'menuSwipeTopNavBorderColor',
   ],
   listIconColor: [
     'listSmallIconColor',
-    'listLargeIconColor'
+    'listLargeIconColor',
   ],
   accordionBorder: {
     none: 'accordionBorderColor',
     values: [
       'accordionBorderWidth',
       'accordionBorderStyle',
-      'accordionBorderColor'
-    ]
+      'accordionBorderColor',
+    ],
   },
   primaryButtonColor: {
     keep: true,
     values: [
-      'highlightColor'
-    ]
+      'highlightColor',
+    ],
   },
   primaryButtonBorder: {
     none: 'primaryButtonBorderSides',
     values: [
       'primaryButtonBorderWidth',
       'primaryButtonBorderStyle',
-      'primaryButtonBorderColor'
-    ]
+      'primaryButtonBorderColor',
+    ],
   },
   primaryButtonHoverBorder: {
     none: 'primaryButtonHoverBorderSides',
     values: [
       'primaryButtonHoverBorderWidth',
       'primaryButtonHoverBorderStyle',
-      'primaryButtonHoverBorderColor'
-    ]
+      'primaryButtonHoverBorderColor',
+    ],
   },
   secondaryButtonColor: {
     keep: true,
     values: [
-      'secondaryColor'
-    ]
+      'secondaryColor',
+    ],
   },
   secondaryButtonBorder: {
     none: 'secondaryButtonBorderSides',
     values: [
       'secondaryButtonBorderWidth',
       'secondaryButtonBorderStyle',
-      'secondaryButtonBorderColor'
-    ]
+      'secondaryButtonBorderColor',
+    ],
   },
   secondaryButtonHoverBorder: {
     none: 'secondaryButtonHoverBorderSides',
     values: [
       'secondaryButtonHoverBorderWidth',
       'secondaryButtonHoverBorderStyle',
-      'secondaryButtonHoverBorderColor'
-    ]
+      'secondaryButtonHoverBorderColor',
+    ],
   },
   directoryListBorderColor: {
     none: 'directoryListBorderColor',
     values: [
       'directoryListBorderWidth',
       'directoryListBorderStyle',
-      'directoryListBorderColor'
-    ]
+      'directoryListBorderColor',
+    ],
   },
   directoryOverlayNavBorderColor: {
     none: 'directoryOverlayNavBorderColor',
     values: [
       '',
       '',
-      'directoryOverlayNavBorderColor'
-    ]
+      'directoryOverlayNavBorderColor',
+    ],
   },
   formInputBorder: {
     none: 'formInputBorderSides',
     values: [
       'formInputBorderWidth',
       'formInputBorderStyle',
-      'formInputBorderColor'
-    ]
+      'formInputBorderColor',
+    ],
   },
   formInputBorderFocus: {
     none: 'formInputBorderFocusSides',
     values: [
       'formInputBorderFocusWidth',
       'formInputBorderFocusStyle',
-      'formInputBorderFocusColor'
-    ]
+      'formInputBorderFocusColor',
+    ],
   },
   formInputBorderError: {
     none: 'formInputBorderErrorSides',
     values: [
       'formInputBorderErrorWidth',
       'formInputBorderErrorStyle',
-      'formInputBorderErrorColor'
-    ]
+      'formInputBorderErrorColor',
+    ],
   },
   formToggleBorder: {
     none: 'formToggleBorderColor',
     values: [
       '',
       '',
-      'formToggleBorderColor'
-    ]
+      'formToggleBorderColor',
+    ],
   },
   lockInput: {
     none: 'lockInput',
     values: [
       '',
       '',
-      'lockInput'
-    ]
+      'lockInput',
+    ],
   },
   lockInputFocus: {
     none: 'lockInputFocus',
     values: [
       '',
       '',
-      'lockInputFocus'
-    ]
+      'lockInputFocus',
+    ],
   },
   touchIDBorder: {
     none: 'touchIDBorder',
     values: [
       '',
       '',
-      'touchIDBorder'
-    ]
+      'touchIDBorder',
+    ],
   },
   fieldBorder: {
     none: 'fieldBorderSides',
     values: [
       'fieldBorderWidth',
       'fieldBorderStyle',
-      'fieldBorder'
-    ]
+      'fieldBorder',
+    ],
   },
   onboardingPaginationBulletBorder: {
     none: 'onboardingPaginationBulletBorderSides',
     values: [
       'onboardingPaginationBulletBorderWidth',
       'onboardingPaginationBulletBorderStyle',
-      'onboardingPaginationBulletBorder'
-    ]
+      'onboardingPaginationBulletBorder',
+    ],
   },
   onboardingPaginationBulletBorderActive: {
     none: 'onboardingPaginationBulletBorderActiveSides',
     values: [
       'onboardingPaginationBulletBorderActiveWidth',
       'onboardingPaginationBulletBorderActiveStyle',
-      'onboardingPaginationBulletBorderActive'
-    ]
+      'onboardingPaginationBulletBorderActive',
+    ],
   },
   panelBorder: {
     none: 'panelBorderSides',
     values: [
       'panelBorderWidth',
       'panelBorderStyle',
-      'panelBorder'
-    ]
+      'panelBorder',
+    ],
   },
   imageContainerBorder: {
     none: 'imageContainerBorder',
     values: [
       'imageContainerBorderWidth',
       'imageContainerBorderStyle',
-      'imageContainerBorder'
-    ]
+      'imageContainerBorder',
+    ],
   },
   paginationBulletBorder: {
     none: 'paginationBulletBorderSides',
     values: [
       'paginationBulletBorderWidth',
       'paginationBulletBorderStyle',
-      'paginationBulletBorder'
-    ]
+      'paginationBulletBorder',
+    ],
   },
   paginationBulletBorderActive: {
     none: 'paginationBulletBorderActiveSides',
     values: [
       'paginationBulletBorderActiveWidth',
       'paginationBulletBorderActiveStyle',
-      'paginationBulletBorderActive'
-    ]
+      'paginationBulletBorderActive',
+    ],
   },
   tableBorder: {
     none: 'tableBorderSides',
     values: [
       'tableBorderWidth',
       'tableBorderStyle',
-      'tableBorder'
-    ]
+      'tableBorder',
+    ],
   },
   rowBorder: {
     none: 'rowBorderSides',
     values: [
       'rowBorderWidth',
       'rowBorderStyle',
-      'rowBorder'
-    ]
+      'rowBorder',
+    ],
   },
   cellBorderTop: {
     none: 'cellBorderTopSides',
     values: [
       'cellBorderTopWidth',
       'cellBorderTopStyle',
-      'cellBorderTop'
-    ]
-  }
-}
+      'cellBorderTop',
+    ],
+  },
+};
