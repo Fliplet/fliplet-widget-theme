@@ -497,6 +497,13 @@ export default {
           return ThemeModel.delete()
         })
         .then(() => {
+          this.savedFields = {
+            values: [],
+            widgetInstances: []
+          }
+          setSavedFields(this.savedFields)
+        })
+        .then(() => {
           this.initialize({
             toReuse: false
           })
