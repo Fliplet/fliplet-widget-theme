@@ -161,7 +161,8 @@ export default {
         Fliplet.Studio.emit('page-preview-send-event', {
           type: 'colorChange',
           color: color,
-          label: this.label
+          label: this.label,
+          widgetId: state.widgetId
         });
       }
 
