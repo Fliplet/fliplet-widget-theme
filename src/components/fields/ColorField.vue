@@ -2,9 +2,9 @@
   <div v-if="showField" :class="'color-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="color-picker-background" :style="'background-image: url(' + bgImg + ')'">
-        <div id="color-picker-container" class="color-holder" ref="colorSquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker"></div>
+        <div id="color-picker-container" class="color-holder" ref="colorSquare" :style="'background-color: ' + valueToShow" @click.prevent="toggleColorPicker" :title="`$${name}`"></div>
       </div>
-      <div v-if="label" class="field-label" @click.prevent="toggleColorPicker">{{ label }}</div>
+      <div v-if="label" class="field-label" @click.prevent="toggleColorPicker" :title="`$${name}`">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :position="'left'" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       state,
+      name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
@@ -59,7 +60,7 @@ export default {
           colors: cookieSavedColors
         }
       ],
-      colorPickerFields: { 
+      colorPickerFields: {
         hsl: ['.hsl-h input', '.hsl-s input', '.hsl-l input', '.hsl-a input'],
         rgb: ['.rgb-r input', '.rgb-g input', '.rgb-b input', '.rgb-a input']
       },
@@ -215,8 +216,8 @@ export default {
           if (field.value.trim().length === 0) {
             field.classList.add(validationErrorClass)
             // Set previous or default field value so user won't be able to save wrong value
-            // if there is no valid value in the preValue[i] we will set the field value to 1 
-            // this may occur when the previous value is RGB(255, 255, 255) but user 
+            // if there is no valid value in the preValue[i] we will set the field value to 1
+            // this may occur when the previous value is RGB(255, 255, 255) but user
             // removed alfa value, in this case, we will place 1 instead of the undefined
             field.value = prevColor[i] || 1
           }
@@ -224,7 +225,7 @@ export default {
 
         this.isValid = false
       }
-      
+
       // If we got an error we show a toast message to a user in case he didn't notice highlighted field
       if (!this.isValid) {
         Fliplet.Modal.alert({ message: 'Your color wasn\'t saved, please set the correct color values'})
