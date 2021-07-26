@@ -2,7 +2,7 @@
   <div v-if="showField" :class="'select-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
       <div class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" :title="`$${name}`" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ valueToShow }}
           <span class="caret"></span>
         </button>
@@ -12,7 +12,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="label" class="field-label" @click.prevent="toggleDropdown">{{ label }}</div>
+      <div v-if="label" class="field-label" @click.prevent="toggleDropdown" :title="`$${name}`">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -30,6 +30,7 @@ export default {
   data() {
     return {
       state,
+      name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,

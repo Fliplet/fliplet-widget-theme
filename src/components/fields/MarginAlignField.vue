@@ -17,7 +17,7 @@
           </div>
         </template>
       </div>
-      <div v-if="label" class="field-label">{{ label }}</div>
+      <div v-if="label" class="field-label" :title="`$${name}`">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       state,
+      name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
       properties: marginAlignProperties,
       label: this.data.fieldConfig.label,
@@ -94,7 +95,7 @@ export default {
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
-        value: this.value 
+        value: this.value
       }
 
       saveFieldData(data)

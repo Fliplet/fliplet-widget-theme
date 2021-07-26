@@ -1,13 +1,13 @@
 <template>
   <div v-if="showField" :class="'toggle-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="wrapper">
-      <label class="switch">
+      <label class="switch" :title="`$${name}`">
         <input type="checkbox" v-model="valueToShow">
         <span class="slider round"></span>
       </label>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div class="field-label"><span v-if="label" >{{ label }} - </span>{{ compValue }}</div>
+    <div class="field-label" :title="`$${name}`"><span v-if="label">{{ label }} - </span>{{ compValue }}</div>
   </div>
 </template>
 
@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       state,
+      name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       properties: this.parseProperties(toggleProperties[this.data.fieldConfig.subtype]),
@@ -102,7 +103,7 @@ export default {
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
-        value: this.value 
+        value: this.value
       }
 
       saveFieldData(data)

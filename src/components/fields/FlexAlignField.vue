@@ -7,11 +7,11 @@
           <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
             <span :class="'check-icon check-flex-align-' + prop"></span>
           </label>
-        </div>        
+        </div>
       </div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
-    <div v-if="label" class="field-label">{{ label }}</div>
+    <div v-if="label" class="field-label" :title="`$${name}`">{{ label }}</div>
   </div>
 </template>
 
@@ -28,6 +28,7 @@ export default {
   data() {
     return {
       state,
+      name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
       properties: displayProperties.flexAlign,
       label: 'Vertical',
@@ -95,7 +96,7 @@ export default {
     prepareToSave() {
       const data = {
         name: getFieldName(this.data.fieldConfig),
-        value: this.value 
+        value: this.value
       }
 
       saveFieldData(data)

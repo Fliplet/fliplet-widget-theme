@@ -1,9 +1,9 @@
 <template>
   <div v-show="showField" :class="'size-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="interactive-holder">
-      <span ref="onDrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property === 'auto' || property === 'none' || property === 'initial' }" @click.prevent="manualEdit">{{ valueToShow }}</span>
+      <span ref="onDrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property === 'auto' || property === 'none' || property === 'initial' }" @click.prevent="manualEdit" :title="`$${name}`">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
-        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :title="`$${name}`">
           <template v-if="property === 'initial'">none</template>
           <template v-else>{{ property }}</template>
         </button>
@@ -14,7 +14,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="label" class="field-label" @click.prevent="manualEdit">{{ label }}</div>
+      <div v-if="label" class="field-label" @click.prevent="manualEdit" :title="`$${name}`">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
     <div class="input-holder" v-show="inputIsActive">
@@ -38,6 +38,7 @@ export default {
       state,
       property: undefined,
       properties: this.getProperties(),
+      name: getFieldName(this.data.fieldConfig),
       value: this.parseValue(getCurrentFieldValue(this.data.fieldConfig)),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,

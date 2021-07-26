@@ -6,7 +6,7 @@
           <template v-if="valueToShow === 'none'">
             None
           </template>
-          <span v-else class="border-style" :style="'border-style: ' + valueToShow"></span>
+          <span v-else class="border-style" :title="`$${name}`" :style="'border-style: ' + valueToShow"></span>
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-left">
@@ -20,7 +20,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="label" class="field-label">{{ label }}</div>
+      <div v-if="label" class="field-label" :title="`$${name}`">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
@@ -38,6 +38,7 @@ export default {
   data() {
     return {
       state,
+      name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
