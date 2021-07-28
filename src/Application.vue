@@ -390,7 +390,8 @@ export default {
 
       // Event to flag that settings will be saved
       Fliplet.Studio.emit('page-preview-send-event', {
-        type: 'savingNewStyles'
+        type: 'savingNewStyles',
+        values: this.dataToSave.values
       })
 
       return this.updateInstance(this.dataToSave)
