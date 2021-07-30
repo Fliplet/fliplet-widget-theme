@@ -162,7 +162,9 @@ export default {
           type: 'colorChange',
           color: color,
           label: this.label,
-          widgetId: state.widgetId
+          name: this.data.fieldConfig.name,
+          widgetId: state.widgetId,
+          widgetMode: state.widgetMode
         });
       }
 
