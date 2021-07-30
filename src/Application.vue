@@ -389,9 +389,11 @@ export default {
       toggleSavingStatus(true)
 
       // Event to flag that settings will be saved
+
       Fliplet.Studio.emit('page-preview-send-event', {
         type: 'savingNewStyles',
-        values: this.dataToSave.values
+        data: this.dataToSave,
+        widgetId: state.widgetId
       })
 
       return this.updateInstance(this.dataToSave)
