@@ -392,7 +392,8 @@ export default {
 
       Fliplet.Studio.emit('page-preview-send-event', {
         type: 'savingNewStyles',
-        data: this.dataToSave
+        data: this.dataToSave,
+        widgetId: state.widgetId
       })
 
       return this.updateInstance(this.dataToSave)
