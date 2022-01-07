@@ -676,7 +676,7 @@ export function sendCssToFrame(value, currentField) {
       })
     })
   })
-
+  
   Fliplet.Studio.emit('page-preview-send-event', {
     type: 'inlineCss',
     cssProperties: cssProperties
@@ -778,7 +778,7 @@ function findDependencies(configurations, currentField) {
         variable.fields.forEach((field) => {
           const inheritingVariable = isInheriting(field.default);
 
-          if (!inheritingVariable || inheritingVariable !== cField.name) {
+          if (!inheritingVariable || inheritingVariable !== cField.name || currentField.default !== field.default) {
             return
           }
 
