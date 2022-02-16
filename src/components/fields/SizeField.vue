@@ -183,7 +183,11 @@ export default {
     processValue() {
       const isInheriting = this.checkIfIsInheriting(this.value)
 
-      return isInheriting || this.value === 'auto' || this.value === 'none' || this.value === 'initial' ? this.value : this.value !== '' ? this.value + (this.property !== 'x' && this.property !== 'index' ? this.property : '') : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
+      return isInheriting || this.value === 'auto' || this.value === 'none' || this.value === 'initial'
+        ? this.value
+        : this.value !== ''
+          ? ('' + this.value).trim() + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
+          : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
     },
     prepareToSave(data) {
       data = data || {
