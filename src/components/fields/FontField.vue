@@ -1,6 +1,6 @@
 <template>
   <div v-if="showField" :class="'font-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
-    <div class="wrapper">
+    <div class="wrapper" :title="`$${name}`">
       <div class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="font-name" :style="'font-family:' + getFontFamily(valueToShow) + ';'">{{ valueToShow }}</span>
@@ -22,7 +22,7 @@
           </li>
         </ul>
       </div>
-      <div v-if="label" class="field-label" @click.prevent="toggleDropdown" :title="`$${name}`">{{ label }}</div>
+      <div v-if="label" class="field-label" @click.prevent="toggleDropdown">{{ label }}</div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
   </div>
