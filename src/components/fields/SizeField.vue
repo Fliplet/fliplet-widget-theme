@@ -1,7 +1,7 @@
 <template>
   <div v-show="showField" :class="'size-field-holder ' + columnClass + ' ' + (isChanged ? 'field-changed' : '')">
     <div class="interactive-holder">
-      <span ref="onDrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': property === 'auto' || property === 'none' || property === 'initial' }" @click.prevent="manualEdit" :title="`$${name}`">{{ valueToShow }}</span>
+      <span ref="onDrag" class="drag-input-holder" :class="{ 'expanded': inputIsActive, 'hidden': this.isNamedValue(property) }" @click.prevent="manualEdit" :title="`$${name}`">{{ valueToShow }}</span>
       <div v-if="property && properties" class="dropdown select-box">
         <button type="button" class="btn btn-default dropdown-toggle" ref="dropdownToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :title="`$${name}`">
           <template v-if="property === 'initial'">none</template>
@@ -131,8 +131,11 @@ export default {
 
       return inherit || variableName ? true : false
     },
+    isNamedValue(str) {
+      return ['auto', 'none', 'initial'].includes(str)
+    },
     getProperty(value) {
-      if (value === 'auto' || value === 'none' || value === 'initial') {
+      if (this.isNamedValue(value)) {
         return value
       }
 
@@ -145,7 +148,7 @@ export default {
       return this.data.fieldConfig.subtype === 'z-index' ? 'index' : 'x'
     },
     parseValue(value) {
-      if (value === 'auto' || value === 'none' || value === 'initial') {
+      if (this.isNamedValue(value)) {
         return value
       }
 
@@ -154,9 +157,11 @@ export default {
       }
 
       let parsedValue = value.replace(new RegExp(this.getProperties().join('$|') + '$'), '')
+
       if (parsedValue === '') {
         parsedValue = 0
       }
+
       const parsedFloatVal = parseFloat(parsedValue, 10)
 
       return isNaN(parsedFloatVal) ? parsedValue : parsedFloatVal
@@ -165,13 +170,13 @@ export default {
       this.property = value
 
       this.$nextTick(() => {
-        if (this.property === 'auto' || this.property === 'none' || this.property === 'initial') {
+        if (this.isNamedValue(this.property)) {
           this.value = this.property
           this.prepareToSave()
           return
         }
 
-        if (this.value === 'auto' || this.value === 'none' || this.value === 'initial') {
+        if (this.isNamedValue(this.value)) {
           this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
           this.prepareToSave()
           return
@@ -183,11 +188,23 @@ export default {
     processValue() {
       const isInheriting = this.checkIfIsInheriting(this.value)
 
-      return isInheriting || this.value === 'auto' || this.value === 'none' || this.value === 'initial'
-        ? this.value
-        : this.value !== ''
-          ? ('' + this.value).trim() + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
-          : '0' + (this.property !== 'x' && this.property !== 'index' ? this.property : '')
+      // Value does not require any unit
+      if (isInheriting || this.isNamedValue(this.value)) {
+        return this.value
+      }
+
+      const isNumberOnly = ['x', 'index'].includes(this.property)
+      let sanitizedValue = this.value === '' ? 0 : parseFloat(this.value)
+
+      if (isNaN(sanitizedValue)) {
+        sanitizedValue = 0
+      }
+
+      if (isNumberOnly) {
+        return sanitizedValue
+      }
+
+      return `${sanitizedValue}${this.property}`
     },
     prepareToSave(data) {
       data = data || {
@@ -211,7 +228,7 @@ export default {
         value: true
       })
 
-      if (this.value === 'auto' || this.value === 'none' || this.value === 'initial') {
+      if (this.isNamedValue(this.value)) {
         event.preventDefault()
         event.stopPropagation()
         $(this.$refs.dropdownToggle).dropdown('toggle')
@@ -237,8 +254,9 @@ export default {
           Fliplet.Modal.alert({
             message:`${this.data.fieldConfig.subtype} can't be set to auto.`
           })
+
           // Use parseInt because the this.data.fieldConfig.value may be '100px' and for this.value valid input is 100
-          this.value = parseInt(this.data.fieldConfig.value) || this.data.fieldConfig.default
+          this.value = parseFloat(this.data.fieldConfig.value) || this.data.fieldConfig.default
         }
       }
 
@@ -254,8 +272,12 @@ export default {
         return
       }
 
-      if (isNaN(this.value) && this.value !== 'auto' && this.value !== 'none' && this.value !== 'initial') {
-        this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
+      if (!this.isNamedValue(this.value)) {
+        if (isNaN(parseFloat(this.value))) {
+          this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
+        } else {
+          this.value = parseFloat(this.value)
+        }
       }
 
       this.valueToShow = this.checkIfIsInheriting(this.value)
@@ -269,7 +291,7 @@ export default {
       this.enterPressedToClose = true
 
       if (this.valueToShow !== this.value) {
-        if (isNaN(this.value) && this.value !== 'auto' && this.value !== 'none' && this.value !== 'initial') {
+        if (isNaN(this.value) && !this.isNamedValue(this.value)) {
           this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100
         }
 
