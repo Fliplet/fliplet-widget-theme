@@ -1,5 +1,5 @@
 {
-  "name": "Theme",
+  "name": "Theme provider",
   "package": "com.fliplet.theme",
   "version": "2.0.0",
   "icon": "static/img/icon.png",
