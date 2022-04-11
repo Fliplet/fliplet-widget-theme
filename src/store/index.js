@@ -704,6 +704,7 @@ export function sendCssToFrame(value, currentField) {
     _.forEach(cssProperties, (css, index) => {
       if (_.has(css.properties, 'background-color')) {
         cssProperties[index].properties['background-image'] = 'none'
+        return false
       }
     })
   }
@@ -713,6 +714,7 @@ export function sendCssToFrame(value, currentField) {
     _.forEach(state.appearanceGroupOverlay.data.appearanceGroup.variables, function(variable) {
       if (variable.description === 'Background') {
         bgc = _.find(variable.fields, { name: 'containerBackgroundColor' })
+        return false
       }
     })
     _.forEach(cssProperties, (css, index) => {
@@ -720,7 +722,8 @@ export function sendCssToFrame(value, currentField) {
         cssProperties[index].properties['background-color'] = getCurrentFieldValue({
           ...bgc,
           inheritingFrom: currentField.inheritingFrom
-      });
+        })
+        return false
       }
     })
   }
