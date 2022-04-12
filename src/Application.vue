@@ -375,21 +375,19 @@ export default {
         this.dataToSave.widgetInstances = themeSavedWidgetInstances
       }
 
-      if(_.has(this.dataToSave.values, 'containerBackgroundType')) {
-        switch(this.dataToSave.values.containerBackgroundType) {
-          case 'Color':
-            delete this.dataToSave.values.containerBackgroundImage
-            break;
-          case 'Image':
-            delete this.dataToSave.values.containerBackgroundColor
-            break;
-          case 'None':
-            delete this.dataToSave.values.containerBackgroundColor
-            delete this.dataToSave.values.containerBackgroundImage
-            break;
-          default:
-            break;
-        }
+      switch(this.dataToSave.values.containerBackgroundType) {
+        case 'Color':
+          delete this.dataToSave.values.containerBackgroundImage
+          break;
+        case 'Image':
+          delete this.dataToSave.values.containerBackgroundColor
+          break;
+        case 'None':
+          delete this.dataToSave.values.containerBackgroundColor
+          delete this.dataToSave.values.containerBackgroundImage
+          break;
+        default:
+          break;
       }
 
       setInstanceValue(this.dataToSave.values)
