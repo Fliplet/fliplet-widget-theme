@@ -68,7 +68,7 @@ export function setSavedFields(data) {
     switch(item.name) {
       case 'containerBackgroundImage':
         if (backgroundType?.value === 'Color' || backgroundType?.value === 'None') {
-          state.savedFields.values[index].value = 'none'
+          state.savedFields.values[index].value = 'none';
         }
         break;
       case 'containerBackgroundColor':
