@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import bus from '../../libs/bus'
+import bus from '../../libs/bus';
 
 export default {
   data() {
-    return {}
+    return {};
   },
   methods: {
     closeSideView() {
@@ -22,10 +22,10 @@ export default {
     }
   },
   mounted() {
-    bus.$on('close-appearance', this.closeSideView)
+    bus.$on('close-appearance', this.closeSideView);
   },
   destroyed() {
-    bus.$off('close-appearance', this.closeSideView)
+    bus.$off('close-appearance', this.closeSideView);
   }
-}
+};
 </script>

@@ -22,16 +22,16 @@
 </template>
 
 <script>
-import { state } from '../../store'
-import ThemeModel from '../../resources/theme'
-import bus from '../../libs/bus'
+import { state } from '../../store';
+import ThemeModel from '../../resources/theme';
+import bus from '../../libs/bus';
 
 export default {
   data() {
     return {
       state,
       selectedTheme: state.activeTheme ? state.activeTheme : { name: 'Select a theme' }
-    }
+    };
   },
   props: {
     themes: Array
@@ -43,30 +43,31 @@ export default {
       if (id !== state.activeTheme.id) {
         this.removeInstance()
           .then(() => {
-            return this.createInstance(id)
+            return this.createInstance(id);
           })
           .then(() => {
-            return bus.$emit('initialize-widget', { themeInstanceId: id })
+            return bus.$emit('initialize-widget', { themeInstanceId: id });
           })
           .then(() => {
-            return bus.$emit('reload-page-preview')
+            return bus.$emit('reload-page-preview');
           })
           .catch((err) => {
-            const error = Fliplet.parseError(err)
-            console.error(error)
-            bus.$emit('on-error', error)
-          })
+            const error = Fliplet.parseError(err);
+
+            console.error(error);
+            bus.$emit('on-error', error);
+          });
       }
     },
     removeInstance() {
-      return ThemeModel.delete()
+      return ThemeModel.delete();
     },
     createInstance(themeId) {
       return ThemeModel.create({
         themeId,
         toReuse: true
-      })
+      });
     }
   }
-}
+};
 </script>

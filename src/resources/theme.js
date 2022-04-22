@@ -1,4 +1,4 @@
-import { state } from '../store'
+import { state } from '../store';
 
 export default {
   create(data = {}) {
@@ -9,7 +9,7 @@ export default {
         widgetId: data.themeId,
         reuse: data.toReuse
       }
-    })
+    });
   },
   getAllVersions() {
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
@@ -19,10 +19,10 @@ export default {
         '&appId=' + Fliplet.Env.get('appId'),
         '&organizationId=' + Fliplet.Env.get('organizationId')
       ].join('')
-    })
+    });
   },
   update(data) {
-    const params = data.async ? '?async' : ''
+    const params = data.async ? '?async' : '';
 
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       url: `v1/widget-instances/${state.themeInstance.id}${params}`,
@@ -32,13 +32,14 @@ export default {
         values: data.values || {},
         widgetInstances: data.widgetInstances || []
       }
-    })
+    });
   },
   delete(id) {
-    const themeId = id || state.themeInstance.id
+    const themeId = id || state.themeInstance.id;
+
     return Fliplet.Env.get('development') ? Promise.resolve() : Fliplet.API.request({
       method: 'DELETE',
       url: `v1/widget-instances/${themeId}`
-    })
+    });
   }
-}
+};

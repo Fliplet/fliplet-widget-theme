@@ -16,11 +16,11 @@
 
 <script>
 import { state, getCurrentFieldValue, getFieldName, getFieldNameByContext,
-  saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
-import { tooltips } from '../../libs/tooltips'
-import InheritDot from '../UI/InheritDot'
-import createClass from '../../libs/column-class'
-import bus from '../../libs/bus'
+  saveFieldData, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store';
+import { tooltips } from '../../libs/tooltips';
+import InheritDot from '../UI/InheritDot';
+import createClass from '../../libs/column-class';
+import bus from '../../libs/bus';
 
 export default {
   data() {
@@ -35,7 +35,7 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
-    }
+    };
   },
   components: {
     InheritDot
@@ -46,47 +46,47 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        checkLogic(this.data.fieldConfig, newVal)
-        sendCssToFrame(`url('${newVal.url}')`, this.data.fieldConfig)
+        checkLogic(this.data.fieldConfig, newVal);
+        sendCssToFrame(`url('${newVal.url}')`, this.data.fieldConfig);
 
         this.$nextTick(() => {
-          this.prepareToSave()
-        })
+          this.prepareToSave();
+        });
       }
     }
   },
   computed: {
     hasImage() {
       if (this.valueToShow && this.valueToShow !== 'none') {
-        return true
+        return true;
       }
 
-      return false
+      return false;
     },
     columnClass() {
-      return createClass(this.data.fieldConfig.columns)
+      return createClass(this.data.fieldConfig.columns);
     }
   },
   methods: {
     setValues() {
       this.valueToShow = typeof this.value === 'object'
         ? this.value.url
-        : this.value
+        : this.value;
     },
     getValueToShow() {
-      return getCurrentFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig);
     },
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
         value: this.value
-      }
+      };
 
-      saveFieldData(data)
+      saveFieldData(data);
     },
     openFilePicker() {
       if (Fliplet.Env.get('development')) {
-        return
+        return;
       }
 
       const filePickerData = {
@@ -96,77 +96,82 @@ export default {
         fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF', 'SVG'],
         autoSelectOnUpload: true,
         cdn: false
-      }
+      };
 
       window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
         data: filePickerData,
         onEvent: (e, data) => {
           switch (e) {
             case 'widget-set-info':
-              Fliplet.Studio.emit('widget-save-toggle', true)
-              Fliplet.Studio.emit('widget-save-label-reset')
+              Fliplet.Studio.emit('widget-save-toggle', true);
+              Fliplet.Studio.emit('widget-save-label-reset');
               Fliplet.Studio.emit('widget-save-label-update', {
                 text: 'Select'
-              })
-              Fliplet.Widget.toggleSaveButton(!!data.length)
-              break
+              });
+              Fliplet.Widget.toggleSaveButton(!!data.length);
+              break;
+            default :
+              break;
           }
         }
-      })
+      });
 
       window.filePickerProvider.then((result) => {
-        let imageUrl = result.data[0].url
-        const pattern = /[?&]size=/
+        let imageUrl = result.data[0].url;
+        const pattern = /[?&]size=/;
 
         if (!pattern.test(imageUrl)) {
           const params = imageUrl.substring(1).split('?');
-          imageUrl += (params.length > 1 ? '&' : '?') + 'size=large'
+
+          imageUrl += (params.length > 1 ? '&' : '?') + 'size=large';
         }
 
-        result.data[0].url = imageUrl
+        result.data[0].url = imageUrl;
 
-        const media = _.pick(result.data[0], ['id', 'url', 'path'])
-        this.valueToShow = media.url
-        this.value = media
+        const media = _.pick(result.data[0], ['id', 'url', 'path']);
 
-        window.filePickerProvider = null
+        this.valueToShow = media.url;
+        this.value = media;
 
-        Fliplet.Studio.emit('widget-save-label-reset')
-        Fliplet.Studio.emit('widget-save-toggle', false)
-        return Promise.resolve()
-      })
+        window.filePickerProvider = null;
+
+        Fliplet.Studio.emit('widget-save-label-reset');
+        Fliplet.Studio.emit('widget-save-toggle', false);
+
+        return Promise.resolve();
+      });
     },
     checkInheritance() {
-      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting;
     },
     reCheckProps() {
-      this.isInheriting = this.checkInheritance()
-      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
-      this.valueToShow = this.getValueToShow()
+      this.isInheriting = this.checkInheritance();
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
+      this.valueToShow = this.getValueToShow();
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true;
     },
     updateAll() {
-      const mobileFieldName = this.data.fieldConfig.name
+      const mobileFieldName = this.data.fieldConfig.name;
       const currentFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: state.componentContext.toLowerCase()
-      })
+      });
 
       // This function can only be run when the user is either
       // in the tablet or desktop context, so it is safe to assume
       // that if it's not one is the other
       const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
         ? 'desktop'
-        : 'tablet'
+        : 'tablet';
       const remainingFieldInheritance = remainingFieldContext === 'desktop'
         ? 'tablet'
-        : 'mobile'
+        : 'mobile';
       const remainingFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: remainingFieldContext
-      })
+      });
 
       const dataToSave = [
         {
@@ -181,15 +186,15 @@ export default {
           name: remainingFieldName,
           value: 'inherit-' + remainingFieldInheritance
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     updatePreviousContext() {
       const fieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: this.inheritingFrom
-      })
+      });
       const dataToSave = [
         {
           name: fieldName,
@@ -199,25 +204,25 @@ export default {
           name: getFieldName(this.data.fieldConfig),
           value: 'inherit-' + this.inheritingFrom
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     inheritValue(value) {
-      this.value = value
+      this.value = value;
     }
   },
   created() {
-    this.setValues()
+    this.setValues();
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckProps)
-    checkLogic(this.data.fieldConfig, this.value)
+    bus.$on('variables-computed', this.reCheckProps);
+    checkLogic(this.data.fieldConfig, this.value);
     // Start Bootstrap tooltips
-    tooltips()
+    tooltips();
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps);
   }
-}
+};
 </script>

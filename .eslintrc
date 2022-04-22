@@ -1,0 +1,15 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "fliplet",
+    "plugin:vue/essential"
+  ],
+  "globals": {
+    "Vue": true,
+    "Modernizr": true
+  },
+  "rules": {
+    "no-new": 0
+  }
+}

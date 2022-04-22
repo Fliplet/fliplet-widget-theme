@@ -17,12 +17,12 @@
 
 <script>
 import { state, getCurrentFieldValue, getFieldName, getFieldNameByContext,
-  saveFieldData, checkIsFieldChanged, checkLogic, sendCssToFrame } from '../../store'
-import InheritDot from '../UI/InheritDot'
-import displayProperties from '../../libs/display-properties'
-import { tooltips } from '../../libs/tooltips'
-import createClass from '../../libs/column-class'
-import bus from '../../libs/bus'
+  saveFieldData, checkIsFieldChanged, checkLogic, sendCssToFrame } from '../../store';
+import InheritDot from '../UI/InheritDot';
+import displayProperties from '../../libs/display-properties';
+import { tooltips } from '../../libs/tooltips';
+import createClass from '../../libs/column-class';
+import bus from '../../libs/bus';
 
 export default {
   data() {
@@ -40,7 +40,7 @@ export default {
         : true,
       fromReset: false,
       uuid: Fliplet.guid()
-    }
+    };
   },
   components: {
     InheritDot
@@ -52,100 +52,98 @@ export default {
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
         if (newVal === 'column' || newVal === 'column-reverse') {
-          bus.$emit('flex-direction-changed', true)
+          bus.$emit('flex-direction-changed', true);
         } else {
-          bus.$emit('flex-direction-changed', false)
+          bus.$emit('flex-direction-changed', false);
         }
-        checkLogic(this.data.fieldConfig, newVal)
-        sendCssToFrame(newVal, this.data.fieldConfig)
+
+        checkLogic(this.data.fieldConfig, newVal);
+        sendCssToFrame(newVal, this.data.fieldConfig);
 
         this.$nextTick(() => {
-          this.prepareToSave()
-        })
-        return
+          this.prepareToSave();
+        });
+
+        return;
       }
 
-      this.fromReset = false
+      this.fromReset = false;
     }
   },
   computed: {
     columnClass() {
-      return createClass(this.data.fieldConfig.columns)
+      return createClass(this.data.fieldConfig.columns);
     }
   },
   methods: {
     getTooltip(prop) {
-      switch(prop) {
+      switch (prop) {
         case 'row':
-          return 'Left to right'
-          break;
+          return 'Left to right';
         case 'row-reverse':
-          return 'Right to left'
-          break;
+          return 'Right to left';
         case 'column':
-          return 'Top to bottom'
-          break;
+          return 'Top to bottom';
         case 'column-reverse':
-          return 'Bottom to top'
-          break;
+          return 'Bottom to top';
         default:
-          return 'Left to right'
+          return 'Left to right';
       }
     },
     getValue() {
-      return getCurrentFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig);
     },
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
         value: this.value
-      }
+      };
 
-      saveFieldData(data)
+      saveFieldData(data);
     },
     checkInheritance() {
-      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting;
     },
     reCheckProps() {
       if (this.value === 'column' || this.value === 'column-reverse') {
-        bus.$emit('flex-direction-changed', true)
+        bus.$emit('flex-direction-changed', true);
       } else {
-        bus.$emit('flex-direction-changed', false)
+        bus.$emit('flex-direction-changed', false);
       }
 
-      this.isInheriting = this.checkInheritance()
-      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
+      this.isInheriting = this.checkInheritance();
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
 
       if (this.fromReset) {
-        this.value = this.getValue()
-        checkLogic(this.data.fieldConfig, this.value)
-        sendCssToFrame(this.value, this.data.fieldConfig)
+        this.value = this.getValue();
+        checkLogic(this.data.fieldConfig, this.value);
+        sendCssToFrame(this.value, this.data.fieldConfig);
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true;
     },
     updateAll() {
-      const mobileFieldName = this.data.fieldConfig.name
+      const mobileFieldName = this.data.fieldConfig.name;
       const currentFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: state.componentContext.toLowerCase()
-      })
+      });
 
       // This function can only be run when the user is either
       // in the tablet or desktop context, so it is safe to assume
       // that if it's not one is the other
       const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
         ? 'desktop'
-        : 'tablet'
+        : 'tablet';
       const remainingFieldInheritance = remainingFieldContext === 'desktop'
         ? 'tablet'
-        : 'mobile'
+        : 'mobile';
       const remainingFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: remainingFieldContext
-      })
+      });
 
       const dataToSave = [
         {
@@ -160,15 +158,15 @@ export default {
           name: remainingFieldName,
           value: 'inherit-' + remainingFieldInheritance
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     updatePreviousContext() {
       const fieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: this.inheritingFrom
-      })
+      });
       const dataToSave = [
         {
           name: fieldName,
@@ -178,25 +176,25 @@ export default {
           name: getFieldName(this.data.fieldConfig),
           value: 'inherit-' + this.inheritingFrom
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     inheritValue(value) {
-      this.value = value
+      this.value = value;
       this.$nextTick(() => {
-        this.fromReset = true
-      })
+        this.fromReset = true;
+      });
     }
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckProps)
-    checkLogic(this.data.fieldConfig, this.value)
+    bus.$on('variables-computed', this.reCheckProps);
+    checkLogic(this.data.fieldConfig, this.value);
     // Start Bootstrap tooltips
-    tooltips()
+    tooltips();
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps);
   }
-}
+};
 </script>

@@ -22,12 +22,13 @@
 </template>
 
 <script>
+/* eslint-disable no-nested-ternary */
 import { state, saveFieldData, getCurrentFieldValue,
-  getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store'
-import InheritDot from '../UI/InheritDot'
-import fontProperties from '../../libs/font-style-properties'
-import createClass from '../../libs/column-class'
-import bus from '../../libs/bus'
+  getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store';
+import InheritDot from '../UI/InheritDot';
+import fontProperties from '../../libs/font-style-properties';
+import createClass from '../../libs/column-class';
+import bus from '../../libs/bus';
 
 export default {
   data() {
@@ -44,7 +45,7 @@ export default {
         : true,
       fromReset: false,
       uuid: Fliplet.guid()
-    }
+    };
   },
   components: {
     InheritDot
@@ -55,38 +56,45 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (this.fromReset) {
-        this.fromReset = false
-        return
+        this.fromReset = false;
+
+        return;
       }
 
-      let index
-      let difference = typeof newVal === 'string' ? '' : _.difference(newVal, oldVal)
+      let index;
+      let difference = typeof newVal === 'string' ? '' : _.difference(newVal, oldVal);
 
       if (newVal.indexOf('normal') > -1) {
         // Remove "normal"
-        index = newVal.indexOf('normal')
+        index = newVal.indexOf('normal');
+
         if (index > -1) {
-          newVal.splice(index, 1)
+          newVal.splice(index, 1);
         }
       }
+
       if (newVal.indexOf('none') > -1) {
         // Remove "none"
-        index = newVal.indexOf('none')
+        index = newVal.indexOf('none');
+
         if (index > -1) {
-          newVal.splice(index, 1)
+          newVal.splice(index, 1);
         }
       }
+
       if (difference.indexOf('bold') > -1) {
         // Remove "lighter" if "bold" is selected
-        index = newVal.indexOf('lighter')
+        index = newVal.indexOf('lighter');
+
         if (index > -1) {
-          newVal.splice(index, 1)
+          newVal.splice(index, 1);
         }
       } else if (difference.indexOf('lighter') > -1) {
         // Remove "bold" if "lighter" is selected
-        index = newVal.indexOf('bold')
+        index = newVal.indexOf('bold');
+
         if (index > -1) {
-          newVal.splice(index, 1)
+          newVal.splice(index, 1);
         }
       }
 
@@ -98,115 +106,113 @@ export default {
             && value !== 'lighter'
             && value !== 'underline'
             && value !== 'italic') {
-            newVal.splice(index, 1)
+            newVal.splice(index, 1);
           }
-        })
+        });
       }
 
-      this.value = newVal
+      this.value = newVal;
+
       const compiledValue = this.checkIfIsInheriting(newVal)
         ? newVal
         : Array.isArray(newVal) && newVal.length
           ? newVal.join(' ')
-          : this.subType === 'decoration' ? 'none' : 'normal'
-      sendCssToFrame(compiledValue, this.data.fieldConfig)
+          : this.subType === 'decoration' ? 'none' : 'normal';
+
+      sendCssToFrame(compiledValue, this.data.fieldConfig);
 
       this.$nextTick(() => {
-        this.prepareToSave()
-      })
+        this.prepareToSave();
+      });
     }
   },
   computed: {
     columnClass() {
-      return createClass(this.data.fieldConfig.columns)
+      return createClass(this.data.fieldConfig.columns);
     }
   },
   methods: {
     getTooltip(prop) {
-      switch(prop) {
+      switch (prop) {
         case 'bold':
-          return 'Bold'
-          break;
+          return 'Bold';
         case 'lighter':
-          return 'Lighter'
-          break;
+          return 'Lighter';
         case 'italic':
-          return 'Italic'
-          break;
+          return 'Italic';
         case 'underline':
-          return 'Underline'
-          break;
+          return 'Underline';
         default:
-          return ''
+          return '';
       }
     },
     getValue() {
-      return this.parseValue(getCurrentFieldValue(this.data.fieldConfig))
+      return this.parseValue(getCurrentFieldValue(this.data.fieldConfig));
     },
     parseValue(value) {
-      return value.split(' ')
+      return value.split(' ');
     },
     checkInheritance() {
-      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting;
     },
     checkIfIsInheriting(value) {
       // Checks if the value matches a variable name
-      const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined
+      const matchVariable = typeof value === 'string' ? value.match(/^\$([A-z0-9]+)$/) : undefined;
       // If the value matches to a variable get the name of the variable
-      const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined
+      const variableName = matchVariable && matchVariable.length ? matchVariable[1] : undefined;
       // Checks if the value matches the 'inherit-x' reserved key
-      const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined
+      const matchInherit = typeof value === 'string' ? value.match(/^inherit-([a-z]+)$/) : undefined;
       // If the value matches the 'inherit-x' reserved key get the inheritance key
-      const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined
+      const inherit = matchInherit && matchInherit.length ? matchInherit[1] : undefined;
 
-      return inherit || variableName ? true : false
+      return inherit || variableName ? true : false;
     },
     reCheckProps() {
-      this.isInheriting = this.checkInheritance()
-      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
+      this.isInheriting = this.checkInheritance();
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
 
       if (this.fromReset) {
-        this.value = this.getValue()
-        sendCssToFrame(this.value, this.data.fieldConfig)
+        this.value = this.getValue();
+        sendCssToFrame(this.value, this.data.fieldConfig);
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true;
     },
     processValue() {
-      const isInheriting = this.checkIfIsInheriting(this.value)
+      const isInheriting = this.checkIfIsInheriting(this.value);
 
-      return isInheriting ? this.value : Array.isArray(this.value) && this.value.length ? this.value.join(' ') : this.subType === 'decoration' ? 'none' : 'normal'
+      return isInheriting ? this.value : Array.isArray(this.value) && this.value.length ? this.value.join(' ') : this.subType === 'decoration' ? 'none' : 'normal';
     },
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
         value: this.processValue()
-      }
+      };
 
-      saveFieldData(data)
+      saveFieldData(data);
     },
     updateAll() {
-      const mobileFieldName = this.data.fieldConfig.name
+      const mobileFieldName = this.data.fieldConfig.name;
       const currentFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: state.componentContext.toLowerCase()
-      })
+      });
 
       // This function can only be run when the user is either
       // in the tablet or desktop context, so it is safe to assume
       // that if it's not one is the other
       const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
         ? 'desktop'
-        : 'tablet'
+        : 'tablet';
       const remainingFieldInheritance = remainingFieldContext === 'desktop'
         ? 'tablet'
-        : 'mobile'
+        : 'mobile';
       const remainingFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: remainingFieldContext
-      })
+      });
 
       const dataToSave = [
         {
@@ -221,15 +227,15 @@ export default {
           name: remainingFieldName,
           value: 'inherit-' + remainingFieldInheritance
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     updatePreviousContext() {
       const fieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: this.inheritingFrom
-      })
+      });
       const dataToSave = [
         {
           name: fieldName,
@@ -239,22 +245,22 @@ export default {
           name: getFieldName(this.data.fieldConfig),
           value: 'inherit-' + this.inheritingFrom
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     inheritValue(value) {
-      this.value = value
+      this.value = value;
       this.$nextTick(() => {
-        this.fromReset = true
-      })
+        this.fromReset = true;
+      });
     }
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckProps)
+    bus.$on('variables-computed', this.reCheckProps);
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps);
   }
-}
+};
 </script>

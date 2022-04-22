@@ -30,11 +30,11 @@
 
 <script>
 import { state, saveFieldData, getCurrentFieldValue,
-  getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store'
-import InheritDot from '../UI/InheritDot'
-import fontMapping from '../../libs/font-mapping'
-import createClass from '../../libs/column-class'
-import bus from '../../libs/bus'
+  getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store';
+import InheritDot from '../UI/InheritDot';
+import fontMapping from '../../libs/font-mapping';
+import createClass from '../../libs/column-class';
+import bus from '../../libs/bus';
 
 export default {
   data() {
@@ -50,7 +50,7 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
-    }
+    };
   },
   components: {
     InheritDot
@@ -61,81 +61,84 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        sendCssToFrame(newVal, this.data.fieldConfig)
+        sendCssToFrame(newVal, this.data.fieldConfig);
 
         this.$nextTick(() => {
-          this.prepareToSave()
-        })
+          this.prepareToSave();
+        });
       }
     }
   },
   computed: {
     customFonts() {
-      return this.data.customFonts
+      return this.data.customFonts;
     },
     webFonts() {
-      return this.data.webFonts
+      return this.data.webFonts;
     },
     columnClass() {
-      return createClass(this.data.fieldConfig.columns)
+      return createClass(this.data.fieldConfig.columns);
     }
   },
   methods: {
     getFontFamily(fontName) {
-      const webFont = fontMapping[fontName]
+      const webFont = fontMapping[fontName];
 
       if (!webFont) {
-        return `"${fontName}", sans-serif`
+        return `"${fontName}", sans-serif`;
       }
 
-      return webFont
+      return webFont;
     },
     searchFontMapping(value) {
-      let result
+      let result;
+
       for (const key in fontMapping) {
         if (fontMapping[key] === value) {
-          result = key
-          continue
+          result = key;
+          continue;
         }
       }
 
       if (!result) {
-        result = value.split(',')[0].trim().replace(/['"]+/g, '')
+        result = value.split(',')[0].trim().replace(/['"]+/g, '');
       }
 
-      return result
+      return result;
     },
     setValues() {
-      this.valueToShow = this.searchFontMapping(this.value)
+      this.valueToShow = this.searchFontMapping(this.value);
 
       if (this.valueToShow) {
-        return
+        return;
       }
 
-      this.valueToShow = this.value
+      this.valueToShow = this.value;
     },
     getValueToShow() {
-      const defaultValue = getCurrentFieldValue(this.data.fieldConfig)
-      return this.searchFontMapping(defaultValue)
+      const defaultValue = getCurrentFieldValue(this.data.fieldConfig);
+
+      return this.searchFontMapping(defaultValue);
     },
     toggleDropdown(event) {
-      event.preventDefault()
-      event.stopPropagation()
-      $(this.$refs.dropdownToggle).dropdown('toggle')
+      event.preventDefault();
+      event.stopPropagation();
+      $(this.$refs.dropdownToggle).dropdown('toggle');
     },
     onValueChange(value) {
       if (typeof value === 'string') {
-        this.valueToShow = value
-        this.value = this.getFontFamily(value)
-        return
+        this.valueToShow = value;
+        this.value = this.getFontFamily(value);
+
+        return;
       }
 
-      this.valueToShow = value.name
-      this.value = `"${value.name}",sans-serif`
+      this.valueToShow = value.name;
+      this.value = `"${value.name}",sans-serif`;
     },
     openFontUploader() {
       if (Fliplet.Env.get('development')) {
-        return
+        return;
       }
 
       Fliplet.Studio.emit('overlay', {
@@ -146,47 +149,47 @@ export default {
           section: 'appCustomFonts',
           appId: Fliplet.Env.get('appId')
         }
-      })
+      });
     },
     checkInheritance() {
-      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting;
     },
     reCheckProps() {
-      this.isInheriting = this.checkInheritance()
-      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
-      this.valueToShow = this.getValueToShow()
+      this.isInheriting = this.checkInheritance();
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
+      this.valueToShow = this.getValueToShow();
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true;
     },
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
         value: this.value
-      }
+      };
 
-      saveFieldData(data)
+      saveFieldData(data);
     },
     updateAll() {
-      const mobileFieldName = this.data.fieldConfig.name
+      const mobileFieldName = this.data.fieldConfig.name;
       const currentFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: state.componentContext.toLowerCase()
-      })
+      });
 
       // This function can only be run when the user is either
       // in the tablet or desktop context, so it is safe to assume
       // that if it's not one is the other
       const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
         ? 'desktop'
-        : 'tablet'
+        : 'tablet';
       const remainingFieldInheritance = remainingFieldContext === 'desktop'
         ? 'tablet'
-        : 'mobile'
+        : 'mobile';
       const remainingFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: remainingFieldContext
-      })
+      });
 
       const dataToSave = [
         {
@@ -201,15 +204,15 @@ export default {
           name: remainingFieldName,
           value: 'inherit-' + remainingFieldInheritance
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     updatePreviousContext() {
       const fieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: this.inheritingFrom
-      })
+      });
       const dataToSave = [
         {
           name: fieldName,
@@ -219,22 +222,22 @@ export default {
           name: getFieldName(this.data.fieldConfig),
           value: 'inherit-' + this.inheritingFrom
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     inheritValue(value) {
-      this.value = value
+      this.value = value;
     }
   },
   created() {
-    this.setValues()
+    this.setValues();
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckProps)
+    bus.$on('variables-computed', this.reCheckProps);
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps);
   }
-}
+};
 </script>
