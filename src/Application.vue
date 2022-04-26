@@ -388,7 +388,7 @@ export default {
 
       switch(this.dataToSave.values.containerBackgroundType) {
         case 'Color':
-          delete this.dataToSave.values.containerBackgroundImageя;
+          delete this.dataToSave.values.containerBackgroundImage;
           break;
         case 'Image':
           delete this.dataToSave.values.containerBackgroundColor;
