@@ -385,6 +385,23 @@ export default {
         this.dataToSave.widgetInstances = themeSavedWidgetInstances;
       }
 
+
+      switch(this.dataToSave.values.containerBackgroundType) {
+        case 'Color':
+          delete this.dataToSave.values.containerBackgroundImageя;
+          break;
+        case 'Image':
+          delete this.dataToSave.values.containerBackgroundColor;
+          break;
+        case 'None':
+          delete this.dataToSave.values.containerBackgroundColor;
+          delete this.dataToSave.values.containerBackgroundImage;
+          break;
+        default:
+          break;
+      }
+
+      setInstanceValue(this.dataToSave.values);
       this.debouncedSave();
     },
     updateInstance(dataObj) {
