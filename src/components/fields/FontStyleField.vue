@@ -22,7 +22,6 @@
 </template>
 
 <script>
-/* eslint-disable no-nested-ternary */
 import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store';
 import InheritDot from '../UI/InheritDot';
@@ -113,11 +112,15 @@ export default {
 
       this.value = newVal;
 
-      const compiledValue = this.checkIfIsInheriting(newVal)
-        ? newVal
-        : Array.isArray(newVal) && newVal.length
-          ? newVal.join(' ')
-          : this.subType === 'decoration' ? 'none' : 'normal';
+      let compiledValue;
+
+      if (this.checkIfIsInheriting(newVal)) {
+        compiledValue = newVal;
+      } else if (Array.isArray(newVal) && newVal.length) {
+        compiledValue = newVal.join(' ');
+      } else {
+        compiledValue =  this.subType === 'decoration' ? 'none' : 'normal';
+      }
 
       sendCssToFrame(compiledValue, this.data.fieldConfig);
 
@@ -183,7 +186,13 @@ export default {
     processValue() {
       const isInheriting = this.checkIfIsInheriting(this.value);
 
-      return isInheriting ? this.value : Array.isArray(this.value) && this.value.length ? this.value.join(' ') : this.subType === 'decoration' ? 'none' : 'normal';
+      if (isInheriting) {
+        return this.value;
+      } else if (Array.isArray(this.value) && this.value.length) {
+        return this.value.join(' ');
+      }
+
+      return this.subType === 'decoration' ? 'none' : 'normal';
     },
     prepareToSave(data) {
       data = data || {

@@ -7,7 +7,8 @@
   ],
   "globals": {
     "Vue": true,
-    "Modernizr": true
+    "Modernizr": true,
+    "Hammer": true
   },
   "rules": {
     "no-new": 0

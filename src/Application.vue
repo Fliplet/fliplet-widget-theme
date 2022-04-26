@@ -38,7 +38,7 @@ import { state, setComponentContext, setActiveTab, migrateOldVariables,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId, setWidgetUUID,
   setWebFonts, setCustomFonts, setSavedFields, handleWidgetData, setParentFlex,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave, appSupportsContainer,
-  toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings } from './store';
+  toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings, setInstanceValue } from './store';
 import WidgetHeader from './components/UI/WidgetHeader';
 import ThemeSelection from './components/UI/ThemeSelection';
 import SettingsButtons from './components/UI/SettingsButtons';
@@ -386,7 +386,7 @@ export default {
       }
 
 
-      switch(this.dataToSave.values.containerBackgroundType) {
+      switch (this.dataToSave.values.containerBackgroundType) {
         case 'Color':
           delete this.dataToSave.values.containerBackgroundImage;
           break;

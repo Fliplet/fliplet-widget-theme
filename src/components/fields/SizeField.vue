@@ -24,7 +24,6 @@
 </template>
 
 <script>
-/* eslint-disable no-nested-ternary */
 import { state, saveFieldData, getCurrentFieldValue,
   getFieldName, getFieldNameByContext, checkIsFieldChanged, checkSizeLogic, sendCssToFrame } from '../../store';
 import InheritDot from '../UI/InheritDot';
@@ -286,9 +285,11 @@ export default {
         }
       }
 
-      this.valueToShow = this.checkIfIsInheriting(this.value)
-        ? this.valueToShow === 'initial' ? 'none' : this.valueToShow
-        : this.value === 'initial' ? 'none' : this.value;
+      if (this.checkIfIsInheriting(this.value)) {
+        this.valueToShow = this.valueToShow === 'initial' ? 'none' : this.valueToShow;
+      } else {
+        this.valueToShow = this.value === 'initial' ? 'none' : this.value;
+      }
 
       this.prepareToSave();
     },
@@ -301,9 +302,11 @@ export default {
           this.value = this.data.fieldConfig.subtype === 'z-index' ? 1 : 100;
         }
 
-        this.valueToShow = this.checkIfIsInheriting(this.value)
-          ? this.valueToShow === 'initial' ? 'none' : this.valueToShow
-          : this.value === 'initial' ? 'none' : this.value;
+        if (this.checkIfIsInheriting(this.value)) {
+          this.valueToShow = this.valueToShow === 'initial' ? 'none' : this.valueToShow;
+        } else {
+          this.valueToShow = this.value === 'initial' ? 'none' : this.value;
+        }
 
         this.$nextTick(this.prepareToSave);
       }

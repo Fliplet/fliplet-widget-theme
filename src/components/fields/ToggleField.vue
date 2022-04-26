@@ -82,15 +82,16 @@ export default {
       if (Array.isArray(properties)) {
         // Checks if it is an Array
         properties.forEach((prop) => {
-          // eslint-disable-next-line guard-for-in
           for (var key in prop) {
-            var newObj = {
-              label: prop[key].label,
-              valueToShow: prop[key].value,
-              value: key
-            };
+            if (Object.prototype.hasOwnProperty.call(prop, key)) {
+              var newObj = {
+                label: prop[key].label,
+                valueToShow: prop[key].value,
+                value: key
+              };
 
-            propsArr.push(newObj);
+              propsArr.push(newObj);
+            }
           }
         });
       }

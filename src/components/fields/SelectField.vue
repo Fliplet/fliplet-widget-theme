@@ -99,14 +99,15 @@ export default {
 
       // Checks if it is an object
       if (properties instanceof Object && properties.constructor === Object) {
-        // eslint-disable-next-line guard-for-in
         for (var prop in properties) {
-          var newObj = {
-            name: properties[prop],
-            value: prop
-          };
+          if (Object.prototype.hasOwnProperty.call(properties, prop)) {
+            var newObj = {
+              name: properties[prop],
+              value: prop
+            };
 
-          propsArr.push(newObj);
+            propsArr.push(newObj);
+          }
         }
       } else if (Array.isArray(properties)) {
         // Checks if it is an Array

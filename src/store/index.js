@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-case-declarations */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable guard-for-in */
 import deviceTypes from '../libs/device-types';
 import migrationObject from '../libs/migration-object';
 import bus from '../libs/bus';
@@ -67,28 +63,29 @@ export function handleWidgetData(data) {
 */
 
 export function setSavedFields(data) {
-
   const backgroundType = _.find(data.values, { name: 'containerBackgroundType' });
 
   state.savedFields = _.assignIn({}, state.savedFields, data);
   _.forEach(state.savedFields.values, function(item, index) {
-    switch(item.name) {
+    switch (item.name) {
       case 'containerBackgroundImage':
         if (backgroundType?.value === 'Color' || backgroundType?.value === 'None') {
           state.savedFields.values[index].value = 'none';
         }
+
         break;
       case 'containerBackgroundColor':
         if (backgroundType?.value === 'Image' || backgroundType?.value === 'None') {
           delete state.savedFields.values[index].value;
         }
+
         break;
       default:
         break;
     }
-  })
+  });
 
-  bus.$emit('saved-fields-set')
+  bus.$emit('saved-fields-set');
 }
 
 /**
@@ -109,12 +106,14 @@ export function prepareSettingsForTheme(id) {
 
   // Construct a new array of objects
   for (var property in foundValues) {
-    const newObj = {
-      name: property,
-      value: foundValues[property]
-    };
+    if (Object.prototype.hasOwnProperty.call(foundValues, property)) {
+      const newObj = {
+        name: property,
+        value: foundValues[property]
+      };
 
-    arrayOfValues.push(newObj);
+      arrayOfValues.push(newObj);
+    }
   }
 
   data.values = arrayOfValues;
@@ -496,15 +495,21 @@ export function getSavedValue(field, returnAll, context) {
     ? field.default
     : field.breakpoints[context].default;
 
-  const value = state.widgetMode
-    ? widgetLocalSavedData && widgetLocalSavedData.value
-      ? widgetLocalSavedData.value
-      : widgetSavedData && widgetSavedData.value
-        ? widgetSavedData.value
-        : savedLocalField
-          ? savedLocalField.value
-          : generalSavedValue || defaultValue
-    : savedLocalField ? savedLocalField.value : generalSavedValue || defaultValue;
+  let value;
+
+  if (state.widgetMode) {
+    if (widgetLocalSavedData && widgetLocalSavedData.value) {
+      value = widgetLocalSavedData.value;
+    } else if (widgetSavedData && widgetSavedData.value) {
+      value = widgetSavedData.value;
+    } else if (savedLocalField) {
+      value = savedLocalField.value;
+    } else {
+      value = generalSavedValue || defaultValue;
+    }
+  } else {
+    value = savedLocalField ? savedLocalField.value : generalSavedValue || defaultValue;
+  }
 
   if (!returnAll) {
     return value;
@@ -565,7 +570,7 @@ export function checkLogic(fieldConfig, value) {
 }
 
 export function setInstanceValue(values) {
-  state.themeInstance.settings.values = values
+  state.themeInstance.settings.values = values;
 }
 
 /**
@@ -591,15 +596,17 @@ export function checkMarginLogic(fieldConfig, value, fromLoad) {
         // skip loop if the property is from prototype
         if (prop === value) {
           for (const key in fieldConfig.logic[prop]) {
-            const newObj = {
-              name: key + (notMobile ? state.componentContext : ''),
-              value: fieldConfig.logic[prop][key]
-            };
+            if (Object.prototype.hasOwnProperty.call(fieldConfig.logic[prop], key)) {
+              const newObj = {
+                name: key + (notMobile ? state.componentContext : ''),
+                value: fieldConfig.logic[prop][key]
+              };
 
-            fieldsArray.push(key);
+              fieldsArray.push(key);
 
-            if (!fromLoad) {
-              bus.$emit('field-saved', [newObj]);
+              if (!fromLoad) {
+                bus.$emit('field-saved', [newObj]);
+              }
             }
           }
 
@@ -635,7 +642,7 @@ export function checkSizeLogic(fieldConfig) {
 
 export function getInheritance(variables) {
   switch (state.componentContext) {
-    case 'Desktop':
+    case 'Desktop': {
       if (!variables) {
         return 'tablet';
       }
@@ -669,6 +676,8 @@ export function getInheritance(variables) {
       });
 
       return newArr;
+    }
+
     default:
       return 'mobile';
   }
@@ -696,12 +705,15 @@ export function sendCssToFrame(value, currentField) {
 
   // If there is a "styles" key
   styles.forEach((css) => {
-    const widgetSelector = state.widgetMode
-      ? currentField.name === 'Accordion'
-        ? `[data-collapse-id='${state.widgetId}']` : `[data-id='${state.widgetId}']`
-      : savedWidgetFound || localSavedWidgetFound
-        ? `:not([data-id='${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}'])`
-        : '';
+    let widgetSelector;
+
+    if (state.widgetMode) {
+      widgetSelector = currentField.name === 'Accordion' ? `[data-collapse-id='${state.widgetId}']` : `[data-id='${state.widgetId}']`;
+    } else if (savedWidgetFound || localSavedWidgetFound) {
+      widgetSelector = `:not([data-id='${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}'])`;
+    } else {
+      widgetSelector = '';
+    }
 
     const preparedStyles = prepareStyles(css, value, widgetSelector, currentField);
 
@@ -733,51 +745,56 @@ export function sendCssToFrame(value, currentField) {
       }
 
       // Add depending fields to changing array of properties
-      const widgetSelector = state.widgetMode
-        ? currentField.name === 'Accordion'
-          ? `[data-collapse-id="${state.widgetId}"]` : `[data-id="${state.widgetId}"]`
-        : savedWidgetFound || localSavedWidgetFound
-          ? currentField.name === 'Accordion'
-            ? `:not([data-collapse-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
-            : `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `
-          : '';
+      let widgetSelector;
+
+      if (state.widgetMode) {
+        widgetSelector = currentField.name === 'Accordion' ? `[data-collapse-id="${state.widgetId}"]` : `[data-id="${state.widgetId}"]`;
+      } else if (savedWidgetFound || localSavedWidgetFound) {
+        widgetSelector = currentField.name === 'Accordion' ? `:not([data-collapse-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) ` : `:not([data-id="${localSavedWidgetFound ? localSavedWidgetFound.id : savedWidgetFound.id}"]) `;
+      } else {
+        widgetSelector = '';
+      }
 
       const preparedStyles = prepareStyles(style, value, widgetSelector, currentField);
 
       preparedStyles.forEach((styles) => {
         cssProperties.push(styles);
-      })
-    })
-  })
+      });
+    });
+  });
 
   if (currentField.name === 'containerBackgroundColor') {
     _.forEach(cssProperties, (css, index) => {
       if (_.has(css.properties, 'background-color')) {
         cssProperties[index].properties['background-image'] = 'none';
+
         return false;
       }
-    })
+    });
   }
 
   if (currentField.name === 'containerBackgroundImage') {
     let bgc;
+
     _.forEach(state.appearanceGroupOverlay.data.appearanceGroup.variables, function(variable) {
       if (variable.description === 'Background') {
         bgc = _.find(variable.fields, { name: 'containerBackgroundColor' });
+
         return false;
       }
-    })
+    });
     _.forEach(cssProperties, (css, index) => {
       if (_.has(css.properties, 'background-image')) {
         cssProperties[index].properties['background-color'] = getCurrentFieldValue({
           ...bgc,
           inheritingFrom: currentField.inheritingFrom
-        })
+        });
+
         return false;
       }
-    })
+    });
   }
-  
+
   Fliplet.Studio.emit('page-preview-send-event', {
     type: 'inlineCss',
     cssProperties: cssProperties
@@ -1038,7 +1055,7 @@ function compileBorderValues(styles, value, currentField) {
 * @return {Array} Returns an array of the positions CSS properties
 */
 
-function compilePositionValues(styles, currentField) {
+function compilePositionValues(styles) {
   if (!styles.siblings) {
     return false;
   }
@@ -1111,11 +1128,13 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       // Reset properties object
       selectors.properties = {};
 
-      const selector = styles.parentSelector
-        ? (styles.parentSelector + widgetSelector + ' ' + sel).trim()
-        : widgetSelector
-          ? ('div' + widgetSelector + ' ' + sel + ', ' + 'span' + widgetSelector + ' ' + sel).trim()
-          : sel;
+      let selector;
+
+      if (styles.parentSelector) {
+        selector = (styles.parentSelector + widgetSelector + ' ' + sel).trim();
+      } else {
+        selector = widgetSelector ? ('div' + widgetSelector + ' ' + sel + ', ' + 'span' + widgetSelector + ' ' + sel).trim() : sel;
+      }
 
       selectors.selector = selector;
 
@@ -1165,7 +1184,8 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
         case 'shadow':
           newValue = compileShadowValues(styles, value, currentField);
           break;
-        case 'position':
+
+        case 'position': {
           const positions = compilePositionValues(styles, currentField);
 
           switch (value) {
@@ -1173,7 +1193,9 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
               selectors.properties['position'] = value;
 
               for (const key in positions) {
-                selectors.properties[key] = 'auto';
+                if (Object.prototype.hasOwnProperty.call(positions, key)) {
+                  selectors.properties[key] = 'auto';
+                }
               }
 
               break;
@@ -1182,7 +1204,9 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
               selectors.properties['position'] = value;
 
               for (const key in positions) {
-                selectors.properties[key] = positions[key];
+                if (Object.prototype.hasOwnProperty.call(positions, key)) {
+                  selectors.properties[key] = positions[key];
+                }
               }
 
               break;
@@ -1196,6 +1220,8 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
           cssProperties.push(selectors);
 
           return cssProperties;
+        }
+
         case 'margin':
           switch (value) {
             case 'left':
@@ -1268,11 +1294,13 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       cssProperties.push(newSelectors);
     });
   } else {
-    const selector = styles.parentSelector
-      ? (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim()
-      : widgetSelector
-        ? ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim()
-        : styles.selectors;
+    let selector;
+
+    if (styles.parentSelector) {
+      selector = (styles.parentSelector + widgetSelector + ' ' + styles.selectors).trim();
+    } else {
+      selector = widgetSelector ? ('div' + widgetSelector + ' ' + styles.selectors + ', ' + 'span' + widgetSelector + ' ' + styles.selectors).trim() : styles.selectors;
+    }
 
     selectors.selector = selector;
 
@@ -1322,7 +1350,8 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       case 'shadow':
         newValue = compileShadowValues(styles, value, currentField);
         break;
-      case 'position':
+
+      case 'position': {
         const positions = compilePositionValues(styles, currentField);
 
         switch (value) {
@@ -1330,7 +1359,9 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
             selectors.properties['position'] = value;
 
             for (const key in positions) {
-              selectors.properties[key] = 'auto';
+              if (Object.prototype.hasOwnProperty.call(positions, key)) {
+                selectors.properties[key] = 'auto';
+              }
             }
 
             break;
@@ -1339,7 +1370,9 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
             selectors.properties['position'] = value;
 
             for (const key in positions) {
-              selectors.properties[key] = positions[key];
+              if (Object.prototype.hasOwnProperty.call(positions, key)) {
+                selectors.properties[key] = positions[key];
+              }
             }
 
             break;
@@ -1353,6 +1386,8 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
         cssProperties.push(selectors);
 
         return cssProperties;
+      }
+
       case 'margin':
         switch (value) {
           case 'left':

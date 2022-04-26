@@ -5,8 +5,7 @@ import 'core-js/stable/string/starts-with';
 import 'regenerator-runtime/runtime';
 import Application from './Application.vue';
 
-// eslint-disable-next-line no-unused-vars
-const mainApp = new Vue({
+new Vue({
   el: '#theme-widget-holder',
   render: (createElement) => {
     return createElement(Application);
