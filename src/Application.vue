@@ -38,7 +38,7 @@ import { state, setComponentContext, setActiveTab, migrateOldVariables,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId, setWidgetUUID,
   setWebFonts, setCustomFonts, setSavedFields, handleWidgetData, setParentFlex,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave, appSupportsContainer,
-  toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings } from './store'
+  toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings, setInstanceValue } from './store'
 import WidgetHeader from './components/UI/WidgetHeader'
 import ThemeSelection from './components/UI/ThemeSelection'
 import SettingsButtons from './components/UI/SettingsButtons'
@@ -375,6 +375,22 @@ export default {
         this.dataToSave.widgetInstances = themeSavedWidgetInstances
       }
 
+      switch(this.dataToSave.values.containerBackgroundType) {
+        case 'Color':
+          delete this.dataToSave.values.containerBackgroundImage
+          break;
+        case 'Image':
+          delete this.dataToSave.values.containerBackgroundColor
+          break;
+        case 'None':
+          delete this.dataToSave.values.containerBackgroundColor
+          delete this.dataToSave.values.containerBackgroundImage
+          break;
+        default:
+          break;
+      }
+
+      setInstanceValue(this.dataToSave.values)
       this.debouncedSave()
     },
     updateInstance(dataObj) {

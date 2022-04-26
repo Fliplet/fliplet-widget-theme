@@ -61,7 +61,26 @@ export function handleWidgetData(data) {
 * @param {Object} Object containing the two arrays
 */
 export function setSavedFields(data) {
+  const backgroundType = _.find(data.values, { name: 'containerBackgroundType' });
+
   state.savedFields = _.assignIn({}, state.savedFields, data)
+  _.forEach(state.savedFields.values, function(item, index) {
+    switch(item.name) {
+      case 'containerBackgroundImage':
+        if (backgroundType?.value === 'Color' || backgroundType?.value === 'None') {
+          state.savedFields.values[index].value = 'none';
+        }
+        break;
+      case 'containerBackgroundColor':
+        if (backgroundType?.value === 'Image' || backgroundType?.value === 'None') {
+          delete state.savedFields.values[index].value
+        }
+        break;
+      default:
+        break;
+    }
+  })
+
   bus.$emit('saved-fields-set')
 }
 
@@ -73,8 +92,8 @@ export function prepareSettingsForTheme(id) {
   // Find the saved values
   const localSavedWidget = _.find(state.savedFields.widgetInstances, { id: id })
   const localValues = localSavedWidget ? localSavedWidget.values : []
-  const instaceSavedWidget = _.find(state.themeInstance.settings.widgetInstances, { id: id })
-  const instanceValues = instaceSavedWidget ? instaceSavedWidget.values : []
+  const instanceSavedWidget = _.find(state.themeInstance.settings.widgetInstances, { id: id })
+  const instanceValues = instanceSavedWidget ? instanceSavedWidget.values : []
   const foundValues = _.merge(instanceValues, localValues)
 
   const arrayOfValues = []
@@ -511,6 +530,10 @@ export function checkLogic(fieldConfig, value) {
   }
 }
 
+export function setInstanceValue(values) {
+  state.themeInstance.settings.values = values
+}
+
 /**
 * Gets the logic object of the margin alignment field
 * @param {Object} Object of the field JSON configuration
@@ -676,6 +699,34 @@ export function sendCssToFrame(value, currentField) {
       })
     })
   })
+
+  if (currentField.name === 'containerBackgroundColor') {
+    _.forEach(cssProperties, (css, index) => {
+      if (_.has(css.properties, 'background-color')) {
+        cssProperties[index].properties['background-image'] = 'none'
+        return false
+      }
+    })
+  }
+
+  if (currentField.name === 'containerBackgroundImage') {
+    let bgc;
+    _.forEach(state.appearanceGroupOverlay.data.appearanceGroup.variables, function(variable) {
+      if (variable.description === 'Background') {
+        bgc = _.find(variable.fields, { name: 'containerBackgroundColor' })
+        return false
+      }
+    })
+    _.forEach(cssProperties, (css, index) => {
+      if (_.has(css.properties, 'background-image')) {
+        cssProperties[index].properties['background-color'] = getCurrentFieldValue({
+          ...bgc,
+          inheritingFrom: currentField.inheritingFrom
+        })
+        return false
+      }
+    })
+  }
   
   Fliplet.Studio.emit('page-preview-send-event', {
     type: 'inlineCss',
