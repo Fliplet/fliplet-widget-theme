@@ -38,7 +38,7 @@ function copyIcons() {
 function scss() {
   return gulp
     .src('src/scss/index.scss')
-    .pipe(sass)
+    .pipe(sass())
     .pipe(gulp.dest('dist/css/'));
 }
 

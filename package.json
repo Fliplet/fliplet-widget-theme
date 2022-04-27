@@ -28,7 +28,7 @@
     "eslint": "^8.13.0",
     "eslint-config-fliplet": "^1.0.8",
     "gulp": "^4.0.2",
-    "gulp-sass": "^4.0.2",
+    "gulp-sass": "^5.1.0",
     "gulp-vueify2": "0.0.3",
     "path": "^0.12.7",
     "sass": "^1.51.0",
