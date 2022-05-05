@@ -5,31 +5,30 @@
 </template>
 
 <script>
-import { state, openAppearanceGroupSettings } from '../../store'
-import bus from '../../libs/bus'
+import { state, openAppearanceGroupSettings } from '../../store';
 
 export default {
   data() {
     return {
       state
-    }
+    };
   },
   props: {
     groupConfig: Object
   },
   methods: {
-    appearanceGroupSettings(group) {
+    appearanceGroupSettings() {
       openAppearanceGroupSettings(this.groupConfig.name, {
         appearanceGroup: this.groupConfig,
         instance: state.themeInstance
-      })
+      });
 
       Fliplet.Studio.emit('track-event', {
         category: 'theme_manager_v2',
         action: 'open_section',
         label: this.groupConfig.name
-      })
+      });
     }
   }
-}
+};
 </script>

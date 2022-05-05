@@ -28,11 +28,11 @@
 
 <script>
 import { state, saveFieldData, getCurrentFieldValue,
-  getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store'
-import InheritDot from '../UI/InheritDot'
-import borderProperties from '../../libs/border-properties'
-import createClass from '../../libs/column-class'
-import bus from '../../libs/bus'
+  getFieldName, getFieldNameByContext, checkIsFieldChanged, sendCssToFrame } from '../../store';
+import InheritDot from '../UI/InheritDot';
+import borderProperties from '../../libs/border-properties';
+import createClass from '../../libs/column-class';
+import bus from '../../libs/bus';
 
 export default {
   data() {
@@ -49,7 +49,7 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
-    }
+    };
   },
   components: {
     InheritDot
@@ -60,68 +60,68 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        sendCssToFrame(newVal, this.data.fieldConfig)
+        sendCssToFrame(newVal, this.data.fieldConfig);
         this.$nextTick(() => {
-          this.prepareToSave()
-        })
+          this.prepareToSave();
+        });
       }
     }
   },
   computed: {
     columnClass() {
-      return createClass(this.data.fieldConfig.columns)
+      return createClass(this.data.fieldConfig.columns);
     }
   },
   methods: {
     setValues() {
-      this.valueToShow = this.value
+      this.valueToShow = this.value;
     },
     getValueToShow() {
-      return getCurrentFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig);
     },
     onValueChange(value) {
-      this.valueToShow = value
-      this.value = value
+      this.valueToShow = value;
+      this.value = value;
     },
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
         value: this.value
-      }
+      };
 
-      saveFieldData(data)
+      saveFieldData(data);
     },
     checkInheritance() {
-      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting;
     },
     reCheckProps() {
-      this.isInheriting = this.checkInheritance()
-      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
-      this.valueToShow = this.getValueToShow()
+      this.isInheriting = this.checkInheritance();
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
+      this.valueToShow = this.getValueToShow();
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true;
     },
     updateAll() {
-      const mobileFieldName = this.data.fieldConfig.name
+      const mobileFieldName = this.data.fieldConfig.name;
       const currentFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: state.componentContext.toLowerCase()
-      })
+      });
 
       // This function can only be run when the user is either
       // in the tablet or desktop context, so it is safe to assume
       // that if it's not one is the other
       const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
         ? 'desktop'
-        : 'tablet'
+        : 'tablet';
       const remainingFieldInheritance = remainingFieldContext === 'desktop'
         ? 'tablet'
-        : 'mobile'
+        : 'mobile';
       const remainingFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: remainingFieldContext
-      })
+      });
 
       const dataToSave = [
         {
@@ -136,15 +136,15 @@ export default {
           name: remainingFieldName,
           value: 'inherit-' + remainingFieldInheritance
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     updatePreviousContext() {
       const fieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: this.inheritingFrom
-      })
+      });
       const dataToSave = [
         {
           name: fieldName,
@@ -154,22 +154,22 @@ export default {
           name: getFieldName(this.data.fieldConfig),
           value: 'inherit-' + this.inheritingFrom
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     inheritValue(value) {
-      this.value = value
+      this.value = value;
     }
   },
   created() {
-    this.setValues()
+    this.setValues();
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckProps)
+    bus.$on('variables-computed', this.reCheckProps);
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps);
   }
-}
+};
 </script>

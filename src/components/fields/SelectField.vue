@@ -20,11 +20,11 @@
 
 <script>
 import { state, saveFieldData, getCurrentFieldValue,
-  getFieldName, getFieldNameByContext, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store'
-import InheritDot from '../UI/InheritDot'
-import selectProperties from '../../libs/select-properties'
-import createClass from '../../libs/column-class'
-import bus from '../../libs/bus'
+  getFieldName, getFieldNameByContext, checkLogic, checkIsFieldChanged, sendCssToFrame } from '../../store';
+import InheritDot from '../UI/InheritDot';
+import selectProperties from '../../libs/select-properties';
+import createClass from '../../libs/column-class';
+import bus from '../../libs/bus';
 
 export default {
   data() {
@@ -43,7 +43,7 @@ export default {
       showField: typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true
-    }
+    };
   },
   components: {
     InheritDot
@@ -54,55 +54,60 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal) {
-        checkLogic(this.data.fieldConfig, newVal)
-        sendCssToFrame(newVal, this.data.fieldConfig)
+        checkLogic(this.data.fieldConfig, newVal);
+        sendCssToFrame(newVal, this.data.fieldConfig);
 
         this.$nextTick(() => {
-          this.prepareToSave()
-        })
+          this.prepareToSave();
+        });
       }
     }
   },
   computed: {
     columnClass() {
-      return createClass(this.data.fieldConfig.columns)
+      return createClass(this.data.fieldConfig.columns);
     }
   },
   methods: {
     setValues() {
-      this.valueToShow = this.value
+      this.valueToShow = this.value;
     },
     getValueToShow() {
-      return this.parseValueToShow(getCurrentFieldValue(this.data.fieldConfig))
+      return this.parseValueToShow(getCurrentFieldValue(this.data.fieldConfig));
     },
     parseValueToShow(value) {
       const properties = this.data.fieldConfig.subtype
         ? selectProperties[this.data.fieldConfig.subtype]
-        : this.data.fieldConfig.properties
+        : this.data.fieldConfig.properties;
+
       // Checks if it is an object
       if (properties instanceof Object && properties.constructor === Object) {
-        return properties[value]
+        return properties[value];
       }
 
       // Checks if it is an Array
       if (Array.isArray(properties)) {
         const propIndex = _.findIndex(properties, (prop) => {
-          return prop === value
+          return prop === value;
         });
-        return properties[propIndex]
+
+        return properties[propIndex];
       }
     },
     parseProperties(properties) {
-      const propsArr = []
+      const propsArr = [];
 
       // Checks if it is an object
       if (properties instanceof Object && properties.constructor === Object) {
         for (var prop in properties) {
-          var newObj = {
-            name: properties[prop],
-            value: prop
+          if (Object.prototype.hasOwnProperty.call(properties, prop)) {
+            var newObj = {
+              name: properties[prop],
+              value: prop
+            };
+
+            propsArr.push(newObj);
           }
-          propsArr.push(newObj)
         }
       } else if (Array.isArray(properties)) {
         // Checks if it is an Array
@@ -110,61 +115,62 @@ export default {
           var newObj = {
             name: prop,
             value: prop
-          }
-          propsArr.push(newObj)
-        })
+          };
+
+          propsArr.push(newObj);
+        });
       }
 
-      return propsArr
+      return propsArr;
     },
     toggleDropdown(event) {
-      event.preventDefault()
-      event.stopPropagation()
-      $(this.$refs.dropdownToggle).dropdown('toggle')
+      event.preventDefault();
+      event.stopPropagation();
+      $(this.$refs.dropdownToggle).dropdown('toggle');
     },
     onValueChange(value) {
-      this.valueToShow = this.parseValueToShow(value)
-      this.value = value
+      this.valueToShow = this.parseValueToShow(value);
+      this.value = value;
     },
     checkInheritance() {
-      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting;
     },
     reCheckProps() {
-      this.isInheriting = this.checkInheritance()
-      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
-      this.valueToShow = this.getValueToShow()
+      this.isInheriting = this.checkInheritance();
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
+      this.valueToShow = this.getValueToShow();
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true;
     },
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
         value: this.value
-      }
+      };
 
-      saveFieldData(data)
+      saveFieldData(data);
     },
     updateAll() {
-      const mobileFieldName = this.data.fieldConfig.name
+      const mobileFieldName = this.data.fieldConfig.name;
       const currentFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: state.componentContext.toLowerCase()
-      })
+      });
 
       // This function can only be run when the user is either
       // in the tablet or desktop context, so it is safe to assume
       // that if it's not one is the other
       const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
         ? 'desktop'
-        : 'tablet'
+        : 'tablet';
       const remainingFieldInheritance = remainingFieldContext === 'desktop'
         ? 'tablet'
-        : 'mobile'
+        : 'mobile';
       const remainingFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: remainingFieldContext
-      })
+      });
 
       const dataToSave = [
         {
@@ -179,15 +185,15 @@ export default {
           name: remainingFieldName,
           value: 'inherit-' + remainingFieldInheritance
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     updatePreviousContext() {
       const fieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: this.inheritingFrom
-      })
+      });
       const dataToSave = [
         {
           name: fieldName,
@@ -197,24 +203,24 @@ export default {
           name: getFieldName(this.data.fieldConfig),
           value: 'inherit-' + this.inheritingFrom
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     inheritValue(value) {
-      this.value = value
+      this.value = value;
     }
   },
   created() {
-    this.setValues()
+    this.setValues();
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckProps)
+    bus.$on('variables-computed', this.reCheckProps);
 
-    checkLogic(this.data.fieldConfig, this.value)
+    checkLogic(this.data.fieldConfig, this.value);
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps);
   }
-}
+};
 </script>

@@ -7,7 +7,7 @@
           <label :for="'radio-' + prop + uuid" data-toggle="tooltip" data-placement="bottom" :title="getTooltip(prop)">
             <span :class="'check-icon check-display-' + prop"></span>
           </label>
-        </div>        
+        </div>
       </div>
       <inherit-dot v-if="!isInheriting" @update-all="updateAll" @update-previous-context="updatePreviousContext" @trigger-inherit="inheritValue" :move-left="true" :inheriting-from="inheritingFrom"></inherit-dot>
     </div>
@@ -16,12 +16,12 @@
 
 <script>
 import { state, getCurrentFieldValue, getFieldName, getFieldNameByContext,
-  saveFieldData, checkIsFieldChanged, checkLogic, sendCssToFrame } from '../../store'
-import InheritDot from '../UI/InheritDot'
-import displayProperties from '../../libs/display-properties'
-import { tooltips } from '../../libs/tooltips'
-import createClass from '../../libs/column-class'
-import bus from '../../libs/bus'
+  saveFieldData, checkIsFieldChanged, checkLogic, sendCssToFrame } from '../../store';
+import InheritDot from '../UI/InheritDot';
+import displayProperties from '../../libs/display-properties';
+import { tooltips } from '../../libs/tooltips';
+import createClass from '../../libs/column-class';
+import bus from '../../libs/bus';
 
 export default {
   data() {
@@ -37,7 +37,7 @@ export default {
         : true,
       fromReset: false,
       uuid: Fliplet.guid()
-    }
+    };
   },
   components: {
     InheritDot
@@ -48,90 +48,87 @@ export default {
   watch: {
     value(newVal, oldVal) {
       if (newVal !== oldVal && !this.fromReset) {
-        checkLogic(this.data.fieldConfig, newVal)
-        sendCssToFrame(newVal, this.data.fieldConfig)
+        checkLogic(this.data.fieldConfig, newVal);
+        sendCssToFrame(newVal, this.data.fieldConfig);
 
         this.$nextTick(() => {
-          this.prepareToSave()
-        })
-        return
+          this.prepareToSave();
+        });
+
+        return;
       }
 
-      this.fromReset = false
+      this.fromReset = false;
     }
   },
   computed: {
     columnClass() {
-      return createClass(this.data.fieldConfig.columns)
+      return createClass(this.data.fieldConfig.columns);
     }
   },
   methods: {
     getTooltip(prop) {
-      switch(prop) {
+      switch (prop) {
         case 'none':
-          return 'Hide'
-          break;
+          return 'Hide';
         case 'block':
-          return 'No row sharing'
-          break;
+          return 'No row sharing';
         case 'inline-block':
-          return 'Row sharing'
-          break;
+          return 'Row sharing';
         case 'flex':
-          return 'Flexible box'
-          break;
+          return 'Flexible box';
         default:
-          return 'No row sharing'
+          return 'No row sharing';
       }
     },
     getValue() {
-      return getCurrentFieldValue(this.data.fieldConfig)
+      return getCurrentFieldValue(this.data.fieldConfig);
     },
     prepareToSave(data) {
       data = data || {
         name: getFieldName(this.data.fieldConfig),
-        value: this.value 
-      }
+        value: this.value
+      };
 
-      saveFieldData(data)
+      saveFieldData(data);
     },
     checkInheritance() {
-      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting
+      return state.componentContext === 'Mobile' ? true : this.data.fieldConfig.inheriting;
     },
     reCheckProps() {
-      this.isInheriting = this.checkInheritance()
-      this.isChanged = checkIsFieldChanged(this.data.fieldConfig)
+      this.isInheriting = this.checkInheritance();
+      this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
 
       if (this.fromReset) {
-        this.value = this.getValue()
-        checkLogic(this.data.fieldConfig, this.value)
-        sendCssToFrame(this.value, this.data.fieldConfig)
+        this.value = this.getValue();
+        checkLogic(this.data.fieldConfig, this.value);
+        sendCssToFrame(this.value, this.data.fieldConfig);
       }
 
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
-        : true
+        : true;
     },
     updateAll() {
-      const mobileFieldName = this.data.fieldConfig.name
+      const mobileFieldName = this.data.fieldConfig.name;
       const currentFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: state.componentContext.toLowerCase()
-      })
+      });
 
       // This function can only be run when the user is either
       // in the tablet or desktop context, so it is safe to assume
       // that if it's not one is the other
       const remainingFieldContext = state.componentContext.toLowerCase() === 'tablet'
         ? 'desktop'
-        : 'tablet'
+        : 'tablet';
       const remainingFieldInheritance = remainingFieldContext === 'desktop'
         ? 'tablet'
-        : 'mobile'
+        : 'mobile';
       const remainingFieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: remainingFieldContext
-      })
+      });
 
       const dataToSave = [
         {
@@ -146,15 +143,15 @@ export default {
           name: remainingFieldName,
           value: 'inherit-' + remainingFieldInheritance
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     updatePreviousContext() {
       const fieldName = getFieldNameByContext({
         field: this.data.fieldConfig,
         context: this.inheritingFrom
-      })
+      });
       const dataToSave = [
         {
           name: fieldName,
@@ -164,25 +161,25 @@ export default {
           name: getFieldName(this.data.fieldConfig),
           value: 'inherit-' + this.inheritingFrom
         }
-      ]
+      ];
 
-      this.prepareToSave(dataToSave)
+      this.prepareToSave(dataToSave);
     },
     inheritValue(value) {
-      this.value = value
+      this.value = value;
       this.$nextTick(() => {
-        this.fromReset = true
-      })
+        this.fromReset = true;
+      });
     }
   },
   mounted() {
-    bus.$on('variables-computed', this.reCheckProps)
-    checkLogic(this.data.fieldConfig, this.value)
+    bus.$on('variables-computed', this.reCheckProps);
+    checkLogic(this.data.fieldConfig, this.value);
     // Start Bootstrap tooltips
-    tooltips()
+    tooltips();
   },
   destroyed() {
-    bus.$off('variables-computed', this.reCheckProps)
+    bus.$off('variables-computed', this.reCheckProps);
   }
-}
+};
 </script>
