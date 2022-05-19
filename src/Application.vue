@@ -38,7 +38,7 @@ import { state, setComponentContext, setActiveTab, migrateOldVariables,
   setThemeInstance, setActiveTheme, setWidgetMode, setWidgetId, setWidgetUUID,
   setWebFonts, setCustomFonts, setSavedFields, handleWidgetData, setParentFlex,
   resetStylesToTheme, prepareSettingsForTheme, clearDataToSave, appSupportsContainer,
-  toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings, setInstanceValue } from './store';
+  toggleSavingStatus, openAppearanceGroupSettings, closeAppearanceGroupSettings, setInstanceValue, getBackgroundValues } from './store';
 import WidgetHeader from './components/UI/WidgetHeader';
 import ThemeSelection from './components/UI/ThemeSelection';
 import SettingsButtons from './components/UI/SettingsButtons';
@@ -385,23 +385,19 @@ export default {
         this.dataToSave.widgetInstances = themeSavedWidgetInstances;
       }
 
+      if (state.widgetId) {
+        _.forEach(this.dataToSave.widgetInstances, (item) => {
+          if (item.id === state.widgetId) {
+            item.values = getBackgroundValues(item.values);
 
-      switch (this.dataToSave.values.containerBackgroundType) {
-        case 'Color':
-          delete this.dataToSave.values.containerBackgroundImage;
-          break;
-        case 'Image':
-          delete this.dataToSave.values.containerBackgroundColor;
-          break;
-        case 'None':
-          delete this.dataToSave.values.containerBackgroundColor;
-          delete this.dataToSave.values.containerBackgroundImage;
-          break;
-        default:
-          break;
+            return;
+          }
+        });
+      } else {
+        this.dataToSave.values = getBackgroundValues(this.dataToSave);
       }
 
-      setInstanceValue(this.dataToSave.values);
+      setInstanceValue(this.dataToSave);
       this.debouncedSave();
     },
     updateInstance(dataObj) {
