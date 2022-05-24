@@ -112,7 +112,7 @@ export function getBackgroundValues(values) {
       break;
   }
 
-  return values;
+  return _.clone(values);
 }
 
 /**
