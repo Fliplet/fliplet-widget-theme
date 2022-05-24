@@ -393,10 +393,9 @@ export default {
             return;
           }
         });
-      } else {
-        this.dataToSave.values = getBackgroundValues(this.dataToSave);
       }
 
+      this.dataToSave.values = getBackgroundValues(this.dataToSave.values);
       setInstanceValue(this.dataToSave);
       this.debouncedSave();
     },
