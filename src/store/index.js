@@ -85,7 +85,34 @@ export function setSavedFields(data) {
     }
   });
 
+  _.forEach(state.savedFields.widgetInstances, function(item, index) {
+    if (item.id === state.widgetId) {
+      state.savedFields.widgetInstances[index].values = getBackgroundValues(state.savedFields.widgetInstances[index].values);
+
+      return;
+    }
+  });
+
   bus.$emit('saved-fields-set');
+}
+
+export function getBackgroundValues(values) {
+  switch (values.containerBackgroundType) {
+    case 'Color':
+      delete values.containerBackgroundImage;
+      break;
+    case 'Image':
+      delete values.containerBackgroundColor;
+      break;
+    case 'None':
+      delete values.containerBackgroundColor;
+      delete values.containerBackgroundImage;
+      break;
+    default:
+      break;
+  }
+
+  return values;
 }
 
 /**
@@ -569,8 +596,8 @@ export function checkLogic(fieldConfig, value) {
   }
 }
 
-export function setInstanceValue(values) {
-  state.themeInstance.settings.values = values;
+export function setInstanceValue(settings) {
+  state.themeInstance.settings = settings;
 }
 
 /**
