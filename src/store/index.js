@@ -597,7 +597,7 @@ export function checkLogic(fieldConfig, value) {
 }
 
 export function setInstanceValue(settings) {
-  state.themeInstance.settings = settings;
+  state.themeInstance.settings = _.cloneDeep(settings);
 }
 
 /**
