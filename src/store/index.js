@@ -191,6 +191,9 @@ export function setThemeInstance(options) {
 
   // If migration done save values
   if (Object.keys(migration.migrated).length) {
+    // Prevent pre-migration data from being saved again
+    state.savedFields.values = migration.data;
+    // Update instance settings
     state.themeInstance.settings.values = migration.data;
     bus.$emit('values-migrated');
   }
@@ -875,12 +878,12 @@ export function migrateOldVariables(data) {
 
         keepOriginalVariable = migrationMapping[key].none === key || migrationMapping[key].keep;
       } else {
-        let borderArray;
+        let values;
 
         if (value.indexOf('rgb') > -1) {
-          borderArray = value.match(/\w+(\(.*?\))?/g);
+          values = value.match(/\w+(\(.*?\))?/g);
         } else {
-          borderArray = value.split(' ');
+          values = value.split(' ');
         }
 
         migrationMapping[key].values.forEach((val, index) => {
@@ -888,11 +891,11 @@ export function migrateOldVariables(data) {
             return;
           }
 
-          if (data[val] !== borderArray[index]) {
-            migrated[val] = borderArray[index];
+          if (data[val] !== values[index]) {
+            migrated[val] = values[index];
           }
 
-          if (data[migrationMapping[key].none] !== 'all') {
+          if (migrationMapping[key].none && data[migrationMapping[key].none] !== 'all') {
             migrated[migrationMapping[key].none] = 'all';
           }
 
