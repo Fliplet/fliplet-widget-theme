@@ -1,5 +1,5 @@
 import deviceTypes from '../libs/device-types';
-import migrationObject from '../libs/migration-object';
+import migrationMapping from '../libs/migration-object';
 import bus from '../libs/bus';
 
 const DEFAULT_INTERACT_VERSION = '2.0';
@@ -190,7 +190,10 @@ export function setThemeInstance(options) {
   const migration = migrateOldVariables(state.themeInstance.settings.values);
 
   // If migration done save values
-  if (migration.migrated) {
+  if (Object.keys(migration.migrated).length) {
+    // Prevent pre-migration data from being saved again
+    state.savedFields.values = migration.data;
+    // Update instance settings
     state.themeInstance.settings.values = migration.data;
     bus.$emit('values-migrated');
   }
@@ -830,72 +833,84 @@ export function sendCssToFrame(value, currentField) {
 
 /**
 * Function to handle migration of old variables to new variables
-* @param {String} The type of migration needed
-* @param {Object} Saved theme values
+* @param {Object} data - Saved theme values
 * @return {Object} Final theme values
 */
-
 export function migrateOldVariables(data) {
-  let migrated = [];
+  const migrated = {};
 
   data = _.cloneDeep(data);
 
   _.forIn(data, (value, key) => {
-    let preventDelete = false;
-
-    if (!migrationObject[key]) {
+    if (!migrationMapping[key]) {
       return;
     }
 
-    if (typeof migrationObject[key] === 'string') {
-      data[migrationObject[key]] = value;
-      migrated.push(true);
+    if (typeof migrationMapping[key] === 'string') {
+      if (data[migrationMapping[key]] !== value) {
+        migrated[migrationMapping[key]] = value;
+      }
+
       delete data[key];
     }
 
-    if (_.isArray(migrationObject[key])) {
-      migrationObject[key].forEach((val) => {
-        data[val] = value;
-      });
-      migrated.push(true);
-      delete data[key];
-    }
-
-    if (_.isPlainObject(migrationObject[key])) {
-      if (value === 'none') {
-        data[migrationObject[key].none] = value;
-        preventDelete = migrationObject[key].none === key || migrationObject[key].keep;
-      } else {
-        let borderArray;
-
-        if (value.indexOf('rgb') > -1) {
-          borderArray = value.match(/\w+(\(.*?\))?/g);
-        } else {
-          borderArray = value.split(' ');
+    if (_.isArray(migrationMapping[key])) {
+      migrationMapping[key].forEach((val) => {
+        if (data[val] === value) {
+          return;
         }
 
-        migrationObject[key].values.forEach((val, index) => {
+        migrated[val] = value;
+
+        return true;
+      });
+
+      delete data[key];
+    }
+
+    if (_.isPlainObject(migrationMapping[key])) {
+      if (value === 'none') {
+        if (data[migrationMapping[key].none] !== value) {
+          migrated[migrationMapping[key].none] = value;
+        }
+      } else {
+        let values;
+
+        if (value.indexOf('rgb') > -1) {
+          values = value.match(/\w+(\(.*?\))?/g);
+        } else {
+          values = value.split(' ');
+        }
+
+        if (typeof migrationMapping[key].values === 'undefined'
+          && typeof migrationMapping[key].value === 'string') {
+          migrationMapping[key].values = [migrationMapping[key].value];
+        }
+
+        migrationMapping[key].values.forEach((val, index) => {
           if (!val) {
             return;
           }
 
-          data[val] = borderArray[index];
-          data[migrationObject[key].none] = 'all';
-          preventDelete = val === key || migrationObject[key].keep;
+          if (data[val] !== values[index]) {
+            migrated[val] = values[index];
+          }
+
+          if (migrationMapping[key].none && data[migrationMapping[key].none] !== 'all') {
+            migrated[migrationMapping[key].none] = 'all';
+          }
         });
       }
 
-      migrated.push(!preventDelete);
-
-      if (!preventDelete) {
+      if (!migrationMapping[key].keep) {
         delete data[key];
       }
     }
   });
 
   return {
-    migrated: migrated.indexOf(true) > -1,
-    data: data
+    migrated: migrated,
+    data: _.assign({}, data, migrated)
   };
 }
 
