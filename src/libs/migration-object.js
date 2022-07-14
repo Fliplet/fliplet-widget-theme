@@ -7,7 +7,6 @@ export default {
   bodyFontFamily: 'quickTextFontFamily',
   bodyBackground: 'quickBackground',
   bodyTextColor: 'quickTextColor',
-  bodyTextColor: 'quickTextColor',
   headingOneFont: 'headingOneFontFamily',
   headingTwoFont: 'headingTwoFontFamily',
   headingThreeFont: 'headingThreeFontFamily',
