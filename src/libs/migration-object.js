@@ -5,14 +5,8 @@
 
 export default {
   bodyFontFamily: 'quickTextFontFamily',
-  bodyBackground: {
-    keep: true,
-    value: 'quickBackground'
-  },
-  bodyTextColor: {
-    keep: true,
-    value: 'quickTextColor'
-  },
+  bodyBackground: 'quickBackground',
+  bodyTextColor: 'quickTextColor',
   bodyTextColor: 'quickTextColor',
   headingOneFont: 'headingOneFontFamily',
   headingTwoFont: 'headingTwoFontFamily',
