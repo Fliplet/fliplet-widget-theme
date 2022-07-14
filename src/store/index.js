@@ -842,8 +842,6 @@ export function migrateOldVariables(data) {
   data = _.cloneDeep(data);
 
   _.forIn(data, (value, key) => {
-    let keepOriginalVariable = false;
-
     if (!migrationMapping[key]) {
       return;
     }
@@ -875,8 +873,6 @@ export function migrateOldVariables(data) {
         if (data[migrationMapping[key].none] !== value) {
           migrated[migrationMapping[key].none] = value;
         }
-
-        keepOriginalVariable = migrationMapping[key].none === key || migrationMapping[key].keep;
       } else {
         let values;
 
@@ -884,6 +880,11 @@ export function migrateOldVariables(data) {
           values = value.match(/\w+(\(.*?\))?/g);
         } else {
           values = value.split(' ');
+        }
+
+        if (typeof migrationMapping[key].values === 'undefined'
+          && typeof migrationMapping[key].value === 'string') {
+          migrationMapping[key].values = [migrationMapping[key].value];
         }
 
         migrationMapping[key].values.forEach((val, index) => {
@@ -898,12 +899,10 @@ export function migrateOldVariables(data) {
           if (migrationMapping[key].none && data[migrationMapping[key].none] !== 'all') {
             migrated[migrationMapping[key].none] = 'all';
           }
-
-          keepOriginalVariable = val === key || migrationMapping[key].keep;
         });
       }
 
-      if (!keepOriginalVariable) {
+      if (!migrationMapping[key].keep) {
         delete data[key];
       }
     }
