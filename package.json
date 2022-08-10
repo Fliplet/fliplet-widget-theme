@@ -9,6 +9,7 @@
     "build": "gulp build"
   },
   "dependencies": {
+    "codemirror": "^5.48.0",
     "codemirror-colorpicker": "^1.9.66",
     "core-js": "^3.1.4",
     "js-cookie": "^2.2.0",
