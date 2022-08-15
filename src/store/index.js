@@ -903,11 +903,11 @@ export function migrateOldVariables(data) {
           if (_.isNil(data[k])) {
             migrated[k] = values[index];
           }
-
-          if (migrationMapping[key].none && data[migrationMapping[key].none] !== 'all') {
-            migrated[migrationMapping[key].none] = 'all';
-          }
         });
+
+        if (migrationMapping[key].none && data[migrationMapping[key].none] !== 'all') {
+          migrated[migrationMapping[key].none] = 'all';
+        }
       }
 
       if (!migrationMapping[key].keep) {
