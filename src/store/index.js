@@ -583,7 +583,7 @@ export function getCurrentFieldValue(field) {
 /**
 * Gets the logic object of the field
 * @param {Object} Object of the field JSON configuration
-* @param {String} String of the value choosen by the user
+* @param {String} String of the value chosen by the user
 * @return {Object} Return by "bus.$emit" the object containing the logic based on the value selected
 */
 
@@ -606,7 +606,7 @@ export function setInstanceValue(settings) {
 /**
 * Gets the logic object of the margin alignment field
 * @param {Object} Object of the field JSON configuration
-* @param {String} String of the value choosen by the user
+* @param {String} String of the value chosen by the user
 * @param {Boolean} Flag to determine if function is called from loading
 * @return {Object} Return by "bus.$emit" the object containing the logic based on the value selected
 */
@@ -842,35 +842,41 @@ export function migrateOldVariables(data) {
   data = _.cloneDeep(data);
 
   _.forIn(data, (value, key) => {
+    // Key doesn't need migrating
     if (!migrationMapping[key]) {
       return;
     }
 
+    // Key needs to map to another key
     if (typeof migrationMapping[key] === 'string') {
-      if (data[migrationMapping[key]] !== value) {
+      // Migrate value if the saved data doesn't already have a value for the key
+      if (_.isNil(data[migrationMapping[key]])) {
         migrated[migrationMapping[key]] = value;
       }
 
       delete data[key];
     }
 
+    // Key needs to map to a list of keys
     if (_.isArray(migrationMapping[key])) {
-      migrationMapping[key].forEach((val) => {
-        if (data[val] === value) {
+      migrationMapping[key].forEach((k) => {
+        // Saved data already has a value for the key
+        if (!_.isNil(data[k])) {
           return;
         }
 
-        migrated[val] = value;
-
-        return true;
+        migrated[k] = value;
       });
 
       delete data[key];
     }
 
+    // Key needs to be mapped based on an object configuration
     if (_.isPlainObject(migrationMapping[key])) {
+      // Mapping behavior based on the value being "none"
       if (value === 'none') {
-        if (data[migrationMapping[key].none] !== value) {
+        // Only map the value if the saved data doesn't already have a value for the mapped key
+        if (_.isNil(data[migrationMapping[key].none])) {
           migrated[migrationMapping[key].none] = value;
         }
       } else {
@@ -882,18 +888,20 @@ export function migrateOldVariables(data) {
           values = value.split(' ');
         }
 
+        // Migration is mapping to a single value, so standardize to use a "values" array instead
         if (typeof migrationMapping[key].values === 'undefined'
           && typeof migrationMapping[key].value === 'string') {
           migrationMapping[key].values = [migrationMapping[key].value];
         }
 
-        migrationMapping[key].values.forEach((val, index) => {
-          if (!val) {
+        migrationMapping[key].values.forEach((k, index) => {
+          if (!k) {
             return;
           }
 
-          if (data[val] !== values[index]) {
-            migrated[val] = values[index];
+          // Only map the value if the saved data doesn't already have a value for the mapped key
+          if (_.isNil(data[k])) {
+            migrated[k] = values[index];
           }
 
           if (migrationMapping[key].none && data[migrationMapping[key].none] !== 'all') {
