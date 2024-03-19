@@ -312,27 +312,22 @@ export default {
         // (Widget mode is on when provider is initialized from a widget instance)
         if (state.widgetMode) {
           let widget = _.find(this.savedFields.widgetInstances, { id: state.widgetId });
-          const component = state.widgetData.widgetLayout
-            ? widgetsMap[`${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`]
-            : state.widgetData.component || widgetsMap[state.widgetData.widgetPackage];
 
           // If it is, check if settings of the same widget were previously saved
           if (widget) {
             widget.values[data.name] = data.value;
 
-            if (!widget.component) {
-              widget.component = component;
-            }
-
             // For existing settings if UUID doesn't exist
             if (!widget.uuid) {
-              widget.uuid = state.widgetUUID;
+              state.widgetUUID;
             }
           } else {
             widget = {
               id: state.widgetId,
               uuid: state.widgetUUID,
-              component: component,
+              component: state.widgetData.widgetLayout
+                ? widgetsMap[`${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`]
+                : widgetsMap[state.widgetData.widgetPackage],
               values: {}
             };
             widget.values[data.name] = data.value;
