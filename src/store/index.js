@@ -1525,6 +1525,12 @@ function checkFieldValue(value, field) {
     return;
   }
 
+  if (value === 'auto' && field.subtype && field.subtype === 'inlineMargin') {
+    value = field.default;
+
+    return checkFieldValue(value, field);
+  }
+
   let foundValue;
 
   // Checks if the value matches a variable name

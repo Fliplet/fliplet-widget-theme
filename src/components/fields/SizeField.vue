@@ -37,7 +37,6 @@ export default {
     return {
       state,
       property: undefined,
-      properties: this.getProperties(),
       name: getFieldName(this.data.fieldConfig),
       value: this.parseValue(getCurrentFieldValue(this.data.fieldConfig)),
       valueToShow: undefined,
@@ -90,6 +89,9 @@ export default {
   computed: {
     columnClass() {
       return createClass(this.data.fieldConfig.columns);
+    },
+    properties() {
+      return this.getProperties();
     }
   },
   methods: {
