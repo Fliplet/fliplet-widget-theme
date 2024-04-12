@@ -396,6 +396,18 @@ export default {
             Vue.set(variable.fields, idx, field);
             Vue.set(this.variables, index, variable);
           }
+
+          if (logic.hideMarginAuto && logic.hideMarginAuto.indexOf(field.name) >= 0) {
+            field.subtype = 'inlineMargin';
+            Vue.set(variable.fields, idx, field);
+            Vue.set(this.variables, index, variable);
+          }
+
+          if (logic.showMarginAuto && logic.showMarginAuto.indexOf(field.name) >= 0) {
+            field.subtype = 'margin';
+            Vue.set(variable.fields, idx, field);
+            Vue.set(this.variables, index, variable);
+          }
         });
       });
 
