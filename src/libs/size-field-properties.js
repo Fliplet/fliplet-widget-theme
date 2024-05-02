@@ -2,10 +2,11 @@ const sizeProperties = {
   'withoutAuto': ['px', 'em', 'rem', '%'],
   'lineHeight': ['x', 'px', 'em', 'rem', '%'],
   'withAuto': ['px', 'em', 'rem', '%', 'auto', { name: 'none', value: 'initial' }],
+  'withoutAutoAndWithNone': ['px', 'em', 'rem', '%', { name: 'none', value: 'initial' }],
   'withNone': ['px', 'em', 'rem', '%', 'none'],
   'full': ['px', 'em', 'rem', '%', 'vw', 'vh', 'auto'],
   'zIndex': ['auto', 'index']
-}
+};
 
 const subtypes = {
   'all-props': 'full',
@@ -20,12 +21,13 @@ const subtypes = {
   'border': 'withoutAuto',
   'shadow': 'withoutAuto',
   'line-height': 'lineHeight',
-  'z-index': 'zIndex'
-}
+  'z-index': 'zIndex',
+  'inlineMargin': 'withoutAutoAndWithNone'
+};
 
 const propertiesMap = {
   properties: sizeProperties,
   types: subtypes
-}
+};
 
-export default propertiesMap
+export default propertiesMap;
