@@ -28,6 +28,7 @@ export default {
       state,
       name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
+      originalValue: getCurrentFieldValue(this.data.fieldConfig),
       valueToShow: undefined,
       label: this.data.fieldConfig.label,
       colorpicker: undefined,
@@ -43,7 +44,6 @@ export default {
         name: undefined,
         value: undefined
       },
-      debouncedSave: _.debounce(this.saveColor, 250),
       colorSets: [
         {
           name: 'Fliplet',
@@ -92,13 +92,15 @@ export default {
         this.dataToSave.value = data;
       }
 
-      this.debouncedSave();
+      // Only save field data for change tracking, don't trigger auto-save
+      this.saveColor();
     },
     saveColor() {
       saveFieldData(this.dataToSave);
     },
     setValues() {
       this.valueToShow = this.value;
+      this.originalValue = this.value;
     },
     getValueToShow() {
       return getCurrentFieldValue(this.data.fieldConfig);
@@ -200,7 +202,7 @@ export default {
       this.isValid = true;
 
       // When a color format is 'hex' library won't let us save the incorrect value
-      if ( colorFormat === 'hex' ) {
+      if (colorFormat === 'hex') {
         return;
       }
 
@@ -253,7 +255,14 @@ export default {
     reCheckProps() {
       this.isInheriting = this.checkInheritance();
       this.isChanged = checkIsFieldChanged(this.data.fieldConfig);
-      this.valueToShow = this.getValueToShow();
+
+      // When external changes occur, update the current value and reset the original value
+      const currentValue = getCurrentFieldValue(this.data.fieldConfig);
+
+      this.value = currentValue;
+      this.valueToShow = currentValue;
+      this.originalValue = currentValue; // Update original value when field recomputes
+
       this.showField = typeof this.data.fieldConfig.showField !== 'undefined'
         ? this.data.fieldConfig.showField
         : true;
@@ -317,6 +326,16 @@ export default {
     inheritValue(value) {
       this.value = value;
       this.prepareToSave(this.value);
+    },
+    resetToOriginal() {
+      // Recalculate the current field value from the store (like initialization)
+      this.value = getCurrentFieldValue(this.data.fieldConfig);
+      this.valueToShow = this.value;
+      this.originalValue = this.value;
+      this.isChanged = false;
+
+      // Send the reset value to the frame for preview
+      sendCssToFrame(this.value, this.data.fieldConfig);
     }
   },
   created() {
@@ -324,12 +343,14 @@ export default {
   },
   mounted() {
     bus.$on('variables-computed', this.reCheckProps);
+    bus.$on('reset-all-fields', this.resetToOriginal);
     this.colorpicker = new ColorPicker({
       colorSets: this.colorSets
     });
   },
   destroyed() {
     bus.$off('variables-computed', this.reCheckProps);
+    bus.$off('reset-all-fields', this.resetToOriginal);
   }
 };
 </script>

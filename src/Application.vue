@@ -70,7 +70,12 @@ export default {
       tabs: deviceTypes,
       error: undefined,
       dataToSave: {},
-      debouncedSave: _.debounce(this.save, 500),
+      hasUnsavedChanges: false,
+      originalDataToSave: {},
+      originalSavedFields: {
+        values: [],
+        widgetInstances: []
+      },
       oldThemeSettings: undefined,
       appSupportsContainers: appSupportsContainer()
     };
@@ -208,6 +213,13 @@ export default {
         promise = this.save();
       }
 
+      // Store original data for change detection
+      this.originalDataToSave = _.cloneDeep(this.dataToSave);
+      this.originalSavedFields = _.cloneDeep(this.savedFields);
+      this.hasUnsavedChanges = false;
+      Fliplet.Studio.emit('widget-save-disable');
+      Fliplet.Studio.emit('widget-cancel-disable');
+
       promise
         .then(() => {
           // Check if there's a tab to be open
@@ -300,6 +312,13 @@ export default {
           this.error = Fliplet.parseError(err);
           console.error(err);
         });
+
+      // Store original data for change detection
+      this.originalDataToSave = _.cloneDeep(this.dataToSave);
+      this.originalSavedFields = _.cloneDeep(this.savedFields);
+      this.hasUnsavedChanges = false;
+      Fliplet.Studio.emit('widget-save-disable');
+      Fliplet.Studio.emit('widget-cancel-disable');
     },
     reloadPagePreview() {
       return Fliplet.Studio.emit('reload-page-preview');
@@ -402,7 +421,26 @@ export default {
 
       this.dataToSave.values = getBackgroundValues(this.dataToSave.values);
       setInstanceValue(this.dataToSave);
-      this.debouncedSave();
+
+      // Check if there are changes and enable/disable save button accordingly
+      this.checkForChanges();
+    },
+    checkForChanges() {
+      // Compare current dataToSave with original to detect changes
+      const hasChanges = !_.isEqual(this.dataToSave, this.originalDataToSave);
+
+      if (hasChanges !== this.hasUnsavedChanges) {
+        this.hasUnsavedChanges = hasChanges;
+
+        // Emit events to enable/disable both save and cancel buttons
+        if (hasChanges) {
+          Fliplet.Studio.emit('widget-save-enable');
+          Fliplet.Studio.emit('widget-cancel-enable');
+        } else {
+          Fliplet.Studio.emit('widget-save-disable');
+          Fliplet.Studio.emit('widget-cancel-disable');
+        }
+      }
     },
     updateInstance(dataObj) {
       dataObj = dataObj || {};
@@ -416,7 +454,6 @@ export default {
       toggleSavingStatus(true);
 
       // Event to flag that settings will be saved
-
       Fliplet.Studio.emit('page-preview-send-event', {
         type: 'savingNewStyles',
         data: this.dataToSave,
@@ -435,6 +472,12 @@ export default {
             });
           }
 
+          // Update original data to reflect saved state
+          this.originalDataToSave = _.cloneDeep(this.dataToSave);
+          this.hasUnsavedChanges = false;
+          Fliplet.Studio.emit('widget-save-disable');
+          Fliplet.Studio.emit('widget-cancel-disable');
+
           // Editing field flag is turned off
           Fliplet.Studio.emit('editing-theme-field', {
             value: false
@@ -446,6 +489,28 @@ export default {
           this.error = Fliplet.parseError(err);
           console.error(err);
         });
+    },
+    cancelChanges() {
+      // Reset to original saved state
+      this.dataToSave = _.cloneDeep(this.originalDataToSave);
+      this.savedFields = _.cloneDeep(this.originalSavedFields);
+      this.hasUnsavedChanges = false;
+
+      // Reset saved fields to original state in the store
+      setSavedFields(this.savedFields);
+      setInstanceValue(this.originalDataToSave);
+
+      // Emit events to disable both buttons
+      Fliplet.Studio.emit('widget-save-disable');
+      Fliplet.Studio.emit('widget-cancel-disable');
+
+      // Emit bus event to notify all field components to reset their values
+      bus.$emit('reset-all-fields');
+
+      // Send event to reload CSS asset in preview
+      Fliplet.Studio.emit('page-preview-send-event', {
+        type: 'reloadCssAsset'
+      });
     },
     reloadCustomFonts() {
       // Function to reload the custom fonts (Fonts added by the user)
@@ -552,13 +617,21 @@ export default {
     bus.$on('values-migrated', this.prepareToSave);
     bus.$on('reload-page-preview', this.reloadPagePreview);
 
-    // Save Request from Image Picker
+    // Save and Cancel Request handlers
     Fliplet.Widget.onSaveRequest(() => {
       if (window.filePickerProvider) {
         window.filePickerProvider.forwardSaveRequest();
 
         return;
       }
+
+      // Perform the actual save
+      this.save();
+    });
+
+    Fliplet.Widget.onCancelRequest(() => {
+      // Handle cancel request
+      this.cancelChanges();
     });
 
     Fliplet.Studio.onMessage((eventData) => {

@@ -10,6 +10,7 @@ Run for local development with the [`fliplet-cli`](https://github.com/Fliplet/fl
 $ git clone https://github.com/Fliplet/fliplet-widget-theme.git
 $ cd fliplet-widget-theme
 
+$ npm install
 $ npm run watch
 $ fliplet run
 ```
