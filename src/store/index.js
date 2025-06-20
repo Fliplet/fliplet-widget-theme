@@ -1,6 +1,7 @@
 import deviceTypes from '../libs/device-types';
 import migrationMapping from '../libs/migration-object';
 import bus from '../libs/bus';
+import { processThemeConfiguration } from '../libs/theme-processor';
 
 const DEFAULT_INTERACT_VERSION = '2.0';
 
@@ -212,7 +213,11 @@ export function setThemeInstance(options) {
 */
 
 export function setActiveTheme(theme) {
-  state.activeTheme = theme;
+  // Process the theme configuration to set default values
+  const processedTheme = processThemeConfiguration(theme);
+  
+  // Save the processed theme to state
+  state.activeTheme = processedTheme;
 }
 
 /**
