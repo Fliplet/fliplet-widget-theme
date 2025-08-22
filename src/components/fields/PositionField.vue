@@ -30,7 +30,6 @@ export default {
       state,
       name: getFieldName(this.data.fieldConfig),
       value: getCurrentFieldValue(this.data.fieldConfig),
-      properties: positionProperties,
       label: this.data.fieldConfig.label,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
@@ -67,6 +66,15 @@ export default {
   computed: {
     columnClass() {
       return createClass(this.data.fieldConfig.columns);
+    },
+    properties() {
+      const parentNode = state.widgetData.parentNode;
+
+      if (parentNode === 'FL-LIST-REPEATER-ROW') {
+        return ['relative'];
+      }
+
+      return positionProperties;
     }
   },
   methods: {
