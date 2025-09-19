@@ -32,6 +32,8 @@ export default {
       label: this.data.fieldConfig.label,
       colorpicker: undefined,
       widgetId: Fliplet.Widget.getDefaultId(),
+      pickerVisible: false,
+      blockPickerOpening: false,
       isValid: true,
       isInheriting: this.checkInheritance(),
       inheritingFrom: this.data.fieldConfig.inheritingFrom,
@@ -106,11 +108,25 @@ export default {
     toggleColorPicker() {
       const target = this.$refs.colorSquare.getBoundingClientRect();
 
+      if (this.blockPickerOpening) {
+        this.blockPickerOpening = false;
+
+        return;
+      }
+
+      if (this.pickerVisible) {
+        this.hidePicker();
+
+        return;
+      }
+
+      this.pickerVisible = true;
+
       this.colorpicker.show({
         left: target.left,
         top: target.bottom,
         hideDelay: 300000
-      }, this.valueToShow, this.onColorChange, this.onColorChanged);
+      }, this.valueToShow, this.onColorChange, this.onHide, this.onColorChanged);
 
 
       this.attachOnBlurEvent();
@@ -119,6 +135,29 @@ export default {
       Fliplet.Studio.emit('editing-theme-field', {
         value: true
       });
+    },
+    hidePicker() {
+      if (!this.pickerVisible) {
+        return;
+      }
+
+      this.pickerVisible = false;
+      this.colorpicker.hide();
+    },
+    onHide(color) {
+      if (!this.pickerVisible) {
+        return; // Already hidden
+      }
+
+      this.pickerVisible = false;
+      this.blockPickerOpening = true;
+      this.colorpicker.hide();
+      this.onColorChanged(color || this.value);
+
+      // Reset after a short delay
+      setTimeout(() => {
+        this.blockPickerOpening = false;
+      }, 150);
     },
     onColorChanged(color) {
       if (!this.isValid) {
