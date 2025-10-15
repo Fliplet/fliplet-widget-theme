@@ -46,7 +46,7 @@ export default {
   },
   watch: {
     valueToShow(newValue) {
-      const valueProperty  = _.find(this.properties, { valueToShow: newValue });
+      const valueProperty  = Fliplet.Utils.find(this.properties, { valueToShow: newValue });
 
       this.value = valueProperty.value;
     },
@@ -70,7 +70,7 @@ export default {
       return createClass(this.data.fieldConfig.columns);
     },
     compValue() {
-      const valueProperty = _.find(this.properties, { valueToShow: this.valueToShow });
+      const valueProperty = Fliplet.Utils.find(this.properties, { valueToShow: this.valueToShow });
 
       return valueProperty.label;
     }
@@ -99,7 +99,7 @@ export default {
       return propsArr;
     },
     setValues() {
-      const valueProperty = _.find(this.properties, { value: this.value });
+      const valueProperty = Fliplet.Utils.find(this.properties, { value: this.value });
 
       this.valueToShow = valueProperty ? valueProperty.valueToShow : true;
     },

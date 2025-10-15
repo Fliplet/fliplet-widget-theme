@@ -43,7 +43,7 @@ export default {
         name: undefined,
         value: undefined
       },
-      debouncedSave: _.debounce(this.saveColor, 250),
+      debouncedSave: Fliplet.Utils.debounce(this.saveColor, 250),
       colorSets: [
         {
           name: 'Fliplet',
