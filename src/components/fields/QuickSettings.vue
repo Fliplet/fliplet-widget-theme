@@ -54,7 +54,7 @@ export default {
       return data;
     },
     computeVariables(toRecompute) {
-      const variables = _.cloneDeep(toRecompute && this.variables.length ? this.variables : this.groupConfig.variables);
+      const variables = Fliplet.Utils.cloneDeep(toRecompute && this.variables.length ? this.variables : this.groupConfig.variables);
 
       // Processing variables
       variables.forEach((variable, index) => {
@@ -66,7 +66,7 @@ export default {
             inheriting: true
           };
 
-          _.extend(variables[index].fields[idx], newObj);
+          Fliplet.Utils.extend(variables[index].fields[idx], newObj);
         });
       });
 

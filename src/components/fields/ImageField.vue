@@ -128,7 +128,7 @@ export default {
 
         result.data[0].url = imageUrl;
 
-        const media = _.pick(result.data[0], ['id', 'url', 'path']);
+        const media = Fliplet.Utils.pick(result.data[0], ['id', 'url', 'path']);
 
         this.valueToShow = media.url;
         this.value = media;

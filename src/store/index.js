@@ -63,10 +63,10 @@ export function handleWidgetData(data) {
 */
 
 export function setSavedFields(data) {
-  const backgroundType = _.find(data.values, { name: 'containerBackgroundType' });
+  const backgroundType = Fliplet.Utils.find(data.values, { name: 'containerBackgroundType' });
 
-  state.savedFields = _.assignIn({}, state.savedFields, data);
-  _.forEach(state.savedFields.values, function(item, index) {
+  state.savedFields = Fliplet.Utils.assignIn({}, state.savedFields, data);
+  Fliplet.Utils.forEach(state.savedFields.values, function(item, index) {
     switch (item.name) {
       case 'containerBackgroundImage':
         if (backgroundType?.value === 'Color' || backgroundType?.value === 'None') {
@@ -85,7 +85,7 @@ export function setSavedFields(data) {
     }
   });
 
-  _.forEach(state.savedFields.widgetInstances, function(item, index) {
+  Fliplet.Utils.forEach(state.savedFields.widgetInstances, function(item, index) {
     if (item.id === state.widgetId) {
       state.savedFields.widgetInstances[index].values = getBackgroundValues(state.savedFields.widgetInstances[index].values);
 
@@ -122,11 +122,11 @@ export function getBackgroundValues(values) {
 
 export function prepareSettingsForTheme(id) {
   // Find the saved values
-  const localSavedWidget = _.find(state.savedFields.widgetInstances, { id: id });
+  const localSavedWidget = Fliplet.Utils.find(state.savedFields.widgetInstances, { id: id });
   const localValues = localSavedWidget ? localSavedWidget.values : [];
-  const instanceSavedWidget = _.find(state.themeInstance.settings.widgetInstances, { id: id });
+  const instanceSavedWidget = Fliplet.Utils.find(state.themeInstance.settings.widgetInstances, { id: id });
   const instanceValues = instanceSavedWidget ? instanceSavedWidget.values : [];
-  const foundValues = _.merge(instanceValues, localValues);
+  const foundValues = Fliplet.Utils.merge(instanceValues, localValues);
 
   const arrayOfValues = [];
   const data = {};
@@ -154,7 +154,7 @@ export function prepareSettingsForTheme(id) {
 */
 
 export function resetStylesToTheme(widgetId, appearanceGroup) {
-  _.remove(state.savedFields.widgetInstances, { id: widgetId });
+  Fliplet.Utils.remove(state.savedFields.widgetInstances, { id: widgetId });
   removeWidgetFromInstance(widgetId);
   updateWidgetData({
     appearanceGroup: appearanceGroup,
@@ -310,11 +310,11 @@ export function closeAppearanceGroupSettings() {
 
 export function saveFieldData(data) {
   if (Array.isArray(data)) {
-    _.forEach(data, (dataObject) => {
-      state.dataToSave.push(_.pick(dataObject, ['name', 'value']));
+    Fliplet.Utils.forEach(data, (dataObject) => {
+      state.dataToSave.push(Fliplet.Utils.pick(dataObject, ['name', 'value']));
     });
   } else {
-    state.dataToSave.push(_.pick(data, ['name', 'value']));
+    state.dataToSave.push(Fliplet.Utils.pick(data, ['name', 'value']));
   }
 
   emitSavedData();
@@ -388,7 +388,7 @@ export function checkIsFieldChanged(field) {
   let fieldIndex;
 
   if (state.widgetMode) {
-    widgetIndex = _.findIndex(state.savedFields.widgetInstances, (widget) => {
+    widgetIndex = Fliplet.Utils.findIndex(state.savedFields.widgetInstances, (widget) => {
       if (widget) {
         let foundValue = false;
 
@@ -406,7 +406,7 @@ export function checkIsFieldChanged(field) {
     });
 
     if (!widgetIndex || widgetIndex < 0) {
-      widgetIndex = _.findIndex(state.themeInstance.settings.widgetInstances, (widget) => {
+      widgetIndex = Fliplet.Utils.findIndex(state.themeInstance.settings.widgetInstances, (widget) => {
         if (widget) {
           let foundValue = false;
 
@@ -422,7 +422,7 @@ export function checkIsFieldChanged(field) {
       });
     }
   } else {
-    fieldIndex = _.findIndex(state.savedFields.values, (value) => {
+    fieldIndex = Fliplet.Utils.findIndex(state.savedFields.values, (value) => {
       return value && value.name === field.name;
     });
 
@@ -499,23 +499,23 @@ export function getSavedValue(field, returnAll, context) {
   const generalSavedValue = state.themeInstance.settings
     && state.themeInstance.settings.values
     && state.themeInstance.settings.values[fieldName];
-  const savedLocalField = _.find(state.savedFields.values, { name: fieldName });
+  const savedLocalField = Fliplet.Utils.find(state.savedFields.values, { name: fieldName });
 
-  const widgetFound = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId });
-  const localWidgetFound = _.find(state.savedFields.widgetInstances, { id: state.widgetId });
+  const widgetFound = Fliplet.Utils.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId });
+  const localWidgetFound = Fliplet.Utils.find(state.savedFields.widgetInstances, { id: state.widgetId });
 
   const widgetSavedData = getWidgetSavedValue({
     type: 'settings',
-    savedValues: _.get(widgetFound, 'values', {}),
-    localSavedValues: _.get(localWidgetFound, 'values', {}),
+    savedValues: Fliplet.Utils.get(widgetFound, 'values', {}),
+    localSavedValues: Fliplet.Utils.get(localWidgetFound, 'values', {}),
     field,
     context,
     fieldName
   });
   const widgetLocalSavedData = getWidgetSavedValue({
     type: 'local',
-    savedValues: _.get(widgetFound, 'values', {}),
-    localSavedValues: _.get(localWidgetFound, 'values', {}),
+    savedValues: Fliplet.Utils.get(widgetFound, 'values', {}),
+    localSavedValues: Fliplet.Utils.get(localWidgetFound, 'values', {}),
     field,
     context,
     fieldName
@@ -600,7 +600,7 @@ export function checkLogic(fieldConfig, value) {
 }
 
 export function setInstanceValue(settings) {
-  state.themeInstance.settings = _.cloneDeep(settings);
+  state.themeInstance.settings = Fliplet.Utils.cloneDeep(settings);
 }
 
 /**
@@ -680,7 +680,7 @@ export function getInheritance(variables) {
       const newArr = [];
 
       variables.forEach((variable) => {
-        const fields = _.filter(variable.fields, { inheriting: true });
+        const fields = Fliplet.Utils.filter(variable.fields, { inheriting: true });
 
         if (fields.length) {
           let inheritingFrom = [];
@@ -689,7 +689,7 @@ export function getInheritance(variables) {
             inheritingFrom.push(field.inheritingFrom);
           });
 
-          inheritingFrom = _.uniq(inheritingFrom);
+          inheritingFrom = Fliplet.Utils.uniq(inheritingFrom);
 
           if (inheritingFrom.indexOf('tablet') > -1) {
             newArr.push('tablet');
@@ -726,10 +726,10 @@ export function sendCssToFrame(value, currentField) {
   const configurations = state.activeTheme.settings.configuration;
   const cssProperties = [];
   const styles = currentField.styles || [];
-  let savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
+  let savedWidgetFound = Fliplet.Utils.find(state.themeInstance.settings.widgetInstances, (widget) => {
     return !!widget.values[currentField.name];
   });
-  let localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
+  let localSavedWidgetFound = Fliplet.Utils.find(state.savedFields.widgetInstances, (widget) => {
     return !!widget.values[currentField.name];
   });
 
@@ -758,10 +758,10 @@ export function sendCssToFrame(value, currentField) {
     const fieldStyles = field.styles || [];
 
     fieldStyles.forEach((style) => {
-      savedWidgetFound = _.find(state.themeInstance.settings.widgetInstances, (widget) => {
+      savedWidgetFound = Fliplet.Utils.find(state.themeInstance.settings.widgetInstances, (widget) => {
         return !!widget.values[field.name];
       });
-      localSavedWidgetFound = _.find(state.savedFields.widgetInstances, (widget) => {
+      localSavedWidgetFound = Fliplet.Utils.find(state.savedFields.widgetInstances, (widget) => {
         return !!widget.values[field.name];
       });
 
@@ -794,8 +794,8 @@ export function sendCssToFrame(value, currentField) {
   });
 
   if (currentField.name === 'containerBackgroundColor') {
-    _.forEach(cssProperties, (css, index) => {
-      if (_.has(css.properties, 'background-color')) {
+    Fliplet.Utils.forEach(cssProperties, (css, index) => {
+      if (Fliplet.Utils.has(css.properties, 'background-color')) {
         cssProperties[index].properties['background-image'] = 'none';
 
         return false;
@@ -806,15 +806,15 @@ export function sendCssToFrame(value, currentField) {
   if (currentField.name === 'containerBackgroundImage') {
     let bgc;
 
-    _.forEach(state.appearanceGroupOverlay.data.appearanceGroup.variables, function(variable) {
+    Fliplet.Utils.forEach(state.appearanceGroupOverlay.data.appearanceGroup.variables, function(variable) {
       if (variable.description === 'Background') {
-        bgc = _.find(variable.fields, { name: 'containerBackgroundColor' });
+        bgc = Fliplet.Utils.find(variable.fields, { name: 'containerBackgroundColor' });
 
         return false;
       }
     });
-    _.forEach(cssProperties, (css, index) => {
-      if (_.has(css.properties, 'background-image')) {
+    Fliplet.Utils.forEach(cssProperties, (css, index) => {
+      if (Fliplet.Utils.has(css.properties, 'background-image')) {
         cssProperties[index].properties['background-color'] = getCurrentFieldValue({
           ...bgc,
           inheritingFrom: currentField.inheritingFrom
@@ -839,9 +839,9 @@ export function sendCssToFrame(value, currentField) {
 export function migrateOldVariables(data) {
   const migrated = {};
 
-  data = _.cloneDeep(data);
+  data = Fliplet.Utils.cloneDeep(data);
 
-  _.forIn(data, (value, key) => {
+  Fliplet.Utils.forIn(data, (value, key) => {
     // Key doesn't need migrating
     if (!migrationMapping[key]) {
       return;
@@ -850,7 +850,7 @@ export function migrateOldVariables(data) {
     // Key needs to map to another key
     if (typeof migrationMapping[key] === 'string') {
       // Migrate value if the saved data doesn't already have a value for the key
-      if (_.isNil(data[migrationMapping[key]])) {
+      if (Fliplet.Utils.isNil(data[migrationMapping[key]])) {
         migrated[migrationMapping[key]] = value;
       }
 
@@ -858,10 +858,10 @@ export function migrateOldVariables(data) {
     }
 
     // Key needs to map to a list of keys
-    if (_.isArray(migrationMapping[key])) {
+    if (Fliplet.Utils.isArray(migrationMapping[key])) {
       migrationMapping[key].forEach((k) => {
         // Saved data already has a value for the key
-        if (!_.isNil(data[k])) {
+        if (!Fliplet.Utils.isNil(data[k])) {
           return;
         }
 
@@ -872,11 +872,11 @@ export function migrateOldVariables(data) {
     }
 
     // Key needs to be mapped based on an object configuration
-    if (_.isPlainObject(migrationMapping[key])) {
+    if (Fliplet.Utils.isPlainObject(migrationMapping[key])) {
       // Mapping behavior based on the value being "none"
       if (value === 'none') {
         // Only map the value if the saved data doesn't already have a value for the mapped key
-        if (_.isNil(data[migrationMapping[key].none])) {
+        if (Fliplet.Utils.isNil(data[migrationMapping[key].none])) {
           migrated[migrationMapping[key].none] = value;
         }
       } else {
@@ -900,7 +900,7 @@ export function migrateOldVariables(data) {
           }
 
           // Only map the value if the saved data doesn't already have a value for the mapped key
-          if (_.isNil(data[k])) {
+          if (Fliplet.Utils.isNil(data[k])) {
             migrated[k] = values[index];
           }
         });
@@ -918,14 +918,14 @@ export function migrateOldVariables(data) {
 
   return {
     migrated: migrated,
-    data: _.assign({}, data, migrated)
+    data: Fliplet.Utils.assign({}, data, migrated)
   };
 }
 
 export function appSupportsContainer() {
   const appSettings = Fliplet.Env.get('appSettings');
 
-  return parseInt(_.get(appSettings, 'interactVersion', DEFAULT_INTERACT_VERSION), 10) > 2;
+  return parseInt(Fliplet.Utils.get(appSettings, 'interactVersion', DEFAULT_INTERACT_VERSION), 10) > 2;
 }
 
 // Private functions
@@ -934,7 +934,7 @@ function emitSavedData() {
 }
 
 function removeWidgetFromInstance(id) {
-  _.remove(state.themeInstance.settings.widgetInstances, { id: id });
+  Fliplet.Utils.remove(state.themeInstance.settings.widgetInstances, { id: id });
 }
 
 function updateWidgetData(data) {
@@ -1320,7 +1320,7 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
               selectors.ignore = styles.ignore;
             }
 
-            const newSelectors = _.clone(selectors);
+            const newSelectors = Fliplet.Utils.clone(selectors);
 
             cssProperties.push(newSelectors);
           });
@@ -1339,7 +1339,7 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
         selectors.ignore = styles.ignore;
       }
 
-      const newSelectors = _.clone(selectors);
+      const newSelectors = Fliplet.Utils.clone(selectors);
 
       cssProperties.push(newSelectors);
     });
@@ -1486,7 +1486,7 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
             selectors.ignore = styles.ignore;
           }
 
-          const newSelectors = _.clone(selectors);
+          const newSelectors = Fliplet.Utils.clone(selectors);
 
           cssProperties.push(newSelectors);
         });
@@ -1505,7 +1505,7 @@ function prepareStyles(styles, value, widgetSelector, currentField) {
       selectors.ignore = styles.ignore;
     }
 
-    const newSelectors = _.clone(selectors);
+    const newSelectors = Fliplet.Utils.clone(selectors);
 
     cssProperties.push(newSelectors);
   }
@@ -1553,7 +1553,7 @@ function checkFieldValue(value, field) {
   // If value is a variable name
   if (variableName) {
     // Try to find the value in the local saved values
-    foundValue = _.find(state.savedFields.values, { name: variableName });
+    foundValue = Fliplet.Utils.find(state.savedFields.values, { name: variableName });
 
     if (foundValue) {
       return checkFieldValue(foundValue.value, field);
@@ -1607,7 +1607,7 @@ function checkFieldValue(value, field) {
 
   if (state.widgetMode) {
     // Try to find the value in the local saved widget values
-    const foundWidgetValue = _.find(state.savedFields.widgetInstances, { id: state.widgetId });
+    const foundWidgetValue = Fliplet.Utils.find(state.savedFields.widgetInstances, { id: state.widgetId });
 
     foundValue = foundWidgetValue ? foundWidgetValue.values[inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name] : undefined;
 
@@ -1616,7 +1616,7 @@ function checkFieldValue(value, field) {
     }
 
     // Try to find the value in the theme instance saved widgets
-    const foundWidget = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId });
+    const foundWidget = Fliplet.Utils.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId });
 
     foundValue = foundWidget ? foundWidget.values[inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name] : undefined;
 
@@ -1625,7 +1625,7 @@ function checkFieldValue(value, field) {
     }
   }
 
-  foundValue = _.find(state.savedFields.values, { name: (inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name) });
+  foundValue = Fliplet.Utils.find(state.savedFields.values, { name: (inherit === 'mobile' || field.isQuickSetting ? field.name : field.breakpoints[inherit].name) });
 
   if (foundValue) {
     return checkFieldValue(foundValue.value,  field);

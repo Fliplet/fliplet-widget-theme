@@ -135,7 +135,7 @@ export default {
     updateActiveTab(tab) {
       // Sets the active device tab
       tab = tab || this.tabs[0];
-      setActiveTab(_.findIndex(this.tabs, { type: tab.type }));
+      setActiveTab(Fliplet.Utils.findIndex(this.tabs, { type: tab.type }));
     },
     handleContextSwitch(tab) {
       this.updateActiveTab(tab);
@@ -150,16 +150,16 @@ export default {
     groupFontStyleFields(fields) {
       // This function makes all the font style fields (Bold, Italic, Underline, etc) together
       // This makes it look like it's just one field of multiple options
-      const clonedFields = _.cloneDeep(fields);
+      const clonedFields = Fliplet.Utils.cloneDeep(fields);
       // Get the index of the first 'font-style' field
-      const firsIndex = _.findIndex(clonedFields, { type: 'font-style' });
+      const firsIndex = Fliplet.Utils.findIndex(clonedFields, { type: 'font-style' });
       // Get the array with all the 'font-style' fields
-      const fontTypeArray = _.filter(clonedFields, { type: 'font-style' });
+      const fontTypeArray = Fliplet.Utils.filter(clonedFields, { type: 'font-style' });
 
       // If there is an index
       if (firsIndex > -1) {
         // Remove the fields from the 'fields' array
-        _.remove(clonedFields, { type: 'font-style' });
+        Fliplet.Utils.remove(clonedFields, { type: 'font-style' });
         // Add them as an array field back in in the index saved above
         clonedFields.splice(firsIndex, 0, fontTypeArray);
       }
@@ -187,7 +187,7 @@ export default {
         return false;
       }
 
-      const show = _.find(variable.fields, (field) => {
+      const show = Fliplet.Utils.find(variable.fields, (field) => {
         return !!field.showField || typeof field.showField === 'undefined';
       });
 
@@ -223,7 +223,7 @@ export default {
       return true;
     },
     goToDeviceTab(inheritingFrom) {
-      const tab = _.find(deviceTypes, { type: inheritingFrom });
+      const tab = Fliplet.Utils.find(deviceTypes, { type: inheritingFrom });
 
       this.handleContextSwitch(tab);
     },
@@ -245,7 +245,7 @@ export default {
         return [];
       }
 
-      const variables = _.cloneDeep(toRecompute && this.variables ? this.variables : state.appearanceGroupOverlay.data.appearanceGroup.variables);
+      const variables = Fliplet.Utils.cloneDeep(toRecompute && this.variables ? this.variables : state.appearanceGroupOverlay.data.appearanceGroup.variables);
 
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
@@ -284,7 +284,7 @@ export default {
               )
           };
 
-          _.extend(variables[index].fields[idx], newObj);
+          Fliplet.Utils.extend(variables[index].fields[idx], newObj);
         });
       });
 
@@ -309,7 +309,7 @@ export default {
       const newArr = [];
 
       this.variables.forEach((variable) => {
-        const fields = _.filter(variable.fields, { inheriting: false });
+        const fields = Fliplet.Utils.filter(variable.fields, { inheriting: false });
 
         if (fields.length) {
           newArr.push(true);
@@ -459,8 +459,8 @@ export default {
     bus.$on('component-context-changed', this.onContextSwitch);
     bus.$on('flex-direction-changed', this.flexDirectionFlag);
 
-    const instanceWidgetSettings = _.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId });
-    const savedWidgetSettings = _.find(state.savedFields.widgetInstances, { id: state.widgetId });
+    const instanceWidgetSettings = Fliplet.Utils.find(state.themeInstance.settings.widgetInstances, { id: state.widgetId });
+    const savedWidgetSettings = Fliplet.Utils.find(state.savedFields.widgetInstances, { id: state.widgetId });
 
     if (instanceWidgetSettings || savedWidgetSettings) {
       this.isChanged = true;
