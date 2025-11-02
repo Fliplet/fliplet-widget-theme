@@ -70,7 +70,7 @@ export default {
       tabs: deviceTypes,
       error: undefined,
       dataToSave: {},
-      debouncedSave: _.debounce(this.save, 500),
+      debouncedSave: Fliplet.Utils.debounce(this.save, 500),
       oldThemeSettings: undefined,
       appSupportsContainers: appSupportsContainer()
     };
@@ -84,7 +84,7 @@ export default {
   },
   computed: {
     themeConfigurations() {
-      const configurations = _.filter(state.activeTheme.settings.configuration, (configuration) => {
+      const configurations = Fliplet.Utils.filter(state.activeTheme.settings.configuration, (configuration) => {
         return !configuration.quickSettings
           && !state.widgetMode
           && this.supportsContainers(configuration);
@@ -99,11 +99,11 @@ export default {
         || this.appSupportsContainers === configuration.appSupportsContainers;
     },
     getQuickSettings() {
-      return _.find(state.activeTheme.settings.configuration, { quickSettings: true });
+      return Fliplet.Utils.find(state.activeTheme.settings.configuration, { quickSettings: true });
     },
     handleContextSwitch(tab) {
       tab = tab || this.tabs[0];
-      setActiveTab(_.findIndex(deviceTypes, { name: tab.name }));
+      setActiveTab(Fliplet.Utils.findIndex(deviceTypes, { name: tab.name }));
       setComponentContext(tab.name);
     },
     handleAppearanceGroup(group) {
@@ -119,7 +119,7 @@ export default {
       });
     },
     changeContext() {
-      const tab = _.find(this.tabs, { name: state.componentContext });
+      const tab = Fliplet.Utils.find(this.tabs, { name: state.componentContext });
 
       this.handleContextSwitch(tab);
     },
@@ -133,11 +133,11 @@ export default {
       return Fliplet.App.Fonts.get();
     },
     storeFonts() {
-      const webFonts = _.reject(this.fonts, (font) => { return font.url; });
+      const webFonts = Fliplet.Utils.reject(this.fonts, (font) => { return font.url; });
 
       setWebFonts(webFonts);
 
-      const customFonts = _.filter(this.fonts, (font) => { return font.url; });
+      const customFonts = Fliplet.Utils.filter(this.fonts, (font) => { return font.url; });
 
       setCustomFonts(customFonts);
     },
@@ -161,12 +161,12 @@ export default {
 
           this.themes = response[0];
 
-          selectedTheme = _.find(this.themes, (theme) => {
+          selectedTheme = Fliplet.Utils.find(this.themes, (theme) => {
             return theme.instances.length;
           });
 
           if (!selectedTheme) {
-            selectedTheme = _.find(this.themes, { name: FLIPLET_THEME });
+            selectedTheme = Fliplet.Utils.find(this.themes, { name: FLIPLET_THEME });
           }
 
           this.setThemeInstance({
@@ -226,7 +226,7 @@ export default {
                 ? `${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`
                 : state.widgetData.widgetPackage;
 
-              this.appearanceGroup = _.find(state.activeTheme.settings.configuration, (config) => {
+              this.appearanceGroup = Fliplet.Utils.find(state.activeTheme.settings.configuration, (config) => {
                 return config.packages && config.packages.indexOf(widgetPackage) > -1;
               });
 
@@ -265,7 +265,7 @@ export default {
       ThemeModel.getAllVersions()
         .then((result) => {
           const allThemes = result.widgets;
-          const versionOneTheme = _.find(allThemes, { name: 'Bootstrap', version: '1.0.0' });
+          const versionOneTheme = Fliplet.Utils.find(allThemes, { name: 'Bootstrap', version: '1.0.0' });
 
           if (!versionOneTheme.instances.length) {
             return;
@@ -311,7 +311,7 @@ export default {
         // Checks if provider is in "widget mode"
         // (Widget mode is on when provider is initialized from a widget instance)
         if (state.widgetMode) {
-          let widget = _.find(this.savedFields.widgetInstances, { id: state.widgetId });
+          let widget = Fliplet.Utils.find(this.savedFields.widgetInstances, { id: state.widgetId });
           const component = state.widgetData.widgetLayout
             ? widgetsMap[`${state.widgetData.widgetPackage}:${state.widgetData.widgetLayout}`]
             : state.widgetData.component || widgetsMap[state.widgetData.widgetPackage];
@@ -340,7 +340,7 @@ export default {
           }
         } else {
           // If it isn't, it means you are saving general theme settings
-          const field = _.find(this.savedFields.values, { name: data.name });
+          const field = Fliplet.Utils.find(this.savedFields.values, { name: data.name });
 
           // Check if the same field was previously saved
           if (field) {
@@ -364,20 +364,20 @@ export default {
       }
 
       // General settings values
-      this.dataToSave.values = _.mapValues(_.keyBy(state.savedFields.values, 'name'), 'value');
-      this.dataToSave.values = _.assignIn({}, state.themeInstance.settings.values, this.dataToSave.values);
+      this.dataToSave.values = Fliplet.Utils.mapValues(Fliplet.Utils.keyBy(state.savedFields.values, 'name'), 'value');
+      this.dataToSave.values = Fliplet.Utils.assignIn({}, state.themeInstance.settings.values, this.dataToSave.values);
 
       // Widget settings values
       this.dataToSave.widgetInstances = state.savedFields.widgetInstances;
 
       if (this.dataToSave.widgetInstances.length) {
         this.dataToSave.widgetInstances.forEach((wi) => {
-          const widget = _.find(themeSavedWidgetInstances, { id: wi.id });
+          const widget = Fliplet.Utils.find(themeSavedWidgetInstances, { id: wi.id });
 
           if (widget) {
             themeSavedWidgetInstances.forEach((item) => {
               if (widget.id === item.id) {
-                _.merge(item, wi);
+                Fliplet.Utils.merge(item, wi);
               }
             });
             this.dataToSave.widgetInstances = themeSavedWidgetInstances;
@@ -391,7 +391,7 @@ export default {
       }
 
       if (state.widgetId) {
-        _.forEach(this.dataToSave.widgetInstances, (item) => {
+        Fliplet.Utils.forEach(this.dataToSave.widgetInstances, (item) => {
           if (item.id === state.widgetId) {
             item.values = getBackgroundValues(item.values);
 

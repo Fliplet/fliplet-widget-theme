@@ -87,7 +87,7 @@ export default {
 
       // Checks if it is an Array
       if (Array.isArray(properties)) {
-        const propIndex = _.findIndex(properties, (prop) => {
+        const propIndex = Fliplet.Utils.findIndex(properties, (prop) => {
           return prop === value;
         });
 

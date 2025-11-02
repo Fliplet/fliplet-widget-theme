@@ -11,8 +11,8 @@
     "dependencies": [
       "vue.js",
       "fliplet-themes",
+      "fliplet-utils",
       "fliplet-studio-ui",
-      "lodash",
       "bootstrap",
       "font-awesome",
       "fliplet-icons",

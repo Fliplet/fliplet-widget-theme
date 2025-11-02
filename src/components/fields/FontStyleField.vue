@@ -61,7 +61,7 @@ export default {
       }
 
       let index;
-      let difference = typeof newVal === 'string' ? '' : _.difference(newVal, oldVal);
+      let difference = typeof newVal === 'string' ? '' : Fliplet.Utils.difference(newVal, oldVal);
 
       if (newVal.indexOf('normal') > -1) {
         // Remove "normal"
