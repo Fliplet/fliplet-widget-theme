@@ -215,7 +215,7 @@ export function setThemeInstance(options) {
 export function setActiveTheme(theme) {
   // Process the theme configuration to set default values
   const processedTheme = processThemeConfiguration(theme);
-  
+
   // Save the processed theme to state
   state.activeTheme = processedTheme;
 }
