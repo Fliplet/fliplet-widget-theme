@@ -3,7 +3,6 @@
 ** for heading fonts, and borders
 */
 
-
 export default {
   bodyFontFamily: 'quickTextFontFamily',
   bodyBackground: 'quickBackground',
@@ -14,7 +13,6 @@ export default {
   headingFourFont: 'headingFourFontFamily',
   headingFiveFont: 'headingFiveFontFamily',
   headingSixFont: 'headingSixFontFamily',
-  containerBackgroundColor: 'quickBackground',
   menuTopNavBorder: [
     'menuTopNavBorderColor',
     'menuPushTopNavBorderColor',

@@ -15,7 +15,6 @@ const PROPERTY_MAPPINGS = {
     'textHeadingSixColor',
     'menuBottomBarActiveFontColor',
     'primaryButtonColor',
-    'primaryButtonHoverColor',
     'linkColor',
     'linkHoverColor',
     'appListPreparingIconColor',
@@ -251,6 +250,7 @@ const PROPERTY_MAPPINGS = {
     'sliderTextColor'
   ]),
   quickBackgrounds: new Set([
+    'primaryButtonHoverColor',
     'Color',
     'menuTopNavBackground',
     'menuBackgroundColor',
