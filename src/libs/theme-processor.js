@@ -426,8 +426,6 @@ export function processThemeConfiguration(theme) {
     return theme;
   }
 
-  debugger;
-
   // Helper function to check if a value is empty/null/undefined
   const isEmptyValue = (value) => value === null || value === undefined || value === '';
 
@@ -455,14 +453,14 @@ export function processThemeConfiguration(theme) {
 
   // Helper function to get the actual default value from theme configuration
   const getActualDefaultValue = (theme, defaultFieldName) => {
-    // Check cache first
-    if (defaultValueCache.has(defaultFieldName)) {
-      return defaultValueCache.get(defaultFieldName);
+    // Return cached value only when present and not null
+    const cached = defaultValueCache.get(defaultFieldName);
+
+    if (cached !== undefined && cached !== null) {
+      return cached;
     }
 
     if (!theme?.settings?.configuration) {
-      defaultValueCache.set(defaultFieldName, null);
-
       return null;
     }
 
@@ -488,8 +486,10 @@ export function processThemeConfiguration(theme) {
       if (result) break;
     }
 
-    // Cache the result
-    defaultValueCache.set(defaultFieldName, result);
+    // Cache only non-null results
+    if (result !== null && result !== undefined) {
+      defaultValueCache.set(defaultFieldName, result);
+    }
 
     return result;
   };
