@@ -426,6 +426,8 @@ export function processThemeConfiguration(theme) {
     return theme;
   }
 
+  debugger;
+
   // Helper function to check if a value is empty/null/undefined
   const isEmptyValue = (value) => value === null || value === undefined || value === '';
 
