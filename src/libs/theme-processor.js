@@ -412,7 +412,10 @@ const DEFAULT_FIELD_MAPPINGS = {
 };
 
 /**
- * Processes a theme configuration and sets default values for fields that don't have them
+ * Processes a theme configuration and sets default values for fields that map to quick-settings
+ * (e.g. highlight colors, secondary colors). Each mapped field gets the quick-setting's value
+ * as its default so the theme stays consistent. Runs for all mapped fields, not only those
+ * with an empty default.
  * @param {Object} theme - The theme object to process
  * @return {Object} The processed theme with updated default values
  */
@@ -497,16 +500,14 @@ export function processThemeConfiguration(theme) {
         if (!variable.fields) continue;
 
         for (const field of variable.fields) {
-          // Check if field has no default value
-          if (isEmptyValue(field.default)) {
-            const defaultFieldName = getDefaultValueForField(field.name);
+          const defaultFieldName = getDefaultValueForField(field.name);
 
-            if (defaultFieldName) {
-              const actualDefaultValue = getActualDefaultValue(theme, defaultFieldName);
+          if (defaultFieldName) {
+            const actualDefaultValue = getActualDefaultValue(theme, defaultFieldName);
 
-              if (actualDefaultValue) {
-                field.default = actualDefaultValue;
-              }
+            if (actualDefaultValue) {
+              // Apply quick-setting default so mapped fields (e.g. highlight colors) use the same value as their quick-setting
+              field.default = actualDefaultValue;
             }
           }
         }
