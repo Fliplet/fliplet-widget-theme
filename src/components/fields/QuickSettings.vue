@@ -54,7 +54,7 @@ export default {
       return data;
     },
     computeVariables(toRecompute) {
-      debugger
+      debugger;
       const variables = _.cloneDeep(toRecompute && this.variables.length ? this.variables : this.groupConfig.variables);
 
       // Processing variables
