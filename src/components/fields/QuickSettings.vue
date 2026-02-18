@@ -78,6 +78,7 @@ export default {
     },
     reSetVariables() {
       this.variables = this.computeVariables(true);
+      debugger;
       this.$nextTick(() => {
         this.forceRerender();
         bus.$emit('variables-computed');
