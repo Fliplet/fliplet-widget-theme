@@ -13,6 +13,7 @@ export default {
   headingFourFont: 'headingFourFontFamily',
   headingFiveFont: 'headingFiveFontFamily',
   headingSixFont: 'headingSixFontFamily',
+  containerBackgroundColor: 'quickBackground',
   menuTopNavBorder: [
     'menuTopNavBorderColor',
     'menuPushTopNavBorderColor',
