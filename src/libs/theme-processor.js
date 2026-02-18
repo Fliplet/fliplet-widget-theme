@@ -314,7 +314,8 @@ const PROPERTY_MAPPINGS = {
     'imageOverlayBackgroundColor',
     'imageOverlayNavBackgroundColor',
     'pushBackgroundColor',
-    'rssBackgroundColor'
+    'rssBackgroundColor',
+    'containerBackgroundColor'
   ]),
   quickHeadingFontFamilies: new Set([
     'headingOneFontFamily',
