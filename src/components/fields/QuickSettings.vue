@@ -1,7 +1,7 @@
 <template>
   <div class="quick-settings clearfix">
     <div class="col-xs-12 control-label quick-settings-title">
-      <label>{{ groupConfig.name }}</label>
+      <label>{{ groupConfig.name }} test</label>
     </div>
 
     <div class="col-xs-12">
