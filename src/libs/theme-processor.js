@@ -407,7 +407,7 @@ const DEFAULT_FIELD_MAPPINGS = {
   highlightColor: '$highlightColor',
   secondaryColor: '$secondaryColor',
   quickTextColor: '$quickTextColor',
-  quickBackground: 'quickBackground',
+  quickBackground: '$quickBackground',
   quickHeadingFontFamily: '$quickHeadingFontFamily',
   quickTextFontFamily: '$quickTextFontFamily'
 };
