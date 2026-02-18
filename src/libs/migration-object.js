@@ -34,7 +34,7 @@ export default {
   primaryButtonColor: {
     keep: true,
     values: [
-      'quickBackground'
+      'highlightColor'
     ]
   },
   primaryButtonBorder: {

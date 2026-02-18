@@ -55,7 +55,7 @@ export default {
     },
     computeVariables(toRecompute) {
       const variables = _.cloneDeep(toRecompute && this.variables.length ? this.variables : this.groupConfig.variables);
-
+debugger;
       // Processing variables
       variables.forEach((variable, index) => {
         variable.fields.forEach((field, idx) => {
