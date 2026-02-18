@@ -3,6 +3,7 @@
 ** for heading fonts, and borders
 */
 
+
 export default {
   bodyFontFamily: 'quickTextFontFamily',
   bodyBackground: 'quickBackground',
